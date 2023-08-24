@@ -5,10 +5,10 @@ import {
 	useFieldset,
 	useForm,
 	type FieldConfig,
-} from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { createId as cuid } from '@paralleldrive/cuid2'
-import { type Note, type NoteImage } from '@prisma/client'
+} from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
+import { createId as cuid } from '@paralleldrive/cuid2';
+import { type Note, type NoteImage } from '@prisma/client';
 import {
 	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
 	json,
@@ -16,46 +16,46 @@ import {
 	redirect,
 	type DataFunctionArgs,
 	type SerializeFrom,
-} from '@remix-run/node'
-import { Form, useFetcher } from '@remix-run/react'
-import { useRef, useState } from 'react'
-import { z } from 'zod'
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
-import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { Label } from '#app/components/ui/label.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { Textarea } from '#app/components/ui/textarea.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
+} from '@remix-run/node';
+import { Form, useFetcher } from '@remix-run/react';
+import { useRef, useState } from 'react';
+import { z } from 'zod';
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
+import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx';
+import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx';
+import { Button } from '#app/components/ui/button.tsx';
+import { Icon } from '#app/components/ui/icon.tsx';
+import { Label } from '#app/components/ui/label.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { Textarea } from '#app/components/ui/textarea.tsx';
+import { requireUserId } from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
+import { cn, getNoteImgSrc } from '#app/utils/misc.tsx';
 
-const titleMinLength = 1
-const titleMaxLength = 100
-const contentMinLength = 1
-const contentMaxLength = 10000
+const titleMinLength = 1;
+const titleMaxLength = 100;
+const contentMinLength = 1;
+const contentMaxLength = 10000;
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 
 const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
 	file: z
 		.instanceof(File)
 		.optional()
-		.refine(file => {
-			return !file || file.size <= MAX_UPLOAD_SIZE
+		.refine((file) => {
+			return !file || file.size <= MAX_UPLOAD_SIZE;
 		}, 'File size must be less than 3MB'),
 	altText: z.string().optional(),
-})
+});
 
-type ImageFieldset = z.infer<typeof ImageFieldsetSchema>
+type ImageFieldset = z.infer<typeof ImageFieldsetSchema>;
 
 function imageHasFile(
 	image: ImageFieldset,
 ): image is ImageFieldset & { file: NonNullable<ImageFieldset['file']> } {
-	return Boolean(image.file)
+	return Boolean(image.file);
 }
 
 const NoteEditorSchema = z.object({
@@ -63,35 +63,35 @@ const NoteEditorSchema = z.object({
 	title: z.string().min(titleMinLength).max(titleMaxLength),
 	content: z.string().min(contentMinLength).max(contentMaxLength),
 	images: z.array(ImageFieldsetSchema).max(5).optional(),
-})
+});
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const userId = await requireUserId(request);
 
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
-	)
+	);
 
 	const submission = await parse(formData, {
 		schema: NoteEditorSchema.superRefine(async (data, ctx) => {
-			if (!data.id) return
+			if (!data.id) return;
 
 			const note = await prisma.note.findUnique({
 				select: { id: true },
 				where: { id: data.id, ownerId: userId },
-			})
+			});
 			if (!note) {
 				ctx.addIssue({
 					code: 'custom',
 					message: 'Note not found',
-				})
+				});
 			}
 		}).transform(async ({ images = [], ...data }) => {
 			return {
 				...data,
 				images: await Promise.all(
-					images.filter(imageHasFile).map(async image => ({
+					images.filter(imageHasFile).map(async (image) => ({
 						id: image.id,
 						altText: image.altText,
 						contentType: image.file.type,
@@ -101,22 +101,22 @@ export async function action({ request }: DataFunctionArgs) {
 								: null,
 					})),
 				),
-			}
+			};
 		}),
 		async: true,
-	})
+	});
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
+		return json({ status: 'idle', submission } as const);
 	}
 
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
-	const { id: noteId, title, content, images = [] } = submission.value
+	const { id: noteId, title, content, images = [] } = submission.value;
 
-	const updatedNote = await prisma.$transaction(async $prisma => {
+	const updatedNote = await prisma.$transaction(async ($prisma) => {
 		const note = await $prisma.note.upsert({
 			select: { id: true, owner: { select: { username: true } } },
 			where: { id: noteId ?? '__new_note__' },
@@ -129,13 +129,15 @@ export async function action({ request }: DataFunctionArgs) {
 				title,
 				content,
 				images: {
-					deleteMany: { id: { notIn: images.map(i => i.id).filter(Boolean) } },
+					deleteMany: {
+						id: { notIn: images.map((i) => i.id).filter(Boolean) },
+					},
 				},
 			},
-		})
+		});
 
 		for (const image of images) {
-			const { blob } = image
+			const { blob } = image;
 			if (blob) {
 				await $prisma.noteImage.upsert({
 					select: { id: true },
@@ -148,22 +150,22 @@ export async function action({ request }: DataFunctionArgs) {
 						id: cuid(),
 						noteId: note.id,
 					},
-				})
+				});
 			} else if (image.id) {
 				await $prisma.noteImage.update({
 					select: { id: true },
 					where: { id: image.id },
 					data: { altText: image.altText },
-				})
+				});
 			}
 		}
 
-		return note
-	})
+		return note;
+	});
 
 	return redirect(
 		`/users/${updatedNote.owner.username}/notes/${updatedNote.id}`,
-	)
+	);
 }
 
 export function NoteEditor({
@@ -171,27 +173,27 @@ export function NoteEditor({
 }: {
 	note?: SerializeFrom<
 		Pick<Note, 'id' | 'title' | 'content'> & {
-			images: Array<Pick<NoteImage, 'id' | 'altText'>>
+			images: Array<Pick<NoteImage, 'id' | 'altText'>>;
 		}
-	>
+	>;
 }) {
-	const noteFetcher = useFetcher<typeof action>()
-	const isPending = noteFetcher.state !== 'idle'
+	const noteFetcher = useFetcher<typeof action>();
+	const isPending = noteFetcher.state !== 'idle';
 
 	const [form, fields] = useForm({
 		id: 'note-editor',
 		constraint: getFieldsetConstraint(NoteEditorSchema),
 		lastSubmission: noteFetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: NoteEditorSchema })
+			return parse(formData, { schema: NoteEditorSchema });
 		},
 		defaultValue: {
 			title: note?.title ?? '',
 			content: note?.content ?? '',
 			images: note?.images ?? [{}],
 		},
-	})
-	const imageList = useFieldList(form.ref, fields.images)
+	});
+	const imageList = useFieldList(form.ref, fields.images);
 
 	return (
 		<div className="absolute inset-0">
@@ -272,21 +274,21 @@ export function NoteEditor({
 				</StatusButton>
 			</div>
 		</div>
-	)
+	);
 }
 
 function ImageChooser({
 	config,
 }: {
-	config: FieldConfig<z.infer<typeof ImageFieldsetSchema>>
+	config: FieldConfig<z.infer<typeof ImageFieldsetSchema>>;
 }) {
-	const ref = useRef<HTMLFieldSetElement>(null)
-	const fields = useFieldset(ref, config)
-	const existingImage = Boolean(fields.id.defaultValue)
+	const ref = useRef<HTMLFieldSetElement>(null);
+	const fields = useFieldset(ref, config);
+	const existingImage = Boolean(fields.id.defaultValue);
 	const [previewImage, setPreviewImage] = useState<string | null>(
 		fields.id.defaultValue ? getNoteImgSrc(fields.id.defaultValue) : null,
-	)
-	const [altText, setAltText] = useState(fields.altText.defaultValue ?? '')
+	);
+	const [altText, setAltText] = useState(fields.altText.defaultValue ?? '');
 
 	return (
 		<fieldset
@@ -334,17 +336,17 @@ function ImageChooser({
 							<input
 								aria-label="Image"
 								className="absolute left-0 top-0 z-0 h-32 w-32 cursor-pointer opacity-0"
-								onChange={event => {
-									const file = event.target.files?.[0]
+								onChange={(event) => {
+									const file = event.target.files?.[0];
 
 									if (file) {
-										const reader = new FileReader()
+										const reader = new FileReader();
 										reader.onloadend = () => {
-											setPreviewImage(reader.result as string)
-										}
-										reader.readAsDataURL(file)
+											setPreviewImage(reader.result as string);
+										};
+										reader.readAsDataURL(file);
 									} else {
-										setPreviewImage(null)
+										setPreviewImage(null);
 									}
 								}}
 								accept="image/*"
@@ -362,7 +364,7 @@ function ImageChooser({
 				<div className="flex-1">
 					<Label htmlFor={fields.altText.id}>Alt Text</Label>
 					<Textarea
-						onChange={e => setAltText(e.currentTarget.value)}
+						onChange={(e) => setAltText(e.currentTarget.value)}
 						{...conform.textarea(fields.altText, { ariaAttributes: true })}
 					/>
 					<div className="min-h-[32px] px-4 pb-3 pt-1">
@@ -377,7 +379,7 @@ function ImageChooser({
 				<ErrorList id={config.errorId} errors={config.errors} />
 			</div>
 		</fieldset>
-	)
+	);
 }
 
 export function ErrorBoundary() {
@@ -389,5 +391,5 @@ export function ErrorBoundary() {
 				),
 			}}
 		/>
-	)
+	);
 }

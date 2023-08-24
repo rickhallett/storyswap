@@ -1,6 +1,6 @@
-import { useLocation, useMatches } from '@remix-run/react'
-import * as Sentry from '@sentry/remix'
-import { useEffect } from 'react'
+import { useLocation, useMatches } from '@remix-run/react';
+import * as Sentry from '@sentry/remix';
+import { useEffect } from 'react';
 
 export function init() {
 	Sentry.init({
@@ -26,5 +26,5 @@ export function init() {
 		// plus for 100% of sessions with an error
 		replaysSessionSampleRate: 0.1,
 		replaysOnErrorSampleRate: 1.0,
-	})
+	});
 }

@@ -1,45 +1,45 @@
-import { useFormAction, useNavigation } from '@remix-run/react'
-import { clsx, type ClassValue } from 'clsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSpinDelay } from 'spin-delay'
-import { extendTailwindMerge } from 'tailwind-merge'
-import { extendedTheme } from './extended-theme.ts'
+import { useFormAction, useNavigation } from '@remix-run/react';
+import { clsx, type ClassValue } from 'clsx';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSpinDelay } from 'spin-delay';
+import { extendTailwindMerge } from 'tailwind-merge';
+import { extendedTheme } from './extended-theme.ts';
 
 export function getUserImgSrc(imageId?: string | null) {
-	return imageId ? `/resources/user-images/${imageId}` : '/img/user.png'
+	return imageId ? `/resources/user-images/${imageId}` : '/img/user.png';
 }
 
 export function getNoteImgSrc(imageId: string) {
-	return `/resources/note-images/${imageId}`
+	return `/resources/note-images/${imageId}`;
 }
 
 export function getErrorMessage(error: unknown) {
-	if (typeof error === 'string') return error
+	if (typeof error === 'string') return error;
 	if (
 		error &&
 		typeof error === 'object' &&
 		'message' in error &&
 		typeof error.message === 'string'
 	) {
-		return error.message
+		return error.message;
 	}
-	console.error('Unable to get error message for error', error)
-	return 'Unknown Error'
+	console.error('Unable to get error message for error', error);
+	return 'Unknown Error';
 }
 
 function formatColors() {
-	const colors = []
+	const colors = [];
 	for (const [key, color] of Object.entries(extendedTheme.colors)) {
 		if (typeof color === 'string') {
-			colors.push(key)
+			colors.push(key);
 		} else {
-			const colorGroup = Object.keys(color).map(subKey =>
+			const colorGroup = Object.keys(color).map((subKey) =>
 				subKey === 'DEFAULT' ? '' : subKey,
-			)
-			colors.push({ [key]: colorGroup })
+			);
+			colors.push({ [key]: colorGroup });
 		}
 	}
-	return colors
+	return colors;
 }
 
 const customTwMerge = extendTailwindMerge({
@@ -59,19 +59,19 @@ const customTwMerge = extendTailwindMerge({
 			},
 		],
 	},
-})
+});
 
 export function cn(...inputs: ClassValue[]) {
-	return customTwMerge(clsx(inputs))
+	return customTwMerge(clsx(inputs));
 }
 
 export function getDomainUrl(request: Request) {
 	const host =
 		request.headers.get('X-Forwarded-Host') ??
 		request.headers.get('host') ??
-		new URL(request.url).host
-	const protocol = host.includes('localhost') ? 'http' : 'https'
-	return `${protocol}://${host}`
+		new URL(request.url).host;
+	const protocol = host.includes('localhost') ? 'http' : 'https';
+	return `${protocol}://${host}`;
 }
 
 export function getReferrerRoute(request: Request) {
@@ -80,12 +80,12 @@ export function getReferrerRoute(request: Request) {
 	const referrer =
 		request.headers.get('referer') ??
 		request.headers.get('referrer') ??
-		request.referrer
-	const domain = getDomainUrl(request)
+		request.referrer;
+	const domain = getDomainUrl(request);
 	if (referrer?.startsWith(domain)) {
-		return referrer.slice(domain.length)
+		return referrer.slice(domain.length);
 	} else {
-		return '/'
+		return '/';
 	}
 }
 
@@ -95,14 +95,14 @@ export function getReferrerRoute(request: Request) {
 export function mergeHeaders(
 	...headers: Array<ResponseInit['headers'] | null | undefined>
 ) {
-	const merged = new Headers()
+	const merged = new Headers();
 	for (const header of headers) {
-		if (!header) continue
+		if (!header) continue;
 		for (const [key, value] of new Headers(header).entries()) {
-			merged.set(key, value)
+			merged.set(key, value);
 		}
 	}
-	return merged
+	return merged;
 }
 
 /**
@@ -111,14 +111,14 @@ export function mergeHeaders(
 export function combineHeaders(
 	...headers: Array<ResponseInit['headers'] | null | undefined>
 ) {
-	const combined = new Headers()
+	const combined = new Headers();
 	for (const header of headers) {
-		if (!header) continue
+		if (!header) continue;
 		for (const [key, value] of new Headers(header).entries()) {
-			combined.append(key, value)
+			combined.append(key, value);
 		}
 	}
-	return combined
+	return combined;
 }
 
 /**
@@ -127,14 +127,14 @@ export function combineHeaders(
 export function combineResponseInits(
 	...responseInits: Array<ResponseInit | null | undefined>
 ) {
-	let combined: ResponseInit = {}
+	let combined: ResponseInit = {};
 	for (const responseInit of responseInits) {
 		combined = {
 			...responseInit,
 			headers: combineHeaders(combined.headers, responseInit?.headers),
-		}
+		};
 	}
-	return combined
+	return combined;
 }
 
 /**
@@ -158,7 +158,7 @@ export function invariant(
 	message: string | (() => string),
 ): asserts condition {
 	if (!condition) {
-		throw new Error(typeof message === 'function' ? message() : message)
+		throw new Error(typeof message === 'function' ? message() : message);
 	}
 }
 
@@ -186,7 +186,7 @@ export function invariantResponse(
 		throw new Response(typeof message === 'function' ? message() : message, {
 			status: 400,
 			...responseInit,
-		})
+		});
 	}
 }
 
@@ -205,21 +205,21 @@ export function useIsPending({
 	formMethod = 'POST',
 	state = 'non-idle',
 }: {
-	formAction?: string
-	formMethod?: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE'
-	state?: 'submitting' | 'loading' | 'non-idle'
+	formAction?: string;
+	formMethod?: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE';
+	state?: 'submitting' | 'loading' | 'non-idle';
 } = {}) {
-	const contextualFormAction = useFormAction()
-	const navigation = useNavigation()
+	const contextualFormAction = useFormAction();
+	const navigation = useNavigation();
 	const isPendingState =
 		state === 'non-idle'
 			? navigation.state !== 'idle'
-			: navigation.state === state
+			: navigation.state === state;
 	return (
 		isPendingState &&
 		navigation.formAction === (formAction ?? contextualFormAction) &&
 		navigation.formMethod === formMethod
-	)
+	);
 }
 
 /**
@@ -237,18 +237,18 @@ export function useDelayedIsPending({
 	minDuration = 300,
 }: Parameters<typeof useIsPending>[0] &
 	Parameters<typeof useSpinDelay>[1] = {}) {
-	const isPending = useIsPending({ formAction, formMethod })
+	const isPending = useIsPending({ formAction, formMethod });
 	const delayedIsPending = useSpinDelay(isPending, {
 		delay,
 		minDuration,
-	})
-	return delayedIsPending
+	});
+	return delayedIsPending;
 }
 
 function callAll<Args extends Array<unknown>>(
 	...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
-	return (...args: Args) => fns.forEach(fn => fn?.(...args))
+	return (...args: Args) => fns.forEach((fn) => fn?.(...args));
 }
 
 /**
@@ -258,38 +258,39 @@ function callAll<Args extends Array<unknown>>(
  * "are you sure?" experience for the user before doing destructive operations.
  */
 export function useDoubleCheck() {
-	const [doubleCheck, setDoubleCheck] = useState(false)
+	const [doubleCheck, setDoubleCheck] = useState(false);
 
 	function getButtonProps(
 		props?: React.ButtonHTMLAttributes<HTMLButtonElement>,
 	) {
 		const onBlur: React.ButtonHTMLAttributes<HTMLButtonElement>['onBlur'] =
-			() => setDoubleCheck(false)
+			() => setDoubleCheck(false);
 
 		const onClick: React.ButtonHTMLAttributes<HTMLButtonElement>['onClick'] =
 			doubleCheck
 				? undefined
-				: e => {
-						e.preventDefault()
-						setDoubleCheck(true)
-				  }
+				: (e) => {
+						e.preventDefault();
+						setDoubleCheck(true);
+				  };
 
-		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
-			e => {
-				if (e.key === 'Escape') {
-					setDoubleCheck(false)
-				}
+		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] = (
+			e,
+		) => {
+			if (e.key === 'Escape') {
+				setDoubleCheck(false);
 			}
+		};
 
 		return {
 			...props,
 			onBlur: callAll(onBlur, props?.onBlur),
 			onClick: callAll(onClick, props?.onClick),
 			onKeyUp: callAll(onKeyUp, props?.onKeyUp),
-		}
+		};
 	}
 
-	return { doubleCheck, getButtonProps }
+	return { doubleCheck, getButtonProps };
 }
 
 /**
@@ -299,13 +300,13 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
 	fn: Callback,
 	delay: number,
 ) {
-	let timer: ReturnType<typeof setTimeout> | null = null
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	return (...args: Parameters<Callback>) => {
-		if (timer) clearTimeout(timer)
+		if (timer) clearTimeout(timer);
 		timer = setTimeout(() => {
-			fn(...args)
-		}, delay)
-	}
+			fn(...args);
+		}, delay);
+	};
 }
 
 /**
@@ -314,10 +315,10 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
 export function useDebounce<
 	Callback extends (...args: Parameters<Callback>) => ReturnType<Callback>,
 >(callback: Callback, delay: number) {
-	const callbackRef = useRef(callback)
+	const callbackRef = useRef(callback);
 	useEffect(() => {
-		callbackRef.current = callback
-	})
+		callbackRef.current = callback;
+	});
 	return useMemo(
 		() =>
 			debounce(
@@ -325,21 +326,21 @@ export function useDebounce<
 				delay,
 			),
 		[delay],
-	)
+	);
 }
 
 export async function downloadFile(url: string, retries: number = 0) {
-	const MAX_RETRIES = 3
+	const MAX_RETRIES = 3;
 	try {
-		const response = await fetch(url)
+		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch image with status ${response.status}`)
+			throw new Error(`Failed to fetch image with status ${response.status}`);
 		}
-		const contentType = response.headers.get('content-type') ?? 'image/jpg'
-		const blob = Buffer.from(await response.arrayBuffer())
-		return { contentType, blob }
+		const contentType = response.headers.get('content-type') ?? 'image/jpg';
+		const blob = Buffer.from(await response.arrayBuffer());
+		return { contentType, blob };
 	} catch (e) {
-		if (retries > MAX_RETRIES) throw e
-		return downloadFile(url, retries + 1)
+		if (retries > MAX_RETRIES) throw e;
+		return downloadFile(url, retries + 1);
 	}
 }

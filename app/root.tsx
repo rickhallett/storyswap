@@ -1,4 +1,4 @@
-import { useForm } from '@conform-to/react'
+// import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
 import {
@@ -17,7 +17,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	useFetcher,
+	// useFetcher,
 	useFetchers,
 	useLoaderData,
 	useMatches,
@@ -28,7 +28,8 @@ import { Suspense, lazy, useRef } from 'react'
 import { z } from 'zod'
 import { Confetti } from './components/confetti.tsx'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
-import { ErrorList } from './components/forms.tsx'
+// import { ErrorList } from './components/forms.tsx'
+import Navbar from './components/navbar.tsx'
 import { SearchBar } from './components/search-bar.tsx'
 import { EpicToaster } from './components/toaster.tsx'
 import { Button } from './components/ui/button.tsx'
@@ -50,7 +51,6 @@ import { getEnv } from './utils/env.server.ts'
 import {
 	combineHeaders,
 	getDomainUrl,
-	getUserImgSrc,
 	invariantResponse,
 } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
@@ -95,7 +95,7 @@ export const links: LinksFunction = () => {
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Epic Notes' : 'Error | Epic Notes' },
+		{ title: data ? 'Story Swap' : 'Error | Story Swap' },
 		{ name: 'description', content: `Your own captain's log` },
 	]
 }
@@ -211,6 +211,7 @@ function Document({
 	theme?: Theme
 	env?: Record<string, string>
 }) {
+	console.log('document')
 	return (
 		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
 			<head>
@@ -249,10 +250,7 @@ function App() {
 			<div className="flex h-screen flex-col justify-between">
 				<header className="container py-6">
 					<nav className="flex items-center justify-between">
-						<Link to="/">
-							<div className="font-light">epic</div>
-							<div className="font-bold">notes</div>
-						</Link>
+						<Navbar />
 						{isOnSearchPage ? null : (
 							<div className="ml-auto max-w-sm flex-1 pr-10">
 								<SearchBar status="idle" />
@@ -273,14 +271,10 @@ function App() {
 				<div className="flex-1">
 					<Outlet />
 				</div>
-
-				<div className="container flex justify-between pb-5">
-					<Link to="/">
-						<div className="font-light">epic</div>
-						<div className="font-bold">notes</div>
-					</Link>
-					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</div>
+				<Link to="/">
+					<div className="font-light">story</div>
+					<div className="font-bold">swap</div>
+				</Link>
 			</div>
 			<Confetti id={data.confettiId} />
 			<EpicToaster toast={data.toast} />
@@ -308,14 +302,8 @@ function UserDropdown() {
 						onClick={e => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
-						<img
-							className="h-8 w-8 rounded-full object-cover"
-							alt={user.name ?? user.username}
-							src={getUserImgSrc(user.image?.id)}
-						/>
-						<span className="text-body-sm font-bold">
-							{user.name ?? user.username}
-						</span>
+						<Icon name="avatar" className="text-body-md" />
+						<span className="text-body">{user.name ?? user.username}</span>
 					</Link>
 				</Button>
 			</DropdownMenuTrigger>
@@ -388,56 +376,56 @@ export function useOptimisticThemeMode() {
 	}
 }
 
-function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
-	const fetcher = useFetcher<typeof action>()
+// function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
+// 	const fetcher = useFetcher<typeof action>()
 
-	const [form] = useForm({
-		id: 'theme-switch',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: ThemeFormSchema })
-		},
-	})
+// 	const [form] = useForm({
+// 		id: 'theme-switch',
+// 		lastSubmission: fetcher.data?.submission,
+// 		onValidate({ formData }) {
+// 			return parse(formData, { schema: ThemeFormSchema })
+// 		},
+// 	})
 
-	const optimisticMode = useOptimisticThemeMode()
-	const mode = optimisticMode ?? userPreference ?? 'system'
-	const nextMode =
-		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
-	const modeLabel = {
-		light: (
-			<Icon name="sun">
-				<span className="sr-only">Light</span>
-			</Icon>
-		),
-		dark: (
-			<Icon name="moon">
-				<span className="sr-only">Dark</span>
-			</Icon>
-		),
-		system: (
-			<Icon name="laptop">
-				<span className="sr-only">System</span>
-			</Icon>
-		),
-	}
+// 	const optimisticMode = useOptimisticThemeMode()
+// 	const mode = optimisticMode ?? userPreference ?? 'system'
+// 	const nextMode =
+// 		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
+// 	const modeLabel = {
+// 		light: (
+// 			<Icon name="sun">
+// 				<span className="sr-only">Light</span>
+// 			</Icon>
+// 		),
+// 		dark: (
+// 			<Icon name="moon">
+// 				<span className="sr-only">Dark</span>
+// 			</Icon>
+// 		),
+// 		system: (
+// 			<Icon name="laptop">
+// 				<span className="sr-only">System</span>
+// 			</Icon>
+// 		),
+// 	}
 
-	return (
-		<fetcher.Form method="POST" {...form.props}>
-			<input type="hidden" name="theme" value={nextMode} />
-			<div className="flex gap-2">
-				<button
-					name="intent"
-					value="update-theme"
-					type="submit"
-					className="flex h-8 w-8 cursor-pointer items-center justify-center"
-				>
-					{modeLabel[mode]}
-				</button>
-			</div>
-			<ErrorList errors={form.errors} id={form.errorId} />
-		</fetcher.Form>
-	)
-}
+// 	return (
+// 		<fetcher.Form method="POST" {...form.props}>
+// 			<input type="hidden" name="theme" value={nextMode} />
+// 			<div className="flex gap-2">
+// 				<button
+// 					name="intent"
+// 					value="update-theme"
+// 					type="submit"
+// 					className="flex h-8 w-8 cursor-pointer items-center justify-center"
+// 				>
+// 					{modeLabel[mode]}
+// 				</button>
+// 			</div>
+// 			<ErrorList errors={form.errors} id={form.errorId} />
+// 		</fetcher.Form>
+// 	)
+// }
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that

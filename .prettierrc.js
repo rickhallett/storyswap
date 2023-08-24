@@ -1,6 +1,6 @@
 /** @type {import("prettier").Options} */
 export default {
-	arrowParens: 'avoid',
+	arrowParens: 'always',
 	bracketSameLine: false,
 	bracketSpacing: true,
 	embeddedLanguageFormatting: 'auto',
@@ -12,7 +12,7 @@ export default {
 	proseWrap: 'always',
 	quoteProps: 'as-needed',
 	requirePragma: false,
-	semi: false,
+	semi: true,
 	singleAttributePerLine: false,
 	singleQuote: true,
 	tabWidth: 2,
@@ -27,4 +27,4 @@ export default {
 		},
 	],
 	plugins: ['prettier-plugin-tailwindcss'],
-}
+};

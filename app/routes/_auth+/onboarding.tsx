@@ -1,36 +1,40 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { conform, useForm } from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
 	json,
 	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
-} from '@remix-run/node'
+} from '@remix-run/node';
 import {
 	Form,
 	useActionData,
 	useLoaderData,
 	useSearchParams,
-} from '@remix-run/react'
-import { safeRedirect } from 'remix-utils'
-import { z } from 'zod'
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
-import { Spacer } from '#app/components/spacer.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireAnonymous, sessionKey, signup } from '#app/utils/auth.server.ts'
-import { redirectWithConfetti } from '#app/utils/confetti.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { invariant, useIsPending } from '#app/utils/misc.tsx'
-import { sessionStorage } from '#app/utils/session.server.ts'
+} from '@remix-run/react';
+import { safeRedirect } from 'remix-utils';
+import { z } from 'zod';
+import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx';
+import { Spacer } from '#app/components/spacer.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import {
+	requireAnonymous,
+	sessionKey,
+	signup,
+} from '#app/utils/auth.server.ts';
+import { redirectWithConfetti } from '#app/utils/confetti.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
+import { invariant, useIsPending } from '#app/utils/misc.tsx';
+import { sessionStorage } from '#app/utils/session.server.ts';
 import {
 	NameSchema,
 	PasswordSchema,
 	UsernameSchema,
-} from '#app/utils/user-validation.ts'
-import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { type VerifyFunctionArgs } from './verify.tsx'
+} from '#app/utils/user-validation.ts';
+import { verifySessionStorage } from '#app/utils/verification.server.ts';
+import { type VerifyFunctionArgs } from './verify.tsx';
 
-const onboardingEmailSessionKey = 'onboardingEmail'
+const onboardingEmailSessionKey = 'onboardingEmail';
 
 const SignupFormSchema = z
 	.object({
@@ -51,107 +55,107 @@ const SignupFormSchema = z
 				path: ['confirmPassword'],
 				code: 'custom',
 				message: 'The passwords must match',
-			})
+			});
 		}
-	})
+	});
 
 async function requireOnboardingEmail(request: Request) {
-	await requireAnonymous(request)
+	await requireAnonymous(request);
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	const email = verifySession.get(onboardingEmailSessionKey)
+	);
+	const email = verifySession.get(onboardingEmailSessionKey);
 	if (typeof email !== 'string' || !email) {
-		throw redirect('/signup')
+		throw redirect('/signup');
 	}
-	return email
+	return email;
 }
 export async function loader({ request }: DataFunctionArgs) {
-	const email = await requireOnboardingEmail(request)
-	return json({ email })
+	const email = await requireOnboardingEmail(request);
+	return json({ email });
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const email = await requireOnboardingEmail(request)
-	const formData = await request.formData()
+	const email = await requireOnboardingEmail(request);
+	const formData = await request.formData();
 	const submission = await parse(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
 			const existingUser = await prisma.user.findUnique({
 				where: { username: data.username },
 				select: { id: true },
-			})
+			});
 			if (existingUser) {
 				ctx.addIssue({
 					path: ['username'],
 					code: z.ZodIssueCode.custom,
 					message: 'A user already exists with this username',
-				})
-				return
+				});
+				return;
 			}
-		}).transform(async data => {
-			const session = await signup({ ...data, email })
-			return { ...data, session }
+		}).transform(async (data) => {
+			const session = await signup({ ...data, email });
+			return { ...data, session };
 		}),
 		async: true,
-	})
+	});
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
+		return json({ status: 'idle', submission } as const);
 	}
 	if (!submission.value?.session) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
-	const { session, remember, redirectTo } = submission.value
+	const { session, remember, redirectTo } = submission.value;
 
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	cookieSession.set(sessionKey, session.id)
+	);
+	cookieSession.set(sessionKey, session.id);
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	const headers = new Headers()
+	);
+	const headers = new Headers();
 	headers.append(
 		'set-cookie',
 		await sessionStorage.commitSession(cookieSession, {
 			expires: remember ? session.expirationDate : undefined,
 		}),
-	)
+	);
 	headers.append(
 		'set-cookie',
 		await verifySessionStorage.destroySession(verifySession),
-	)
+	);
 
-	return redirectWithConfetti(safeRedirect(redirectTo), { headers })
+	return redirectWithConfetti(safeRedirect(redirectTo), { headers });
 }
 
 export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	invariant(submission.value, 'submission.value should be defined by now')
+	invariant(submission.value, 'submission.value should be defined by now');
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	verifySession.set(onboardingEmailSessionKey, submission.value.target)
+	);
+	verifySession.set(onboardingEmailSessionKey, submission.value.target);
 	return redirect('/onboarding', {
 		headers: {
 			'set-cookie': await verifySessionStorage.commitSession(verifySession),
 		},
-	})
+	});
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Setup Epic Notes Account' }]
-}
+	return [{ title: 'Setup Epic Notes Account' }];
+};
 
 export default function SignupRoute() {
-	const data = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
-	const isPending = useIsPending()
-	const [searchParams] = useSearchParams()
-	const redirectTo = searchParams.get('redirectTo')
+	const data = useLoaderData<typeof loader>();
+	const actionData = useActionData<typeof action>();
+	const isPending = useIsPending();
+	const [searchParams] = useSearchParams();
+	const redirectTo = searchParams.get('redirectTo');
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
@@ -159,10 +163,10 @@ export default function SignupRoute() {
 		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: SignupFormSchema })
+			return parse(formData, { schema: SignupFormSchema });
 		},
 		shouldRevalidate: 'onBlur',
-	})
+	});
 
 	return (
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
@@ -254,5 +258,5 @@ export default function SignupRoute() {
 				</Form>
 			</div>
 		</div>
-	)
+	);
 }

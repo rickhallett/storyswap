@@ -1,18 +1,18 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node'
-import { authenticator, requireUserId } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
+import { redirect, type DataFunctionArgs } from '@remix-run/node';
+import { authenticator, requireUserId } from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const user = await prisma.user.findUnique({ where: { id: userId } })
+	const userId = await requireUserId(request);
+	const user = await prisma.user.findUnique({ where: { id: userId } });
 	if (!user) {
-		const requestUrl = new URL(request.url)
+		const requestUrl = new URL(request.url);
 		const loginParams = new URLSearchParams([
 			['redirectTo', `${requestUrl.pathname}${requestUrl.search}`],
-		])
-		const redirectTo = `/login?${loginParams}`
-		await authenticator.logout(request, { redirectTo })
-		return redirect(redirectTo)
+		]);
+		const redirectTo = `/login?${loginParams}`;
+		await authenticator.logout(request, { redirectTo });
+		return redirect(redirectTo);
 	}
-	return redirect(`/users/${user.username}`)
+	return redirect(`/users/${user.username}`);
 }

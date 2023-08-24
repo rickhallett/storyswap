@@ -1,20 +1,20 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
-import { Form, Link, useActionData } from '@remix-run/react'
-import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { getPasswordHash, requireUserId } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { useIsPending } from '#app/utils/misc.tsx'
-import { PasswordSchema } from '#app/utils/user-validation.ts'
+import { conform, useForm } from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
+import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { Form, Link, useActionData } from '@remix-run/react';
+import { z } from 'zod';
+import { ErrorList, Field } from '#app/components/forms.tsx';
+import { Button } from '#app/components/ui/button.tsx';
+import { Icon } from '#app/components/ui/icon.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { getPasswordHash, requireUserId } from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
+import { useIsPending } from '#app/utils/misc.tsx';
+import { PasswordSchema } from '#app/utils/user-validation.ts';
 
 export const handle = {
 	breadcrumb: <Icon name="dots-horizontal">Password</Icon>,
-}
+};
 
 const CreatePasswordForm = z
 	.object({
@@ -27,46 +27,46 @@ const CreatePasswordForm = z
 				path: ['confirmNewPassword'],
 				code: 'custom',
 				message: 'The passwords must match',
-			})
+			});
 		}
-	})
+	});
 
 async function requireNoPassword(userId: string) {
 	const password = await prisma.password.findUnique({
 		select: { userId: true },
 		where: { userId },
-	})
+	});
 	if (password) {
-		throw redirect('/settings/profile/password')
+		throw redirect('/settings/profile/password');
 	}
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	await requireNoPassword(userId)
-	return json({})
+	const userId = await requireUserId(request);
+	await requireNoPassword(userId);
+	return json({});
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	await requireNoPassword(userId)
-	const formData = await request.formData()
+	const userId = await requireUserId(request);
+	await requireNoPassword(userId);
+	const formData = await request.formData();
 	const submission = await parse(formData, {
 		async: true,
 		schema: CreatePasswordForm,
-	})
+	});
 	// clear the payload so we don't send the password back to the client
-	submission.payload = {}
+	submission.payload = {};
 	if (submission.intent !== 'submit') {
 		// clear the value so we don't send the password back to the client
-		submission.value = undefined
-		return json({ status: 'idle', submission } as const)
+		submission.value = undefined;
+		return json({ status: 'idle', submission } as const);
 	}
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
-	const { newPassword } = submission.value
+	const { newPassword } = submission.value;
 
 	await prisma.user.update({
 		select: { username: true },
@@ -78,24 +78,24 @@ export async function action({ request }: DataFunctionArgs) {
 				},
 			},
 		},
-	})
+	});
 
-	return redirect(`/settings/profile`, { status: 302 })
+	return redirect(`/settings/profile`, { status: 302 });
 }
 
 export default function CreatePasswordRoute() {
-	const actionData = useActionData<typeof action>()
-	const isPending = useIsPending()
+	const actionData = useActionData<typeof action>();
+	const isPending = useIsPending();
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(CreatePasswordForm),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: CreatePasswordForm })
+			return parse(formData, { schema: CreatePasswordForm });
 		},
 		shouldRevalidate: 'onBlur',
-	})
+	});
 
 	return (
 		<Form method="POST" {...form.props} className="mx-auto max-w-md">
@@ -124,5 +124,5 @@ export default function CreatePasswordRoute() {
 				</StatusButton>
 			</div>
 		</Form>
-	)
+	);
 }

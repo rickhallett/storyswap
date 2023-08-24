@@ -29,5 +29,5 @@ export function Spinner({ showSpinner }: { showSpinner: boolean }) {
 				/>
 			</svg>
 		</div>
-	)
+	);
 }

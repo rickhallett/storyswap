@@ -1,32 +1,32 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { getTOTPAuthUri } from '@epic-web/totp'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
-import * as QRCode from 'qrcode'
-import { z } from 'zod'
-import { Field } from '#app/components/forms.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { isCodeValid } from '#app/routes/_auth+/verify.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { twoFAVerificationType } from './profile.two-factor.tsx'
+import { conform, useForm } from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
+import { getTOTPAuthUri } from '@epic-web/totp';
+import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import * as QRCode from 'qrcode';
+import { z } from 'zod';
+import { Field } from '#app/components/forms.tsx';
+import { Icon } from '#app/components/ui/icon.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { isCodeValid } from '#app/routes/_auth+/verify.tsx';
+import { requireUserId } from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
+import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx';
+import { redirectWithToast } from '#app/utils/toast.server.ts';
+import { twoFAVerificationType } from './profile.two-factor.tsx';
 
 export const handle = {
 	breadcrumb: <Icon name="check">Verify</Icon>,
-}
+};
 
 const VerifySchema = z.object({
 	code: z.string().min(6).max(6),
-})
+});
 
-export const twoFAVerifyVerificationType = '2fa-verify'
+export const twoFAVerifyVerificationType = '2fa-verify';
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const userId = await requireUserId(request);
 	const verification = await prisma.verification.findUnique({
 		where: {
 			target_type: { type: twoFAVerifyVerificationType, target: userId },
@@ -38,33 +38,33 @@ export async function loader({ request }: DataFunctionArgs) {
 			period: true,
 			digits: true,
 		},
-	})
+	});
 	if (!verification) {
-		return redirect('/settings/profile/two-factor')
+		return redirect('/settings/profile/two-factor');
 	}
 	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
 		select: { email: true },
-	})
-	const issuer = new URL(getDomainUrl(request)).host
+	});
+	const issuer = new URL(getDomainUrl(request)).host;
 	const otpUri = getTOTPAuthUri({
 		...verification,
 		accountName: user.email,
 		issuer,
-	})
-	const qrCode = await QRCode.toDataURL(otpUri)
-	return json({ otpUri, qrCode })
+	});
+	const qrCode = await QRCode.toDataURL(otpUri);
+	return json({ otpUri, qrCode });
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const formData = await request.formData()
+	const userId = await requireUserId(request);
+	const formData = await request.formData();
 
 	if (formData.get('intent') === 'cancel') {
 		await prisma.verification.deleteMany({
 			where: { type: twoFAVerifyVerificationType, target: userId },
-		})
-		return redirect('/settings/profile/two-factor')
+		});
+		return redirect('/settings/profile/two-factor');
 	}
 	const submission = await parse(formData, {
 		schema: () =>
@@ -73,24 +73,24 @@ export async function action({ request }: DataFunctionArgs) {
 					code: data.code,
 					type: twoFAVerifyVerificationType,
 					target: userId,
-				})
+				});
 				if (!codeIsValid) {
 					ctx.addIssue({
 						path: ['code'],
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
-					})
-					return
+					});
+					return;
 				}
 			}),
 		async: true,
-	})
+	});
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
+		return json({ status: 'idle', submission } as const);
 	}
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
 	await prisma.verification.update({
@@ -98,28 +98,28 @@ export async function action({ request }: DataFunctionArgs) {
 			target_type: { type: twoFAVerifyVerificationType, target: userId },
 		},
 		data: { type: twoFAVerificationType },
-	})
+	});
 	return redirectWithToast('/settings/profile/two-factor', {
 		type: 'success',
 		title: 'Enabled',
 		description: 'Two-factor authentication has been enabled.',
-	})
+	});
 }
 
 export default function TwoFactorRoute() {
-	const data = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
+	const data = useLoaderData<typeof loader>();
+	const actionData = useActionData<typeof action>();
 
-	const isPending = useIsPending()
+	const isPending = useIsPending();
 
 	const [form, fields] = useForm({
 		id: 'verify-form',
 		constraint: getFieldsetConstraint(VerifySchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: VerifySchema })
+			return parse(formData, { schema: VerifySchema });
 		},
-	})
+	});
 
 	return (
 		<div>
@@ -167,5 +167,5 @@ export default function TwoFactorRoute() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }

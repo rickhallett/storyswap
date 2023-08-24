@@ -1,8 +1,8 @@
-import { Index as ConfettiShower } from 'confetti-react'
-import { ClientOnly } from 'remix-utils'
+import { Index as ConfettiShower } from 'confetti-react';
+import { ClientOnly } from 'remix-utils';
 
 export function Confetti({ id }: { id?: string | null }) {
-	if (!id) return null
+	if (!id) return null;
 
 	return (
 		<ClientOnly>
@@ -17,5 +17,5 @@ export function Confetti({ id }: { id?: string | null }) {
 				/>
 			)}
 		</ClientOnly>
-	)
+	);
 }

@@ -1,38 +1,38 @@
-import { faker } from '@faker-js/faker'
-import { promiseHash } from 'remix-utils'
-import { prisma } from '#app/utils/db.server.ts'
+import { faker } from '@faker-js/faker';
+import { promiseHash } from 'remix-utils';
+import { prisma } from '#app/utils/db.server.ts';
 import {
 	createPassword,
 	createUser,
 	getNoteImages,
 	getUserImages,
 	img,
-} from '#tests/db-utils.ts'
+} from '#tests/db-utils.ts';
 
 async function seed() {
-	console.log('🌱 Seeding...')
-	console.time(`🌱 Database has been seeded`)
+	console.log('🌱 Seeding...');
+	console.time(`🌱 Database has been seeded`);
 
-	console.time('🧹 Cleaned up the database...')
-	await prisma.user.deleteMany()
-	await prisma.role.deleteMany()
-	await prisma.permission.deleteMany()
-	console.timeEnd('🧹 Cleaned up the database...')
+	console.time('🧹 Cleaned up the database...');
+	await prisma.user.deleteMany();
+	await prisma.role.deleteMany();
+	await prisma.permission.deleteMany();
+	console.timeEnd('🧹 Cleaned up the database...');
 
-	console.time('🔑 Created permissions...')
-	const entities = ['user', 'note']
-	const actions = ['create', 'read', 'update', 'delete']
-	const accesses = ['own', 'any'] as const
+	console.time('🔑 Created permissions...');
+	const entities = ['user', 'note'];
+	const actions = ['create', 'read', 'update', 'delete'];
+	const accesses = ['own', 'any'] as const;
 	for (const entity of entities) {
 		for (const action of actions) {
 			for (const access of accesses) {
-				await prisma.permission.create({ data: { entity, action, access } })
+				await prisma.permission.create({ data: { entity, action, access } });
 			}
 		}
 	}
-	console.timeEnd('🔑 Created permissions...')
+	console.timeEnd('🔑 Created permissions...');
 
-	console.time('👑 Created roles...')
+	console.time('👑 Created roles...');
 	await prisma.role.create({
 		data: {
 			name: 'admin',
@@ -43,7 +43,7 @@ async function seed() {
 				}),
 			},
 		},
-	})
+	});
 	await prisma.role.create({
 		data: {
 			name: 'user',
@@ -54,22 +54,22 @@ async function seed() {
 				}),
 			},
 		},
-	})
-	console.timeEnd('👑 Created roles...')
+	});
+	console.timeEnd('👑 Created roles...');
 
 	if (process.env.MINIMAL_SEED) {
-		console.log('👍 Minimal seed complete')
-		console.timeEnd(`🌱 Database has been seeded`)
-		return
+		console.log('👍 Minimal seed complete');
+		console.timeEnd(`🌱 Database has been seeded`);
+		return;
 	}
 
-	const totalUsers = 5
-	console.time(`👤 Created ${totalUsers} users...`)
-	const noteImages = await getNoteImages()
-	const userImages = await getUserImages()
+	const totalUsers = 5;
+	console.time(`👤 Created ${totalUsers} users...`);
+	const noteImages = await getNoteImages();
+	const userImages = await getUserImages();
 
 	for (let index = 0; index < totalUsers; index++) {
-		const userData = createUser()
+		const userData = createUser();
 		await prisma.user
 			.create({
 				select: { id: true },
@@ -88,22 +88,22 @@ async function seed() {
 								create: Array.from({
 									length: faker.number.int({ min: 1, max: 3 }),
 								}).map(() => {
-									const imgNumber = faker.number.int({ min: 0, max: 9 })
-									return noteImages[imgNumber]
+									const imgNumber = faker.number.int({ min: 0, max: 9 });
+									return noteImages[imgNumber];
 								}),
 							},
 						})),
 					},
 				},
 			})
-			.catch(e => {
-				console.error('Error creating a user:', e)
-				return null
-			})
+			.catch((e) => {
+				console.error('Error creating a user:', e);
+				return null;
+			});
 	}
-	console.timeEnd(`👤 Created ${totalUsers} users...`)
+	console.timeEnd(`👤 Created ${totalUsers} users...`);
 
-	console.time(`🐨 Created admin user "kody"`)
+	console.time(`🐨 Created admin user "kody"`);
 
 	const kodyImages = await promiseHash({
 		kodyUser: img({ filepath: './tests/fixtures/images/user/kody.png' }),
@@ -136,7 +136,7 @@ async function seed() {
 			altText: 'a cute cartoon koala kicking a soccer ball on a soccer field ',
 			filepath: './tests/fixtures/images/kody-notes/koala-soccer.png',
 		}),
-	})
+	});
 
 	await prisma.user.create({
 		select: { id: true },
@@ -247,17 +247,17 @@ async function seed() {
 				],
 			},
 		},
-	})
-	console.timeEnd(`🐨 Created admin user "kody"`)
+	});
+	console.timeEnd(`🐨 Created admin user "kody"`);
 
-	console.timeEnd(`🌱 Database has been seeded`)
+	console.timeEnd(`🌱 Database has been seeded`);
 }
 
 seed()
-	.catch(e => {
-		console.error(e)
-		process.exit(1)
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
 	})
 	.finally(async () => {
-		await prisma.$disconnect()
-	})
+		await prisma.$disconnect();
+	});

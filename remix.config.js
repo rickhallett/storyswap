@@ -1,4 +1,4 @@
-import { flatRoutes } from 'remix-flat-routes'
+import { flatRoutes } from 'remix-flat-routes';
 
 /**
  * @type {import('@remix-run/dev').AppConfig}
@@ -19,7 +19,7 @@ export default {
 		v2_routeConvention: true,
 		v2_dev: true,
 	},
-	routes: async defineRoutes => {
+	routes: async (defineRoutes) => {
 		return flatRoutes('routes', defineRoutes, {
 			ignoredRouteFiles: [
 				'.*',
@@ -27,6 +27,6 @@ export default {
 				'**/*.test.{js,jsx,ts,tsx}',
 				'**/__*.*',
 			],
-		})
+		});
 	},
-}
+};

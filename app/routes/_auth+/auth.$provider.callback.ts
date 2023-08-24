@@ -1,46 +1,46 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node'
+import { redirect, type DataFunctionArgs } from '@remix-run/node';
 import {
 	authenticator,
 	getSessionExpirationDate,
 	getUserId,
-} from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
-import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
-import { prisma } from '#app/utils/db.server.ts'
-import { combineHeaders } from '#app/utils/misc.tsx'
+} from '#app/utils/auth.server.ts';
+import { handleMockCallback } from '#app/utils/connections.server.ts';
+import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx';
+import { prisma } from '#app/utils/db.server.ts';
+import { combineHeaders } from '#app/utils/misc.tsx';
 import {
 	destroyRedirectToHeader,
 	getRedirectCookieValue,
-} from '#app/utils/redirect-cookie.server.ts'
+} from '#app/utils/redirect-cookie.server.ts';
 import {
 	createToastHeaders,
 	redirectWithToast,
-} from '#app/utils/toast.server.ts'
-import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { handleNewSession } from './login.tsx'
+} from '#app/utils/toast.server.ts';
+import { verifySessionStorage } from '#app/utils/verification.server.ts';
+import { handleNewSession } from './login.tsx';
 import {
 	onboardingEmailSessionKey,
 	prefilledProfileKey,
 	providerIdKey,
-} from './onboarding_.$provider.tsx'
+} from './onboarding_.$provider.tsx';
 
-const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader }
+const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader };
 
 export async function loader({ request, params }: DataFunctionArgs) {
-	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
-	const redirectTo = getRedirectCookieValue(request)
-	const label = providerLabels[providerName]
+	const providerName = ProviderNameSchema.parse(params.provider);
+	request = await handleMockCallback(providerName, request);
+	const redirectTo = getRedirectCookieValue(request);
+	const label = providerLabels[providerName];
 
 	const authResult = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
 		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
+			(data) => ({ success: true, data }) as const,
+			(error) => ({ success: false, error }) as const,
+		);
 
 	if (!authResult.success) {
-		console.error(authResult.error)
+		console.error(authResult.error);
 		throw await redirectWithToast(
 			'/login',
 			{
@@ -49,18 +49,18 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				type: 'error',
 			},
 			{ headers: destroyRedirectTo },
-		)
+		);
 	}
 
 	// return
-	const { data: profile } = authResult
+	const { data: profile } = authResult;
 
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
 		where: { providerId: profile.id },
-	})
+	});
 
-	const userId = await getUserId(request)
+	const userId = await getUserId(request);
 
 	if (existingConnection && userId) {
 		if (existingConnection.userId === userId) {
@@ -71,7 +71,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					description: `Your "${profile.username}" ${label} account is already connected.`,
 				},
 				{ headers: destroyRedirectTo },
-			)
+			);
 		} else {
 			return redirectWithToast(
 				'/settings/profile/connections',
@@ -80,7 +80,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					description: `The "${profile.username}" ${label} account is already connected to another account.`,
 				},
 				{ headers: destroyRedirectTo },
-			)
+			);
 		}
 	}
 
@@ -92,7 +92,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				providerId: profile.id,
 				userId,
 			},
-		})
+		});
 		return redirectWithToast(
 			'/settings/profile/connections',
 			{
@@ -101,12 +101,12 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				description: `Your "${profile.username}" ${label} account has been connected.`,
 			},
 			{ headers: destroyRedirectTo },
-		)
+		);
 	}
 
 	// Connection exists already? Make a new session
 	if (existingConnection) {
-		return makeSession({ request, userId: existingConnection.userId })
+		return makeSession({ request, userId: existingConnection.userId });
 	}
 
 	// if the email matches a user in the db, then link the account and
@@ -114,7 +114,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const user = await prisma.user.findUnique({
 		select: { id: true },
 		where: { email: profile.email.toLowerCase() },
-	})
+	});
 	if (user) {
 		await prisma.connection.create({
 			data: {
@@ -122,7 +122,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				providerId: profile.id,
 				userId: user.id,
 			},
-		})
+		});
 		return makeSession(
 			{ request, userId: user.id },
 			{
@@ -131,32 +131,32 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					description: `Your "${profile.username}" ${label} account has been connected.`,
 				}),
 			},
-		)
+		);
 	}
 
 	// this is a new user, so let's get them onboarded
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	verifySession.set(onboardingEmailSessionKey, profile.email)
+	);
+	verifySession.set(onboardingEmailSessionKey, profile.email);
 	verifySession.set(prefilledProfileKey, {
 		...profile,
 		email: profile.email.toLowerCase(),
 		username: profile.username?.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase(),
-	})
-	verifySession.set(providerIdKey, profile.id)
+	});
+	verifySession.set(providerIdKey, profile.id);
 	const onboardingRedirect = [
 		`/onboarding/${providerName}`,
 		redirectTo ? new URLSearchParams({ redirectTo }) : null,
 	]
 		.filter(Boolean)
-		.join('?')
+		.join('?');
 	return redirect(onboardingRedirect, {
 		headers: combineHeaders(
 			{ 'set-cookie': await verifySessionStorage.commitSession(verifySession) },
 			destroyRedirectTo,
 		),
-	})
+	});
 }
 
 async function makeSession(
@@ -167,16 +167,16 @@ async function makeSession(
 	}: { request: Request; userId: string; redirectTo?: string | null },
 	responseInit?: ResponseInit,
 ) {
-	redirectTo ??= '/'
+	redirectTo ??= '/';
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true, userId: true },
 		data: {
 			expirationDate: getSessionExpirationDate(),
 			userId,
 		},
-	})
+	});
 	return handleNewSession(
 		{ request, session, redirectTo, remember: true },
 		{ headers: combineHeaders(responseInit?.headers, destroyRedirectTo) },
-	)
+	);
 }

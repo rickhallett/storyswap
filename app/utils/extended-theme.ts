@@ -1,4 +1,4 @@
-import { type Config } from 'tailwindcss'
+import { type Config } from 'tailwindcss';
 
 export const extendedTheme = {
 	colors: {
@@ -101,4 +101,4 @@ export const extendedTheme = {
 		'accordion-down': 'accordion-down 0.2s ease-out',
 		'accordion-up': 'accordion-up 0.2s ease-out',
 	},
-} satisfies Config['theme']
+} satisfies Config['theme'];

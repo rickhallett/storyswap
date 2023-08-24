@@ -1,6 +1,6 @@
-import { GitHubStrategy } from 'remix-auth-github'
+import { GitHubStrategy } from 'remix-auth-github';
 
-export const GITHUB_PROVIDER_NAME = 'github'
+export const GITHUB_PROVIDER_NAME = 'github';
 
 export function getGitHubAuthStrategy() {
 	return new GitHubStrategy(
@@ -10,16 +10,16 @@ export function getGitHubAuthStrategy() {
 			callbackURL: '/auth/github/callback',
 		},
 		async ({ profile }) => {
-			const email = profile.emails[0].value.trim().toLowerCase()
-			const username = profile.displayName
-			const imageUrl = profile.photos[0].value
+			const email = profile.emails[0].value.trim().toLowerCase();
+			const username = profile.displayName;
+			const imageUrl = profile.photos[0].value;
 			return {
 				email,
 				id: profile.id,
 				username,
 				name: profile.name.givenName,
 				imageUrl,
-			}
+			};
 		},
-	)
+	);
 }

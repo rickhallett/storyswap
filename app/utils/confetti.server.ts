@@ -1,18 +1,18 @@
-import { redirect } from '@remix-run/node'
-import * as cookie from 'cookie'
-import { combineHeaders } from './misc.tsx'
+import { redirect } from '@remix-run/node';
+import * as cookie from 'cookie';
+import { combineHeaders } from './misc.tsx';
 
-const cookieName = 'en_confetti'
+const cookieName = 'en_confetti';
 
 export function getConfetti(request: Request) {
-	const cookieHeader = request.headers.get('cookie')
+	const cookieHeader = request.headers.get('cookie');
 	const confettiId = cookieHeader
 		? cookie.parse(cookieHeader)[cookieName]
-		: null
+		: null;
 	return {
 		confettiId,
 		headers: confettiId ? createConfettiHeaders(null) : null,
-	}
+	};
 }
 
 /**
@@ -31,12 +31,12 @@ export function createConfettiHeaders(
 			path: '/',
 			maxAge: value ? 60 : -1,
 		}),
-	})
+	});
 }
 
 export async function redirectWithConfetti(url: string, init?: ResponseInit) {
 	return redirect(url, {
 		...init,
 		headers: combineHeaders(init?.headers, await createConfettiHeaders()),
-	})
+	});
 }

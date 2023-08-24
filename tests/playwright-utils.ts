@@ -1,18 +1,21 @@
-import { test, type Page } from '@playwright/test'
-import * as setCookieParser from 'set-cookie-parser'
-import { getSessionExpirationDate, sessionKey } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { sessionStorage } from '#app/utils/session.server.ts'
-import { insertNewUser, insertedUsers } from './db-utils.ts'
+import { test, type Page } from '@playwright/test';
+import * as setCookieParser from 'set-cookie-parser';
+import {
+	getSessionExpirationDate,
+	sessionKey,
+} from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
+import { sessionStorage } from '#app/utils/session.server.ts';
+import { insertNewUser, insertedUsers } from './db-utils.ts';
 
-export * from './db-utils.ts'
+export * from './db-utils.ts';
 
 export async function loginPage({
 	page,
 	user: givenUser,
 }: {
-	page: Page
-	user?: { id: string }
+	page: Page;
+	user?: { id: string };
 }) {
 	const user = givenUser
 		? await prisma.user.findUniqueOrThrow({
@@ -24,22 +27,22 @@ export async function loginPage({
 					name: true,
 				},
 		  })
-		: await insertNewUser()
+		: await insertNewUser();
 	const session = await prisma.session.create({
 		data: {
 			expirationDate: getSessionExpirationDate(),
 			userId: user.id,
 		},
 		select: { id: true },
-	})
+	});
 
-	const cookieSession = await sessionStorage.getSession()
-	cookieSession.set(sessionKey, session.id)
+	const cookieSession = await sessionStorage.getSession();
+	cookieSession.set(sessionKey, session.id);
 	const cookieConfig = setCookieParser.parseString(
 		await sessionStorage.commitSession(cookieSession),
-	) as any
-	await page.context().addCookies([{ ...cookieConfig, domain: 'localhost' }])
-	return user as typeof user & { name: string }
+	) as any;
+	await page.context().addCookies([{ ...cookieConfig, domain: 'localhost' }]);
+	return user as typeof user & { name: string };
 }
 
 /**
@@ -56,23 +59,23 @@ export async function waitFor<ReturnValue>(
 		timeout = 5000,
 	}: { errorMessage?: string; timeout?: number } = {},
 ) {
-	const endTime = Date.now() + timeout
-	let lastError: unknown = new Error(errorMessage)
+	const endTime = Date.now() + timeout;
+	let lastError: unknown = new Error(errorMessage);
 	while (Date.now() < endTime) {
 		try {
-			const response = await cb()
-			if (response) return response
+			const response = await cb();
+			if (response) return response;
 		} catch (e: unknown) {
-			lastError = e
+			lastError = e;
 		}
-		await new Promise(r => setTimeout(r, 100))
+		await new Promise((r) => setTimeout(r, 100));
 	}
-	throw lastError
+	throw lastError;
 }
 
 test.afterEach(async () => {
 	await prisma.user.deleteMany({
 		where: { id: { in: Array.from(insertedUsers) } },
-	})
-	insertedUsers.clear()
-})
+	});
+	insertedUsers.clear();
+});

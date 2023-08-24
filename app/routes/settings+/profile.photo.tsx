@@ -1,44 +1,47 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { conform, useForm } from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
 	json,
 	redirect,
 	unstable_createMemoryUploadHandler,
 	unstable_parseMultipartFormData,
 	type DataFunctionArgs,
-} from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
-import { useState } from 'react'
-import { ServerOnly } from 'remix-utils'
-import { z } from 'zod'
-import { ErrorList } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
+} from '@remix-run/node';
+import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { useState } from 'react';
+import { ServerOnly } from 'remix-utils';
+import { z } from 'zod';
+import { ErrorList } from '#app/components/forms.tsx';
+import { Button } from '#app/components/ui/button.tsx';
+import { Icon } from '#app/components/ui/icon.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { requireUserId } from '#app/utils/auth.server.ts';
+import { prisma } from '#app/utils/db.server.ts';
 import {
 	getUserImgSrc,
 	invariantResponse,
 	useDoubleCheck,
 	useIsPending,
-} from '#app/utils/misc.tsx'
+} from '#app/utils/misc.tsx';
 
 export const handle = {
 	breadcrumb: <Icon name="avatar">Photo</Icon>,
-}
+};
 
-const MAX_SIZE = 1024 * 1024 * 3 // 3MB
+const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 
 const PhotoFormSchema = z.object({
 	photoFile: z
 		.instanceof(File)
-		.refine(file => file.size > 0, 'Image is required')
-		.refine(file => file.size <= MAX_SIZE, 'Image size must be less than 3MB'),
-})
+		.refine((file) => file.size > 0, 'Image is required')
+		.refine(
+			(file) => file.size <= MAX_SIZE,
+			'Image size must be less than 3MB',
+		),
+});
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const userId = await requireUserId(request);
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: {
@@ -47,76 +50,76 @@ export async function loader({ request }: DataFunctionArgs) {
 			username: true,
 			image: { select: { id: true } },
 		},
-	})
-	invariantResponse(user, 'User not found', { status: 404 })
-	return json({ user })
+	});
+	invariantResponse(user, 'User not found', { status: 404 });
+	return json({ user });
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const userId = await requireUserId(request);
 	const formData = await unstable_parseMultipartFormData(
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
-	)
-	const intent = formData.get('intent')
+	);
+	const intent = formData.get('intent');
 	if (intent === 'delete') {
-		await prisma.userImage.deleteMany({ where: { userId } })
-		return redirect('/settings/profile')
+		await prisma.userImage.deleteMany({ where: { userId } });
+		return redirect('/settings/profile');
 	}
 
 	const submission = await parse(formData, {
-		schema: PhotoFormSchema.transform(async data => {
-			if (data.photoFile.size <= 0) return z.NEVER
+		schema: PhotoFormSchema.transform(async (data) => {
+			if (data.photoFile.size <= 0) return z.NEVER;
 			return {
 				image: {
 					contentType: data.photoFile.type,
 					blob: Buffer.from(await data.photoFile.arrayBuffer()),
 				},
-			}
+			};
 		}),
 		async: true,
-	})
+	});
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
+		return json({ status: 'idle', submission } as const);
 	}
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
-	const { image } = submission.value
+	const { image } = submission.value;
 
-	await prisma.$transaction(async $prisma => {
-		await $prisma.userImage.deleteMany({ where: { userId } })
+	await prisma.$transaction(async ($prisma) => {
+		await $prisma.userImage.deleteMany({ where: { userId } });
 		await $prisma.user.update({
 			where: { id: userId },
 			data: { image: { create: image } },
-		})
-	})
+		});
+	});
 
-	return redirect('/settings/profile')
+	return redirect('/settings/profile');
 }
 
 export default function PhotoRoute() {
-	const data = useLoaderData<typeof loader>()
+	const data = useLoaderData<typeof loader>();
 
-	const doubleCheckDeleteImage = useDoubleCheck()
+	const doubleCheckDeleteImage = useDoubleCheck();
 
-	const actionData = useActionData<typeof action>()
+	const actionData = useActionData<typeof action>();
 
 	const [form, fields] = useForm({
 		id: 'profile-photo',
 		constraint: getFieldsetConstraint(PhotoFormSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: PhotoFormSchema })
+			return parse(formData, { schema: PhotoFormSchema });
 		},
 		shouldRevalidate: 'onBlur',
-	})
+	});
 
-	const isPending = useIsPending()
+	const isPending = useIsPending();
 
-	const [newImageSrc, setNewImageSrc] = useState<string | null>(null)
+	const [newImageSrc, setNewImageSrc] = useState<string | null>(null);
 
 	return (
 		<div>
@@ -140,14 +143,14 @@ export default function PhotoRoute() {
 					accept="image/*"
 					className="peer sr-only"
 					tabIndex={newImageSrc ? -1 : 0}
-					onChange={e => {
-						const file = e.currentTarget.files?.[0]
+					onChange={(e) => {
+						const file = e.currentTarget.files?.[0];
 						if (file) {
-							const reader = new FileReader()
-							reader.onload = event => {
-								setNewImageSrc(event.target?.result?.toString() ?? null)
-							}
-							reader.readAsDataURL(file)
+							const reader = new FileReader();
+							reader.onload = (event) => {
+								setNewImageSrc(event.target?.result?.toString() ?? null);
+							};
+							reader.readAsDataURL(file);
 						}
 					}}
 				/>
@@ -203,5 +206,5 @@ export default function PhotoRoute() {
 				<ErrorList errors={form.errors} />
 			</Form>
 		</div>
-	)
+	);
 }
