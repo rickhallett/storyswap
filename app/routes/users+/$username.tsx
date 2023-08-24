@@ -1,17 +1,17 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { json, type DataFunctionArgs } from '@remix-run/node'
 import {
 	Form,
 	Link,
 	useLoaderData,
 	type V2_MetaFunction,
-} from '@remix-run/react';
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
-import { Spacer } from '#app/components/spacer.tsx';
-import { Button } from '#app/components/ui/button.tsx';
-import { Icon } from '#app/components/ui/icon.tsx';
-import { prisma } from '#app/utils/db.server.ts';
-import { getUserImgSrc, invariantResponse } from '#app/utils/misc.tsx';
-import { useOptionalUser } from '#app/utils/user.ts';
+} from '@remix-run/react'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { getUserImgSrc, invariantResponse } from '#app/utils/misc.tsx'
+import { useOptionalUser } from '#app/utils/user.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const user = await prisma.user.findFirst({
@@ -25,19 +25,19 @@ export async function loader({ params }: DataFunctionArgs) {
 		where: {
 			username: params.username,
 		},
-	});
+	})
 
-	invariantResponse(user, 'User not found', { status: 404 });
+	invariantResponse(user, 'User not found', { status: 404 })
 
-	return json({ user, userJoinedDisplay: user.createdAt.toLocaleDateString() });
+	return json({ user, userJoinedDisplay: user.createdAt.toLocaleDateString() })
 }
 
 export default function ProfileRoute() {
-	const data = useLoaderData<typeof loader>();
-	const user = data.user;
-	const userDisplayName = user.name ?? user.username;
-	const loggedInUser = useOptionalUser();
-	const isLoggedInUser = data.user.id === loggedInUser?.id;
+	const data = useLoaderData<typeof loader>()
+	const user = data.user
+	const userDisplayName = user.name ?? user.username
+	const loggedInUser = useOptionalUser()
+	const isLoggedInUser = data.user.id === loggedInUser?.id
 
 	return (
 		<div className="container mb-48 mt-36 flex flex-col items-center justify-center">
@@ -99,19 +99,19 @@ export default function ProfileRoute() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data, params }) => {
-	const displayName = data?.user.name ?? params.username;
+	const displayName = data?.user.name ?? params.username
 	return [
-		{ title: `${displayName} | Epic Notes` },
+		{ title: `${displayName} | StorySwap` },
 		{
 			name: 'description',
-			content: `Profile of ${displayName} on Epic Notes`,
+			content: `Profile of ${displayName} on StorySwap`,
 		},
-	];
-};
+	]
+}
 
 export function ErrorBoundary() {
 	return (
@@ -122,5 +122,5 @@ export function ErrorBoundary() {
 				),
 			}}
 		/>
-	);
+	)
 }

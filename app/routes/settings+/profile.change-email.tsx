@@ -1,63 +1,63 @@
-import { conform, useForm } from '@conform-to/react';
-import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import * as E from '@react-email/components';
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
-import { z } from 'zod';
-import { ErrorList, Field } from '#app/components/forms.tsx';
-import { Icon } from '#app/components/ui/icon.tsx';
-import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { conform, useForm } from '@conform-to/react'
+import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import * as E from '@react-email/components'
+import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { z } from 'zod'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	prepareVerification,
 	requireRecentVerification,
 	type VerifyFunctionArgs,
-} from '#app/routes/_auth+/verify.tsx';
-import { requireUserId } from '#app/utils/auth.server.ts';
-import { prisma } from '#app/utils/db.server.ts';
-import { sendEmail } from '#app/utils/email.server.ts';
-import { invariant, useIsPending } from '#app/utils/misc.tsx';
-import { redirectWithToast } from '#app/utils/toast.server.ts';
-import { EmailSchema } from '#app/utils/user-validation.ts';
-import { verifySessionStorage } from '#app/utils/verification.server.ts';
+} from '#app/routes/_auth+/verify.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { sendEmail } from '#app/utils/email.server.ts'
+import { invariant, useIsPending } from '#app/utils/misc.tsx'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { EmailSchema } from '#app/utils/user-validation.ts'
+import { verifySessionStorage } from '#app/utils/verification.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
-};
+}
 
-const newEmailAddressSessionKey = 'new-email-address';
+const newEmailAddressSessionKey = 'new-email-address'
 
 export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	await requireRecentVerification(request);
-	invariant(submission.value, 'submission.value should be defined by now');
+	await requireRecentVerification(request)
+	invariant(submission.value, 'submission.value should be defined by now')
 
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	);
-	const newEmail = verifySession.get(newEmailAddressSessionKey);
+	)
+	const newEmail = verifySession.get(newEmailAddressSessionKey)
 	if (!newEmail) {
 		submission.error[''] = [
 			'You must submit the code on the same device that requested the email change.',
-		];
-		return json({ status: 'error', submission } as const, { status: 400 });
+		]
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const preUpdateUser = await prisma.user.findFirstOrThrow({
 		select: { email: true },
 		where: { id: submission.value.target },
-	});
+	})
 	const user = await prisma.user.update({
 		where: { id: submission.value.target },
 		select: { id: true, email: true, username: true },
 		data: { email: newEmail },
-	});
+	})
 
 	void sendEmail({
 		to: preUpdateUser.email,
 		subject: 'Epic Stack email changed',
 		react: <EmailChangeNoticeEmail userId={user.id} />,
-	});
+	})
 
 	return redirectWithToast(
 		'/settings/profile',
@@ -71,78 +71,78 @@ export async function handleVerification({
 				'set-cookie': await verifySessionStorage.destroySession(verifySession),
 			},
 		},
-	);
+	)
 }
 
 const ChangeEmailSchema = z.object({
 	email: EmailSchema,
-});
+})
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireRecentVerification(request);
-	const userId = await requireUserId(request);
+	await requireRecentVerification(request)
+	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: { email: true },
-	});
+	})
 	if (!user) {
-		const params = new URLSearchParams({ redirectTo: request.url });
-		throw redirect(`/login?${params}`);
+		const params = new URLSearchParams({ redirectTo: request.url })
+		throw redirect(`/login?${params}`)
 	}
-	return json({ user });
+	return json({ user })
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request);
-	const formData = await request.formData();
+	const userId = await requireUserId(request)
+	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: ChangeEmailSchema.superRefine(async (data, ctx) => {
 			const existingUser = await prisma.user.findUnique({
 				where: { email: data.email },
-			});
+			})
 			if (existingUser) {
 				ctx.addIssue({
 					path: ['email'],
 					code: 'custom',
 					message: 'This email is already in use.',
-				});
+				})
 			}
 		}),
 		async: true,
-	});
+	})
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const);
+		return json({ status: 'idle', submission } as const)
 	}
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 });
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { otp, redirectTo, verifyUrl } = await prepareVerification({
 		period: 10 * 60,
 		request,
 		target: userId,
 		type: 'change-email',
-	});
+	})
 
 	const response = await sendEmail({
 		to: submission.value.email,
-		subject: `Epic Notes Email Change Verification`,
+		subject: `StorySwap Email Change Verification`,
 		react: <EmailChangeEmail verifyUrl={verifyUrl.toString()} otp={otp} />,
-	});
+	})
 
 	if (response.status === 'success') {
 		const verifySession = await verifySessionStorage.getSession(
 			request.headers.get('cookie'),
-		);
-		verifySession.set(newEmailAddressSessionKey, submission.value.email);
+		)
+		verifySession.set(newEmailAddressSessionKey, submission.value.email)
 		return redirect(redirectTo.toString(), {
 			headers: {
 				'set-cookie': await verifySessionStorage.commitSession(verifySession),
 			},
-		});
+		})
 	} else {
-		submission.error[''] = [response.error.message];
-		return json({ status: 'error', submission } as const, { status: 500 });
+		submission.error[''] = [response.error.message]
+		return json({ status: 'error', submission } as const, { status: 500 })
 	}
 }
 
@@ -150,14 +150,14 @@ export function EmailChangeEmail({
 	verifyUrl,
 	otp,
 }: {
-	verifyUrl: string;
-	otp: string;
+	verifyUrl: string
+	otp: string
 }) {
 	return (
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Epic Notes Email Change</E.Text>
+					<E.Text>StorySwap Email Change</E.Text>
 				</h1>
 				<p>
 					<E.Text>
@@ -170,7 +170,7 @@ export function EmailChangeEmail({
 				<E.Link href={verifyUrl}>{verifyUrl}</E.Link>
 			</E.Container>
 		</E.Html>
-	);
+	)
 }
 
 export function EmailChangeNoticeEmail({ userId }: { userId: string }) {
@@ -178,11 +178,11 @@ export function EmailChangeNoticeEmail({ userId }: { userId: string }) {
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Your Epic Notes email has been changed</E.Text>
+					<E.Text>Your StorySwap email has been changed</E.Text>
 				</h1>
 				<p>
 					<E.Text>
-						We're writing to let you know that your Epic Notes email has been
+						We're writing to let you know that your StorySwap email has been
 						changed.
 					</E.Text>
 				</p>
@@ -198,23 +198,23 @@ export function EmailChangeNoticeEmail({ userId }: { userId: string }) {
 				</p>
 			</E.Container>
 		</E.Html>
-	);
+	)
 }
 
 export default function ChangeEmailIndex() {
-	const data = useLoaderData<typeof loader>();
-	const actionData = useActionData<typeof action>();
+	const data = useLoaderData<typeof loader>()
+	const actionData = useActionData<typeof action>()
 
 	const [form, fields] = useForm({
 		id: 'change-email-form',
 		constraint: getFieldsetConstraint(ChangeEmailSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: ChangeEmailSchema });
+			return parse(formData, { schema: ChangeEmailSchema })
 		},
-	});
+	})
 
-	const isPending = useIsPending();
+	const isPending = useIsPending()
 	return (
 		<div>
 			<h1 className="text-h1">Change Email</h1>
@@ -240,5 +240,5 @@ export default function ChangeEmailIndex() {
 				</Form>
 			</div>
 		</div>
-	);
+	)
 }

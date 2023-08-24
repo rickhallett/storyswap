@@ -95,7 +95,7 @@ export const links: LinksFunction = () => {
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Story Swap' : 'Error | Story Swap' },
+		{ title: data ? 'StorySwap' : 'Error | StorySwap' },
 		{ name: 'description', content: `Your own captain's log` },
 	]
 }
@@ -211,7 +211,6 @@ function Document({
 	theme?: Theme
 	env?: Record<string, string>
 }) {
-	console.log('document')
 	return (
 		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
 			<head>
