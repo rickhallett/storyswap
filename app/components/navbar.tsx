@@ -43,14 +43,14 @@ const Navbar = () => {
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={'/'}>
+						<Link prefetch="intent" to={'/users'}>
 							<Icon className="text-body-md" name="camera">
 								User Profiles
 							</Icon>
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={'/'}>
+						<Link prefetch="intent" to={'/books'}>
 							<Icon className="text-body-md" name="pencil-2">
 								Book Listings
 							</Icon>
