@@ -31,7 +31,6 @@ import { Textarea } from '#app/components/ui/textarea.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
-import { Spacer } from '#app/components/spacer.tsx'
 
 const titleMinLength = 1
 const titleMaxLength = 100
