@@ -28,8 +28,8 @@ const Navbar = () => {
 						onClick={e => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
-						<Icon name="avatar" className="text-body-md" />
-						<span className="text-body">Home</span>
+						<Icon name="dashboard" className="text-body-md" />
+						<span className="text-body">Menu</span>
 					</Link>
 				</Button>
 			</DropdownMenuTrigger>

@@ -18,7 +18,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 	// useFetcher,
-	useFetchers,
+	// useFetchers,
 	useLoaderData,
 	useMatches,
 	useSubmit,
@@ -44,7 +44,7 @@ import { Icon, href as iconsHref } from './components/ui/icon.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { authenticator, getUserId } from './utils/auth.server.ts'
-import { ClientHintCheck, getHints, useHints } from './utils/client-hints.tsx'
+import { ClientHintCheck, getHints } from './utils/client-hints.tsx'
 import { getConfetti } from './utils/confetti.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
@@ -54,7 +54,7 @@ import {
 	invariantResponse,
 } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
-import { useRequestInfo } from './utils/request-info.ts'
+// import { useRequestInfo } from './utils/request-info.ts'
 import { type Theme, setTheme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
@@ -212,7 +212,7 @@ function Document({
 	env?: Record<string, string>
 }) {
 	return (
-		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
+		<html lang="en" className={`${theme} mx-auto h-full overflow-x-hidden`}>
 			<head>
 				<ClientHintCheck nonce={nonce} />
 				<Meta />
@@ -240,21 +240,23 @@ function App() {
 	const data = useLoaderData<typeof loader>()
 	const nonce = useNonce()
 	const user = useOptionalUser()
-	const theme = useTheme()
+	// const theme = useTheme()
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 
 	return (
-		<Document nonce={nonce} theme={theme} env={data.ENV}>
+		<Document nonce={nonce} theme={'light'} env={data.ENV}>
 			<div className="flex h-screen flex-col justify-between">
 				<header className="container py-6">
 					<nav className="flex items-center justify-between">
 						<Navbar />
+
 						{isOnSearchPage ? null : (
-							<div className="ml-auto max-w-sm flex-1 pr-10">
-								<SearchBar status="idle" />
+							<div className="flex-0 mx-auto">
+								<SearchBar status="idle" hideInput />
 							</div>
 						)}
+
 						<div className="flex items-center gap-10">
 							{user ? (
 								<UserDropdown />
@@ -342,38 +344,38 @@ function UserDropdown() {
 	)
 }
 
-/**
- * @returns the user's theme preference, or the client hint theme if the user
- * has not set a preference.
- */
-export function useTheme() {
-	const hints = useHints()
-	const requestInfo = useRequestInfo()
-	const optimisticMode = useOptimisticThemeMode()
-	if (optimisticMode) {
-		return optimisticMode === 'system' ? hints.theme : optimisticMode
-	}
-	return requestInfo.userPrefs.theme ?? hints.theme
-}
+// /**
+//  * @returns the user's theme preference, or the client hint theme if the user
+//  * has not set a preference.
+//  */
+// export function useTheme() {
+// 	const hints = useHints()
+// 	const requestInfo = useRequestInfo()
+// 	const optimisticMode = useOptimisticThemeMode()
+// 	if (optimisticMode) {
+// 		return optimisticMode === 'system' ? hints.theme : optimisticMode
+// 	}
+// 	return requestInfo.userPrefs.theme ?? hints.theme
+// }
 
-/**
- * If the user's changing their theme mode preference, this will return the
- * value it's being changed to.
- */
-export function useOptimisticThemeMode() {
-	const fetchers = useFetchers()
+// /**
+//  * If the user's changing their theme mode preference, this will return the
+//  * value it's being changed to.
+//  */
+// export function useOptimisticThemeMode() {
+// 	const fetchers = useFetchers()
 
-	const themeFetcher = fetchers.find(
-		f => f.formData?.get('intent') === 'update-theme',
-	)
+// 	const themeFetcher = fetchers.find(
+// 		f => f.formData?.get('intent') === 'update-theme',
+// 	)
 
-	if (themeFetcher && themeFetcher.formData) {
-		const submission = parse(themeFetcher.formData, {
-			schema: ThemeFormSchema,
-		})
-		return submission.value?.theme
-	}
-}
+// 	if (themeFetcher && themeFetcher.formData) {
+// 		const submission = parse(themeFetcher.formData, {
+// 			schema: ThemeFormSchema,
+// 		})
+// 		return submission.value?.theme
+// 	}
+// }
 
 // function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
 // 	const fetcher = useFetcher<typeof action>()

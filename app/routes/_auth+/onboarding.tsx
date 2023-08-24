@@ -168,7 +168,7 @@ export default function SignupRoute() {
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
-					<h1 className="text-h1">Welcome aboard {data.email}!</h1>
+					<h3 className="text-h3">Welcome aboard {data.email}!</h3>
 					<p className="text-body-md text-muted-foreground">
 						Please enter your details.
 					</p>
