@@ -43,9 +43,9 @@ export default function ProfileRoute() {
 		<div className="container mb-48 mt-36 flex flex-col items-center justify-center">
 			<Spacer size="4xs" />
 
-			<div className="container flex flex-col items-center rounded-3xl bg-muted p-12">
-				<div className="relative w-40">
-					<div className="absolute -top-20">
+			<div className="container flex flex-col items-center rounded-3xl bg-muted p-10">
+				<div className="relative w-32">
+					<div className="absolute -top-32">
 						<div className="relative">
 							<img
 								src={getUserImgSrc(data.user.image?.id)}
@@ -77,12 +77,12 @@ export default function ProfileRoute() {
 					<div className="mt-10 flex gap-4">
 						{isLoggedInUser ? (
 							<>
-								<Button asChild>
+								<Button asChild size="lg" className="text-center text-xs">
 									<Link to="notes" prefetch="intent">
 										My notes
 									</Link>
 								</Button>
-								<Button asChild>
+								<Button asChild size="lg" className="text-center text-xs">
 									<Link to="/settings/profile" prefetch="intent">
 										Edit profile
 									</Link>

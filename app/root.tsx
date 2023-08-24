@@ -212,7 +212,7 @@ function Document({
 	env?: Record<string, string>
 }) {
 	return (
-		<html lang="en" className={`${theme} mx-auto h-full overflow-x-hidden`}>
+		<html lang="en" className={`${theme} mx-auto h-screen overflow-x-hidden`}>
 			<head>
 				<ClientHintCheck nonce={nonce} />
 				<Meta />
