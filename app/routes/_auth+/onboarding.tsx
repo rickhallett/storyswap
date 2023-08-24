@@ -164,21 +164,27 @@ export default function SignupRoute() {
 		shouldRevalidate: 'onBlur',
 	})
 
+	function getEmailUsername(email: string) {
+		const match = email.match(/^(.+)@/)
+		if (!match) {
+			return ''
+		}
+		return match[1]
+	}
+
 	return (
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
-					<h3 className="text-h3">Welcome aboard {data.email}!</h3>
+					<h3 className="text-h3">
+						Welcome aboard {getEmailUsername(data.email)}!
+					</h3>
 					<p className="text-body-md text-muted-foreground">
 						Please enter your details.
 					</p>
 				</div>
-				<Spacer size="xs" />
-				<Form
-					method="POST"
-					className="mx-auto min-w-[368px] max-w-sm"
-					{...form.props}
-				>
+				<Spacer size="3xs" />
+				<Form method="POST" {...form.props}>
 					<Field
 						labelProps={{ htmlFor: fields.username.id, children: 'Username' }}
 						inputProps={{

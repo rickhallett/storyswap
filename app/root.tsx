@@ -252,7 +252,7 @@ function App() {
 						<Navbar />
 
 						{isOnSearchPage ? null : (
-							<div className="flex-0 mx-auto">
+							<div className="mx-auto">
 								<SearchBar status="idle" hideInput />
 							</div>
 						)}
@@ -272,7 +272,7 @@ function App() {
 				<div className="flex-1">
 					<Outlet />
 				</div>
-				<Link to="/">
+				<Link to="/" className="p-2">
 					<div className="font-light">story</div>
 					<div className="font-bold">swap</div>
 				</Link>

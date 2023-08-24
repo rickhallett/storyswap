@@ -124,12 +124,12 @@ export default function SignupRoute() {
 	return (
 		<div className="container flex flex-col justify-center pb-32 pt-20">
 			<div className="text-center">
-				<h1 className="text-h1">Let's start your journey!</h1>
-				<p className="mt-3 text-body-md text-muted-foreground">
+				<h1 className="text-h3">Let's start your journey!</h1>
+				<p className="mt-3 text-body-sm text-muted-foreground">
 					Please enter your email.
 				</p>
 			</div>
-			<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+			<div className="min-w-xl mt-16">
 				<Form method="POST" {...form.props}>
 					<Field
 						labelProps={{
