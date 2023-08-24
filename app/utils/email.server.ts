@@ -31,7 +31,7 @@ export async function sendEmail({
 	| { html: string; text: string; react?: never }
 	| { react: ReactElement; html?: never; text?: never }
 )) {
-	const from = 'storyswap.email.com'
+	const from = 'storyswap.example.com'
 
 	const email = {
 		from,

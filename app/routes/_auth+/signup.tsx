@@ -17,7 +17,7 @@ import {
 	providerNames,
 } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
-// import { sendEmail } from '#app/utils/email.server.ts'
+import { sendEmail } from '#app/utils/email.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { EmailSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
@@ -52,27 +52,27 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { email } = submission.value
-	const { /* verifyUrl, */ redirectTo, otp } = await prepareVerification({
+	const { verifyUrl, redirectTo, otp } = await prepareVerification({
 		period: 10 * 60,
 		request,
 		type: 'onboarding',
 		target: email,
 	})
 
-	// const response = await sendEmail({
-	// 	to: email,
-	// 	subject: `Welcome to StorySwap!`,
-	// 	react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
-	// })
+	const response = await sendEmail({
+		to: email,
+		subject: `Welcome to StorySwap!`,
+		react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
+	})
 
-	return redirect(redirectTo.toString() + `&code=${otp}`)
+	// return redirect(redirectTo.toString() + `&code=${otp}`)
 
-	// if (response.status === 'success') {
-	// 	return redirect(redirectTo.toString() + `?otp=${otp}`)
-	// } else {
-	// 	submission.error[''] = [response.error.message]
-	// 	return json({ status: 'error', submission } as const, { status: 500 })
-	// }
+	if (response.status === 'success') {
+		return redirect(redirectTo.toString())
+	} else {
+		submission.error[''] = [response.error.message]
+		return json({ status: 'error', submission } as const, { status: 500 })
+	}
 }
 
 export function SignupEmail({
