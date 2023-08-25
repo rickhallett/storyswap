@@ -1,13 +1,13 @@
 // import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
-import { cssBundleHref } from '@remix-run/css-bundle'
+import { parse } from '@conform-to/zod';
+import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	json,
 	type DataFunctionArgs,
 	type HeadersFunction,
 	type LinksFunction,
 	type V2_MetaFunction,
-} from '@remix-run/node'
+} from '@remix-run/node';
 import {
 	Form,
 	Link,
@@ -22,48 +22,48 @@ import {
 	useLoaderData,
 	useMatches,
 	useSubmit,
-} from '@remix-run/react'
-import { withSentry } from '@sentry/remix'
-import { Suspense, lazy, useRef } from 'react'
-import { z } from 'zod'
-import { Confetti } from './components/confetti.tsx'
-import { GeneralErrorBoundary } from './components/error-boundary.tsx'
+} from '@remix-run/react';
+import { withSentry } from '@sentry/remix';
+import { Suspense, lazy, useRef } from 'react';
+import { z } from 'zod';
+import { Confetti } from './components/confetti.tsx';
+import { GeneralErrorBoundary } from './components/error-boundary.tsx';
 // import { ErrorList } from './components/forms.tsx'
-import Navbar from './components/navbar.tsx'
-import { SearchBar } from './components/search-bar.tsx'
-import { EpicToaster } from './components/toaster.tsx'
-import { Button } from './components/ui/button.tsx'
+import Navbar from './components/navbar.tsx';
+import { SearchBar } from './components/search-bar.tsx';
+import { EpicToaster } from './components/toaster.tsx';
+import { Button } from './components/ui/button.tsx';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuTrigger,
-} from './components/ui/dropdown-menu.tsx'
-import { Icon, href as iconsHref } from './components/ui/icon.tsx'
-import fontStylestylesheetUrl from './styles/font.css'
-import tailwindStylesheetUrl from './styles/tailwind.css'
-import { authenticator, getUserId } from './utils/auth.server.ts'
-import { ClientHintCheck, getHints, useHints } from './utils/client-hints.tsx'
-import { getConfetti } from './utils/confetti.server.ts'
-import { prisma } from './utils/db.server.ts'
-import { getEnv } from './utils/env.server.ts'
+} from './components/ui/dropdown-menu.tsx';
+import { Icon, href as iconsHref } from './components/ui/icon.tsx';
+import fontStylestylesheetUrl from './styles/font.css';
+import tailwindStylesheetUrl from './styles/tailwind.css';
+import { authenticator, getUserId } from './utils/auth.server.ts';
+import { ClientHintCheck, getHints, useHints } from './utils/client-hints.tsx';
+import { getConfetti } from './utils/confetti.server.ts';
+import { prisma } from './utils/db.server.ts';
+import { getEnv } from './utils/env.server.ts';
 import {
 	combineHeaders,
 	getDomainUrl,
 	invariantResponse,
-} from './utils/misc.tsx'
-import { useNonce } from './utils/nonce-provider.ts'
-import { useRequestInfo } from './utils/request-info.ts'
-import { type Theme, setTheme, getTheme } from './utils/theme.server.ts'
-import { makeTimings, time } from './utils/timing.server.ts'
-import { getToast } from './utils/toast.server.ts'
-import { useOptionalUser, useUser } from './utils/user.ts'
+} from './utils/misc.tsx';
+import { useNonce } from './utils/nonce-provider.ts';
+import { useRequestInfo } from './utils/request-info.ts';
+import { type Theme, setTheme, getTheme } from './utils/theme.server.ts';
+import { makeTimings, time } from './utils/timing.server.ts';
+import { getToast } from './utils/toast.server.ts';
+import { useOptionalUser, useUser } from './utils/user.ts';
 
 const RemixDevTools =
 	process.env.NODE_ENV === 'development'
 		? lazy(() => import('remix-development-tools'))
-		: null
+		: null;
 
 export const links: LinksFunction = () => {
 	return [
@@ -90,23 +90,23 @@ export const links: LinksFunction = () => {
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
 		cssBundleHref ? { rel: 'stylesheet', href: cssBundleHref } : null,
-	].filter(Boolean)
-}
+	].filter(Boolean);
+};
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	return [
 		{ title: data ? 'Story Swap' : 'Error | Story Swap' },
 		{ name: 'description', content: `Your own captain's log` },
-	]
-}
+	];
+};
 
 export async function loader({ request }: DataFunctionArgs) {
-	const timings = makeTimings('root loader')
+	const timings = makeTimings('root loader');
 	const userId = await time(() => getUserId(request), {
 		timings,
 		type: 'getUserId',
 		desc: 'getUserId in root',
-	})
+	});
 
 	const user = userId
 		? await time(
@@ -130,15 +130,15 @@ export async function loader({ request }: DataFunctionArgs) {
 					}),
 				{ timings, type: 'find user', desc: 'find user in root' },
 		  )
-		: null
+		: null;
 	if (userId && !user) {
-		console.info('something weird happened')
+		console.info('something weird happened');
 		// something weird happened... The user is authenticated but we can't find
 		// them in the database. Maybe they were deleted? Let's log them out.
-		await authenticator.logout(request, { redirectTo: '/' })
+		await authenticator.logout(request, { redirectTo: '/' });
 	}
-	const { toast, headers: toastHeaders } = await getToast(request)
-	const { confettiId, headers: confettiHeaders } = getConfetti(request)
+	const { toast, headers: toastHeaders } = await getToast(request);
+	const { confettiId, headers: confettiHeaders } = getConfetti(request);
 
 	return json(
 		{
@@ -162,42 +162,42 @@ export async function loader({ request }: DataFunctionArgs) {
 				confettiHeaders,
 			),
 		},
-	)
+	);
 }
 
 export const headers: HeadersFunction = ({ loaderHeaders }) => {
 	const headers = {
 		'Server-Timing': loaderHeaders.get('Server-Timing') ?? '',
-	}
-	return headers
-}
+	};
+	return headers;
+};
 
 const ThemeFormSchema = z.object({
 	theme: z.enum(['system', 'light', 'dark']),
-})
+});
 
 export async function action({ request }: DataFunctionArgs) {
-	const formData = await request.formData()
+	const formData = await request.formData();
 	invariantResponse(
 		formData.get('intent') === 'update-theme',
 		'Invalid intent',
 		{ status: 400 },
-	)
+	);
 	const submission = parse(formData, {
 		schema: ThemeFormSchema,
-	})
+	});
 	if (submission.intent !== 'submit') {
-		return json({ status: 'success', submission } as const)
+		return json({ status: 'success', submission } as const);
 	}
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
-	const { theme } = submission.value
+	const { theme } = submission.value;
 
 	const responseInit = {
 		headers: { 'set-cookie': setTheme(theme) },
-	}
-	return json({ success: true, submission }, responseInit)
+	};
+	return json({ success: true, submission }, responseInit);
 }
 
 function Document({
@@ -206,12 +206,12 @@ function Document({
 	theme = 'light',
 	env = {},
 }: {
-	children: React.ReactNode
-	nonce: string
-	theme?: Theme
-	env?: Record<string, string>
+	children: React.ReactNode;
+	nonce: string;
+	theme?: Theme;
+	env?: Record<string, string>;
 }) {
-	console.log('document')
+	console.log('document');
 	return (
 		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
 			<head>
@@ -234,16 +234,16 @@ function Document({
 				<LiveReload nonce={nonce} />
 			</body>
 		</html>
-	)
+	);
 }
 
 function App() {
-	const data = useLoaderData<typeof loader>()
-	const nonce = useNonce()
-	const user = useOptionalUser()
-	const theme = useTheme()
-	const matches = useMatches()
-	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
+	const data = useLoaderData<typeof loader>();
+	const nonce = useNonce();
+	const user = useOptionalUser();
+	const theme = useTheme();
+	const matches = useMatches();
+	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
 	return (
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
@@ -284,14 +284,14 @@ function App() {
 				</Suspense>
 			) : null}
 		</Document>
-	)
+	);
 }
-export default withSentry(App)
+export default withSentry(App);
 
 function UserDropdown() {
-	const user = useUser()
-	const submit = useSubmit()
-	const formRef = useRef<HTMLFormElement>(null)
+	const user = useUser();
+	const submit = useSubmit();
+	const formRef = useRef<HTMLFormElement>(null);
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -299,7 +299,7 @@ function UserDropdown() {
 					<Link
 						to={`/users/${user.username}`}
 						// this is for progressive enhancement
-						onClick={e => e.preventDefault()}
+						onClick={(e) => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
 						<Icon name="avatar" className="text-body-md" />
@@ -326,9 +326,9 @@ function UserDropdown() {
 					<DropdownMenuItem
 						asChild
 						// this prevents the menu from closing before the form submission is completed
-						onSelect={event => {
-							event.preventDefault()
-							submit(formRef.current)
+						onSelect={(event) => {
+							event.preventDefault();
+							submit(formRef.current);
 						}}
 					>
 						<Form action="/logout" method="POST" ref={formRef}>
@@ -340,7 +340,7 @@ function UserDropdown() {
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
 		</DropdownMenu>
-	)
+	);
 }
 
 /**
@@ -348,13 +348,13 @@ function UserDropdown() {
  * has not set a preference.
  */
 export function useTheme() {
-	const hints = useHints()
-	const requestInfo = useRequestInfo()
-	const optimisticMode = useOptimisticThemeMode()
+	const hints = useHints();
+	const requestInfo = useRequestInfo();
+	const optimisticMode = useOptimisticThemeMode();
 	if (optimisticMode) {
-		return optimisticMode === 'system' ? hints.theme : optimisticMode
+		return optimisticMode === 'system' ? hints.theme : optimisticMode;
 	}
-	return requestInfo.userPrefs.theme ?? hints.theme
+	return requestInfo.userPrefs.theme ?? hints.theme;
 }
 
 /**
@@ -362,17 +362,17 @@ export function useTheme() {
  * value it's being changed to.
  */
 export function useOptimisticThemeMode() {
-	const fetchers = useFetchers()
+	const fetchers = useFetchers();
 
 	const themeFetcher = fetchers.find(
-		f => f.formData?.get('intent') === 'update-theme',
-	)
+		(f) => f.formData?.get('intent') === 'update-theme',
+	);
 
 	if (themeFetcher && themeFetcher.formData) {
 		const submission = parse(themeFetcher.formData, {
 			schema: ThemeFormSchema,
-		})
-		return submission.value?.theme
+		});
+		return submission.value?.theme;
 	}
 }
 
@@ -429,7 +429,7 @@ export function useOptimisticThemeMode() {
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that
-	const nonce = useNonce()
+	const nonce = useNonce();
 
 	// NOTE: you cannot use useLoaderData in an ErrorBoundary because the loader
 	// likely failed to run so we have to do the best we can.
@@ -443,5 +443,5 @@ export function ErrorBoundary() {
 		<Document nonce={nonce}>
 			<GeneralErrorBoundary />
 		</Document>
-	)
+	);
 }

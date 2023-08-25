@@ -6,11 +6,10 @@
 	:root {
 		--font-sans: monospace, Nunito Sans, Nunito Sans Fallback;
 
-		--radius: 0.5rem; 
+		--radius: 0.5rem;
 	}
 
 	.dark {
-
 	}
 }
 

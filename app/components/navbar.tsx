@@ -1,21 +1,21 @@
 // import { CaretDownIcon } from '@radix-ui/react-icons'
 // import * as NavigationMenu from '@radix-ui/react-navigation-menu'
-import { type LinksFunction } from '@remix-run/node'
-import { Link } from '@remix-run/react'
-import React from 'react'
-import { Button } from '../components/ui/button.tsx'
+import { type LinksFunction } from '@remix-run/node';
+import { Link } from '@remix-run/react';
+import React from 'react';
+import { Button } from '../components/ui/button.tsx';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu.tsx'
-import { Icon } from '../components/ui/icon.tsx'
+} from '../components/ui/dropdown-menu.tsx';
+import { Icon } from '../components/ui/icon.tsx';
 
 export const links: LinksFunction = () => {
-	return [].filter(Boolean)
-}
+	return [].filter(Boolean);
+};
 
 const Navbar = () => {
 	return (
@@ -25,7 +25,7 @@ const Navbar = () => {
 					<Link
 						to={`/users/`}
 						// this is for progressive enhancement
-						onClick={e => e.preventDefault()}
+						onClick={(e) => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
 						<Icon name="avatar" className="text-body-md" />
@@ -52,7 +52,7 @@ const Navbar = () => {
 				</DropdownMenuContent>
 			</DropdownMenuPortal>
 		</DropdownMenu>
-	)
-}
+	);
+};
 
-export default Navbar
+export default Navbar;
