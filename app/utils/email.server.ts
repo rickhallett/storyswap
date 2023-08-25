@@ -64,7 +64,7 @@ export async function sendEmail({
 		},
 	});
 	const data = await response.json();
-	console.log('resend res', { data });
+	console.log('resend res:', { data });
 	const parsedData = resendSuccessSchema.safeParse(data);
 
 	if (response.ok && parsedData.success) {
