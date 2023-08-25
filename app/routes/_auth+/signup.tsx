@@ -17,7 +17,7 @@ import {
 	providerNames,
 } from '#app/utils/connections.tsx';
 import { prisma } from '#app/utils/db.server.ts';
-import { sendEmail } from '#app/utils/email.server.ts';
+import { sendGmail } from '#app/utils/email.server.ts';
 import { useIsPending } from '#app/utils/misc.tsx';
 import { EmailSchema } from '#app/utils/user-validation.ts';
 import { prepareVerification } from './verify.tsx';
@@ -59,15 +59,13 @@ export async function action({ request }: DataFunctionArgs) {
 		target: email,
 	});
 
-	const response = await sendEmail({
+	const response = await sendGmail({
 		to: email,
 		subject: `Welcome to StorySwap!`,
 		react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
 	});
 
-	// return redirect(redirectTo.toString() + `&code=${otp}`)
-
-	if (response.status === 'success') {
+	if (response.status === 200) {
 		return redirect(redirectTo.toString());
 	} else {
 		submission.error[''] = [response.error.message];
