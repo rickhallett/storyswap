@@ -141,6 +141,18 @@ async function seed() {
 	await prisma.user.create({
 		select: { id: true },
 		data: {
+			email: 'rick.hallett@brandwatch.com',
+			username: 'rick',
+			name: 'Rick Hallett',
+			image: { create: kodyImages.kodyUser },
+			password: { create: createPassword('admin01') },
+			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
+		},
+	});
+
+	await prisma.user.create({
+		select: { id: true },
+		data: {
 			email: 'kody@kcd.dev',
 			username: 'kody',
 			name: 'Kody',
