@@ -1,43 +1,43 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { conform, useForm } from '@conform-to/react';
+import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
 	json,
 	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
-} from '@remix-run/node'
-import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
-import { safeRedirect } from 'remix-utils'
-import { z } from 'zod'
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
-import { Spacer } from '#app/components/spacer.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
+} from '@remix-run/node';
+import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import { safeRedirect } from 'remix-utils';
+import { z } from 'zod';
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
+import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx';
+import { Spacer } from '#app/components/spacer.tsx';
+import { StatusButton } from '#app/components/ui/status-button.tsx';
+import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx';
 import {
 	getUserId,
 	login,
 	requireAnonymous,
 	sessionKey,
-} from '#app/utils/auth.server.ts'
+} from '#app/utils/auth.server.ts';
 import {
 	ProviderConnectionForm,
 	providerNames,
-} from '#app/utils/connections.tsx'
-import { prisma } from '#app/utils/db.server.ts'
+} from '#app/utils/connections.tsx';
+import { prisma } from '#app/utils/db.server.ts';
 import {
 	combineResponseInits,
 	invariant,
 	useIsPending,
-} from '#app/utils/misc.tsx'
-import { sessionStorage } from '#app/utils/session.server.ts'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
-import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
+} from '#app/utils/misc.tsx';
+import { sessionStorage } from '#app/utils/session.server.ts';
+import { redirectWithToast } from '#app/utils/toast.server.ts';
+import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts';
+import { verifySessionStorage } from '#app/utils/verification.server.ts';
+import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx';
 
-const verifiedTimeKey = 'verified-time'
-const unverifiedSessionIdKey = 'unverified-session-id'
+const verifiedTimeKey = 'verified-time';
+const unverifiedSessionIdKey = 'unverified-session-id';
 
 export async function handleNewSession(
 	{
@@ -46,10 +46,10 @@ export async function handleNewSession(
 		redirectTo,
 		remember,
 	}: {
-		request: Request
-		session: { userId: string; id: string; expirationDate: Date }
-		redirectTo?: string
-		remember: boolean
+		request: Request;
+		session: { userId: string; id: string; expirationDate: Date };
+		redirectTo?: string;
+		remember: boolean;
 	},
 	responseInit?: ResponseInit,
 ) {
@@ -58,24 +58,24 @@ export async function handleNewSession(
 		where: {
 			target_type: { target: session.userId, type: twoFAVerificationType },
 		},
-	})
-	const userHasTwoFactor = Boolean(verification)
+	});
+	const userHasTwoFactor = Boolean(verification);
 
 	if (userHasTwoFactor) {
 		const verifySession = await verifySessionStorage.getSession(
 			request.headers.get('cookie'),
-		)
-		verifySession.set(unverifiedSessionIdKey, session.id)
+		);
+		verifySession.set(unverifiedSessionIdKey, session.id);
 		const redirectUrl = getRedirectToUrl({
 			request,
 			type: twoFAVerificationType,
 			target: session.userId,
 			redirectTo,
-		})
+		});
 		if (remember) {
-			redirectUrl.searchParams.set('remember', 'on')
+			redirectUrl.searchParams.set('remember', 'on');
 		}
-		redirectUrl.searchParams.sort()
+		redirectUrl.searchParams.sort();
 		return redirect(
 			`${redirectUrl.pathname}?${redirectUrl.searchParams}`,
 			combineResponseInits(
@@ -87,12 +87,12 @@ export async function handleNewSession(
 				},
 				responseInit,
 			),
-		)
+		);
 	} else {
 		const cookieSession = await sessionStorage.getSession(
 			request.headers.get('cookie'),
-		)
-		cookieSession.set(sessionKey, session.id)
+		);
+		cookieSession.set(sessionKey, session.id);
 
 		return redirect(
 			safeRedirect(redirectTo),
@@ -106,7 +106,7 @@ export async function handleNewSession(
 				},
 				responseInit,
 			),
-		)
+		);
 	}
 }
 
@@ -114,64 +114,64 @@ export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	invariant(submission.value, 'Submission should have a value by this point')
+	invariant(submission.value, 'Submission should have a value by this point');
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
+	);
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
+	);
 
 	const session = await prisma.session.findUnique({
 		select: { expirationDate: true },
 		where: { id: verifySession.get(unverifiedSessionIdKey) },
-	})
+	});
 	if (!session) {
 		throw await redirectWithToast('/login', {
 			type: 'error',
 			title: 'Invalid session',
 			description: 'Could not find session to verify. Please try again.',
-		})
+		});
 	}
 
-	cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
-	const { redirectTo } = submission.value
-	cookieSession.set(verifiedTimeKey, Date.now())
+	cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey));
+	const { redirectTo } = submission.value;
+	cookieSession.set(verifiedTimeKey, Date.now());
 
-	const headers = new Headers()
+	const headers = new Headers();
 	headers.append(
 		'set-cookie',
 		await sessionStorage.commitSession(cookieSession, {
 			expires: submission.value.remember ? session.expirationDate : undefined,
 		}),
-	)
+	);
 	headers.append(
 		'set-cookie',
 		await verifySessionStorage.destroySession(verifySession),
-	)
+	);
 
-	return redirect(safeRedirect(redirectTo), { headers })
+	return redirect(safeRedirect(redirectTo), { headers });
 }
 
 export async function shouldRequestTwoFA(request: Request) {
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
+	);
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
-	)
-	if (verifySession.has(unverifiedSessionIdKey)) return true
-	const userId = await getUserId(request)
-	if (!userId) return false
+	);
+	if (verifySession.has(unverifiedSessionIdKey)) return true;
+	const userId = await getUserId(request);
+	if (!userId) return false;
 	// if it's over two hours since they last verified, we should request 2FA again
 	const userHasTwoFA = await prisma.verification.findUnique({
 		select: { id: true },
 		where: { target_type: { target: userId, type: twoFAVerificationType } },
-	})
-	if (!userHasTwoFA) return false
-	const verifiedTime = cookieSession.get(verifiedTimeKey) ?? new Date(0)
-	const twoHours = 1000 * 60 * 60 * 2
-	return Date.now() - verifiedTime > twoHours
+	});
+	if (!userHasTwoFA) return false;
+	const verifiedTime = cookieSession.get(verifiedTimeKey) ?? new Date(0);
+	const twoHours = 1000 * 60 * 60 * 2;
+	return Date.now() - verifiedTime > twoHours;
 }
 
 const LoginFormSchema = z.object({
@@ -179,61 +179,61 @@ const LoginFormSchema = z.object({
 	password: PasswordSchema,
 	redirectTo: z.string().optional(),
 	remember: z.boolean().optional(),
-})
+});
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireAnonymous(request)
-	return json({})
+	await requireAnonymous(request);
+	return json({});
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	await requireAnonymous(request)
-	const formData = await request.formData()
+	await requireAnonymous(request);
+	const formData = await request.formData();
 	const submission = await parse(formData, {
-		schema: intent =>
+		schema: (intent) =>
 			LoginFormSchema.transform(async (data, ctx) => {
-				if (intent !== 'submit') return { ...data, session: null }
+				if (intent !== 'submit') return { ...data, session: null };
 
-				const session = await login(data)
+				const session = await login(data);
 				if (!session) {
 					ctx.addIssue({
 						code: 'custom',
 						message: 'Invalid username or password',
-					})
-					return z.NEVER
+					});
+					return z.NEVER;
 				}
 
-				return { ...data, session }
+				return { ...data, session };
 			}),
 		async: true,
-	})
+	});
 	// get the password off the payload that's sent back
-	delete submission.payload.password
+	delete submission.payload.password;
 
 	if (submission.intent !== 'submit') {
 		// @ts-expect-error - conform should probably have support for doing this
-		delete submission.value?.password
-		return json({ status: 'idle', submission } as const)
+		delete submission.value?.password;
+		return json({ status: 'idle', submission } as const);
 	}
 	if (!submission.value?.session) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ status: 'error', submission } as const, { status: 400 });
 	}
 
-	const { session, remember, redirectTo } = submission.value
+	const { session, remember, redirectTo } = submission.value;
 
 	return handleNewSession({
 		request,
 		session,
 		remember: remember ?? false,
 		redirectTo,
-	})
+	});
 }
 
 export default function LoginPage() {
-	const actionData = useActionData<typeof action>()
-	const isPending = useIsPending()
-	const [searchParams] = useSearchParams()
-	const redirectTo = searchParams.get('redirectTo')
+	const actionData = useActionData<typeof action>();
+	const isPending = useIsPending();
+	const [searchParams] = useSearchParams();
+	const redirectTo = searchParams.get('redirectTo');
 
 	const [form, fields] = useForm({
 		id: 'login-form',
@@ -241,10 +241,10 @@ export default function LoginPage() {
 		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: LoginFormSchema })
+			return parse(formData, { schema: LoginFormSchema });
 		},
 		shouldRevalidate: 'onBlur',
-	})
+	});
 
 	return (
 		<div className="flex min-h-full flex-col justify-center pb-32 pt-20">
@@ -317,7 +317,7 @@ export default function LoginPage() {
 							</div>
 						</Form>
 						<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
-							{providerNames.map(providerName => (
+							{providerNames.map((providerName) => (
 								<ProviderConnectionForm
 									key={providerName}
 									type="Login"
@@ -342,13 +342,13 @@ export default function LoginPage() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Login to StorySwap' }]
-}
+	return [{ title: 'Login to StorySwap' }];
+};
 
 export function ErrorBoundary() {
-	return <GeneralErrorBoundary />
+	return <GeneralErrorBoundary />;
 }

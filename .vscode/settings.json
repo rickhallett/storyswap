@@ -15,5 +15,7 @@
   ],
   "workbench.editorAssociations": {
     "*.db": "sqlite-viewer.view"
-  }
+  },
+  "prettier.useEditorConfig": false,
+  "editor.formatOnSave": true
 }

@@ -1,13 +1,13 @@
-import { type V2_MetaFunction } from '@remix-run/node'
+import { type V2_MetaFunction } from '@remix-run/node';
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from '#app/components/ui/tooltip.tsx'
-import { logos } from './logos/logos.ts'
+} from '#app/components/ui/tooltip.tsx';
+import { logos } from './logos/logos.ts';
 
-export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }]
+export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];
 
 export default function About() {
 	return (
@@ -45,8 +45,8 @@ export default function About() {
 					<div className="flex flex-wrap justify-center gap-8 rounded-3xl bg-slate-100 py-4 dark:bg-slate-200">
 						<TooltipProvider>
 							{logos
-								.filter(l => l.inc)
-								.map(img => (
+								.filter((l) => l.inc)
+								.map((img) => (
 									<Tooltip key={img.href}>
 										<TooltipTrigger asChild>
 											<a
@@ -68,5 +68,5 @@ export default function About() {
 				</div>
 			</div>
 		</main>
-	)
+	);
 }

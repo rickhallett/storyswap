@@ -1,7 +1,7 @@
-import { type V2_MetaFunction } from '@remix-run/node'
-import { quitter } from './logos/logos.ts'
+import { type V2_MetaFunction } from '@remix-run/node';
+import { quitter } from './logos/logos.ts';
 
-export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }]
+export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];
 
 export default function Index() {
 	return (
@@ -13,5 +13,5 @@ export default function Index() {
 				<img src={quitter} alt="quit-meme" />
 			</div>
 		</div>
-	)
+	);
 }

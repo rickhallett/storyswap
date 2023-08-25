@@ -1,9 +1,9 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react'
-import { useDebounce, useIsPending } from '#app/utils/misc.tsx'
-import { Icon } from './ui/icon.tsx'
-import { Input } from './ui/input.tsx'
-import { Label } from './ui/label.tsx'
-import { StatusButton } from './ui/status-button.tsx'
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { useDebounce, useIsPending } from '#app/utils/misc.tsx';
+import { Icon } from './ui/icon.tsx';
+import { Input } from './ui/input.tsx';
+import { Label } from './ui/label.tsx';
+import { StatusButton } from './ui/status-button.tsx';
 
 export function SearchBar({
 	status,
@@ -11,28 +11,28 @@ export function SearchBar({
 	autoFocus = false,
 	autoSubmit = false,
 }: {
-	status: 'idle' | 'pending' | 'success' | 'error'
-	hideInput?: boolean
-	autoFocus?: boolean
-	autoSubmit?: boolean
+	status: 'idle' | 'pending' | 'success' | 'error';
+	hideInput?: boolean;
+	autoFocus?: boolean;
+	autoSubmit?: boolean;
 }) {
-	const [searchParams] = useSearchParams()
-	const submit = useSubmit()
+	const [searchParams] = useSearchParams();
+	const submit = useSubmit();
 	const isSubmitting = useIsPending({
 		formMethod: 'GET',
 		formAction: '/users',
-	})
+	});
 
 	const handleFormChange = useDebounce((form: HTMLFormElement) => {
-		submit(form)
-	}, 400)
+		submit(form);
+	}, 400);
 
 	return (
 		<Form
 			method="GET"
 			action="/users"
 			className="flex flex-wrap items-center justify-center gap-2"
-			onChange={e => autoSubmit && handleFormChange(e.currentTarget)}
+			onChange={(e) => autoSubmit && handleFormChange(e.currentTarget)}
 		>
 			<div className="flex-1">
 				<Label htmlFor="search" className="sr-only">
@@ -62,5 +62,5 @@ export function SearchBar({
 				</StatusButton>
 			</div>
 		</Form>
-	)
+	);
 }

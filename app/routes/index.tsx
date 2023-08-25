@@ -1,5 +1,5 @@
-import { Link } from '@remix-run/react'
-import { Icon } from '#app/components/ui/icon.tsx'
+import { Link } from '@remix-run/react';
+import { Icon } from '#app/components/ui/icon.tsx';
 
 export default function IndexRoute() {
 	return (
@@ -16,5 +16,5 @@ export default function IndexRoute() {
 				</Link>
 			</div>
 		</div>
-	)
+	);
 }
