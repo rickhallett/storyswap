@@ -248,6 +248,8 @@ function App() {
 	const matches = useMatches();
 	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
+	console.log({ user, matches });
+
 	return (
 		<Document nonce={nonce} theme={'light'} env={data.ENV}>
 			<div className="flex h-screen flex-col justify-between">
