@@ -1,6 +1,7 @@
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
 import { SearchBar } from '#app/components/search-bar.tsx';

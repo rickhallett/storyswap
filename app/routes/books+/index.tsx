@@ -1,4 +1,5 @@
 import { Link } from '@remix-run/react';
+
 import { Icon } from '#app/components/ui/icon.tsx';
 
 export default function BooksRoute() {

@@ -1,5 +1,6 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import { Link, Outlet, useMatches } from '@remix-run/react';
+
 import { Spacer } from '#app/components/spacer.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';

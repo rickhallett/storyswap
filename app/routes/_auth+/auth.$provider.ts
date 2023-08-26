@@ -1,4 +1,5 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, redirect } from '@remix-run/node';
+
 import { authenticator } from '#app/utils/auth.server.ts';
 import { handleMockAction } from '#app/utils/connections.server.ts';
 import { ProviderNameSchema } from '#app/utils/connections.tsx';

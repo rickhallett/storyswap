@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
+
 import { authenticate } from '@google-cloud/local-auth';
 import { type gmail_v1, google } from 'googleapis';
 

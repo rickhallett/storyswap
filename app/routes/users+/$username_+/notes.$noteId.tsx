@@ -1,15 +1,16 @@
 import { useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
 	Link,
+	type V2_MetaFunction,
 	useActionData,
 	useLoaderData,
-	type V2_MetaFunction,
 } from '@remix-run/react';
 import { formatDistanceToNow } from 'date-fns';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
@@ -29,6 +30,7 @@ import {
 } from '#app/utils/permissions.ts';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
 import { useOptionalUser } from '#app/utils/user.ts';
+
 import { type loader as notesLoader } from './notes.tsx';
 
 export async function loader({ params }: DataFunctionArgs) {

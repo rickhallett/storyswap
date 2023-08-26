@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { prisma } from '#app/utils/db.server.ts';
-import { createPassword, createUser, getNoteImages } from '#tests/db-utils.ts';
 import {
 	BOOK_CONDITIONS,
 	BOOK_STATUSES,
 	GENRES,
-	bookConditions,
 } from '#constants/prisma.constants.ts';
+
+import { createPassword, createUser, getNoteImages } from '#tests/db-utils.ts';
 
 async function seed() {
 	console.log('🌱 Seeding...');

@@ -1,4 +1,5 @@
 import { type V2_MetaFunction } from '@remix-run/node';
+
 import { quitter } from './logos/logos.ts';
 
 export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];

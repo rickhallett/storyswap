@@ -1,5 +1,6 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import { Link, NavLink, Outlet, useLoaderData } from '@remix-run/react';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
 import { prisma } from '#app/utils/db.server.ts';

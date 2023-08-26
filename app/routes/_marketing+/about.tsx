@@ -1,10 +1,12 @@
 import { type V2_MetaFunction } from '@remix-run/node';
+
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '#app/components/ui/tooltip.tsx';
+
 import { logos } from './logos/logos.ts';
 
 export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];

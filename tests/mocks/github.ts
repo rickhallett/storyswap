@@ -1,6 +1,7 @@
 import fs from 'node:fs';
+
 import { faker } from '@faker-js/faker';
-import { HttpResponse, passthrough, http, type HttpHandler } from 'msw';
+import { type HttpHandler, HttpResponse, http, passthrough } from 'msw';
 
 const { json } = HttpResponse;
 

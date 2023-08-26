@@ -1,4 +1,5 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, redirect } from '@remix-run/node';
+
 import {
 	authenticator,
 	getSessionExpirationDate,
@@ -17,6 +18,7 @@ import {
 	redirectWithToast,
 } from '#app/utils/toast.server.ts';
 import { verifySessionStorage } from '#app/utils/verification.server.ts';
+
 import { handleNewSession } from './login.tsx';
 import {
 	onboardingEmailSessionKey,

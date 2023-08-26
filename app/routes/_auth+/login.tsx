@@ -1,14 +1,15 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
-	json,
-	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
+	json,
+	redirect,
 } from '@remix-run/node';
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
 import { safeRedirect } from 'remix-utils';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
@@ -34,7 +35,8 @@ import { sessionStorage } from '#app/utils/session.server.ts';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts';
 import { verifySessionStorage } from '#app/utils/verification.server.ts';
-import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx';
+
+import { type VerifyFunctionArgs, getRedirectToUrl } from './verify.tsx';
 
 const verifiedTimeKey = 'verified-time';
 const unverifiedSessionIdKey = 'unverified-session-id';

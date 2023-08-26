@@ -2,19 +2,21 @@ import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import * as E from '@react-email/components';
 import {
-	json,
-	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
+	json,
+	redirect,
 } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { StatusButton } from '#app/components/ui/status-button.tsx';
 import { prisma } from '#app/utils/db.server.ts';
 import { sendEmail } from '#app/utils/email.server.ts';
 import { EmailSchema, UsernameSchema } from '#app/utils/user-validation.ts';
+
 import { prepareVerification } from './verify.tsx';
 
 const ForgotPasswordSchema = z.object({

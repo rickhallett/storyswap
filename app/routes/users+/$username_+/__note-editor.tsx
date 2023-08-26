@@ -1,25 +1,26 @@
 import {
+	type FieldConfig,
 	conform,
 	list,
 	useFieldList,
 	useFieldset,
 	useForm,
-	type FieldConfig,
 } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { type Note, type NoteImage } from '@prisma/client';
 import {
+	type DataFunctionArgs,
+	type SerializeFrom,
 	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
 	json,
 	unstable_parseMultipartFormData as parseMultipartFormData,
 	redirect,
-	type DataFunctionArgs,
-	type SerializeFrom,
 } from '@remix-run/node';
 import { Form, useFetcher } from '@remix-run/react';
 import { useRef, useState } from 'react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx';
 import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx';

@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 import userEventDefault from '@testing-library/user-event';
 import { useState } from 'react';
 import { expect, test } from 'vitest';
+
 import { useDoubleCheck } from './misc.tsx';
 
 // https://github.com/testing-library/user-event/issues/1146

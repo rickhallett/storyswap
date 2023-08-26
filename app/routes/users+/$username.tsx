@@ -1,10 +1,11 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
 	Link,
-	useLoaderData,
 	type V2_MetaFunction,
+	useLoaderData,
 } from '@remix-run/react';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
 import { Button } from '#app/components/ui/button.tsx';

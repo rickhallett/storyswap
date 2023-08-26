@@ -1,8 +1,9 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
+
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { Button } from '#app/components/ui/button.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
@@ -16,6 +17,7 @@ import {
 } from '#app/utils/misc.tsx';
 import { sessionStorage } from '#app/utils/session.server.ts';
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts';
+
 import { twoFAVerificationType } from './profile.two-factor.tsx';
 
 const ProfileFormSchema = z.object({

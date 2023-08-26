@@ -2,11 +2,11 @@
 import { parse } from '@conform-to/zod';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
-	json,
 	type DataFunctionArgs,
 	type HeadersFunction,
 	type LinksFunction,
 	type V2_MetaFunction,
+	json,
 } from '@remix-run/node';
 import {
 	Form,
@@ -26,6 +26,7 @@ import {
 import { withSentry } from '@sentry/remix';
 import { Suspense, lazy, useRef } from 'react';
 import { z } from 'zod';
+
 import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
 // import { ErrorList } from './components/forms.tsx'
@@ -55,7 +56,7 @@ import {
 } from './utils/misc.tsx';
 import { useNonce } from './utils/nonce-provider.ts';
 // import { useRequestInfo } from './utils/request-info.ts'
-import { type Theme, setTheme, getTheme } from './utils/theme.server.ts';
+import { type Theme, getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
 import { useOptionalUser, useUser } from './utils/user.ts';

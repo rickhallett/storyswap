@@ -17,5 +17,8 @@
     "*.db": "sqlite-viewer.view"
   },
   "prettier.useEditorConfig": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "eslint.codeActionsOnSave.rules": ["import/order"],
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.format.enable": true
 }

@@ -1,4 +1,5 @@
 import { Outlet } from '@remix-run/react';
+
 import { Icon } from '#app/components/ui/icon.tsx';
 import { type VerificationTypes } from '#app/routes/_auth+/verify.tsx';
 
