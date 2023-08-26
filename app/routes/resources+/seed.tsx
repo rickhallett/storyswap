@@ -5,7 +5,7 @@ import { seedDB } from '#prisma/seedDB.ts';
 export const ROUTE_PATH = '/resources/seed';
 
 export async function loader({ request }: DataFunctionArgs) {
-	const seeded = await seedDB();
+	const seeded = await seedDB(); // run seed as usual
 
 	if (seeded) {
 		return redirectWithToast('/', {
