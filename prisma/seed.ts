@@ -14,9 +14,9 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...');
 	await prisma.permission.deleteMany();
-	await prisma.genre.deleteMany();
 	await prisma.book.deleteMany();
 	await prisma.bookStatus.deleteMany();
+	await prisma.bookCondition.deleteMany();
 	await prisma.swapRequest.deleteMany();
 	await prisma.swapRequestStatus.deleteMany();
 	await prisma.message.deleteMany();
@@ -28,6 +28,7 @@ async function seed() {
 	await prisma.verification.deleteMany();
 	await prisma.connection.deleteMany();
 	await prisma.note.deleteMany();
+	await prisma.genre.deleteMany();
 	await prisma.role.deleteMany();
 	await prisma.user.deleteMany();
 	console.timeEnd('🧹 Cleaned up the database...');
@@ -171,6 +172,7 @@ async function seed() {
 	}
 	console.timeEnd('🌱 Seeded book genres');
 
+	console.time('🌱 Seeded books');
 	const fakeBooksCount = 5;
 	console.time(`🌱 Seeded ${fakeBooksCount} books`);
 	const usersAll = await prisma.user.findMany();
