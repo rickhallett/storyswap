@@ -24,8 +24,8 @@ const CREDENTIALS_PATH = join(cwd(), 'credentials.json');
  */
 async function loadSavedCredentialsIfExist() {
 	try {
-		const content = await fs.readFile(TOKEN_PATH);
-		const credentials = JSON.parse(content);
+		const content = await fs.readFile(TOKEN_PATH, 'utf-8');
+		const credentials: any = JSON.parse(content);
 		return google.auth.fromJSON(credentials);
 	} catch (err) {
 		return null;
@@ -38,9 +38,9 @@ async function loadSavedCredentialsIfExist() {
  * @param {OAuth2Client} client
  * @return {Promise<void>}
  */
-async function saveCredentials(client) {
-	const content = await fs.readFile(CREDENTIALS_PATH);
-	const keys = JSON.parse(content);
+async function saveCredentials(client: any) {
+	const content = await fs.readFile(CREDENTIALS_PATH, 'utf-8');
+	const keys: any = JSON.parse(content);
 	const key = keys.installed || keys.web;
 	const payload = JSON.stringify({
 		type: 'authorized_user',
