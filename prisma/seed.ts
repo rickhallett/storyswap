@@ -13,10 +13,7 @@ async function seed() {
 	console.time(`🌱 Database has been seeded`);
 
 	console.time('🧹 Cleaned up the database...');
-	await prisma.user.deleteMany();
-	await prisma.role.deleteMany();
 	await prisma.permission.deleteMany();
-	await prisma.note.deleteMany();
 	await prisma.genre.deleteMany();
 	await prisma.book.deleteMany();
 	await prisma.bookStatus.deleteMany();
@@ -30,6 +27,9 @@ async function seed() {
 	await prisma.session.deleteMany();
 	await prisma.verification.deleteMany();
 	await prisma.connection.deleteMany();
+	await prisma.note.deleteMany();
+	await prisma.role.deleteMany();
+	await prisma.user.deleteMany();
 	console.timeEnd('🧹 Cleaned up the database...');
 
 	console.time('🔑 Created permissions...');
