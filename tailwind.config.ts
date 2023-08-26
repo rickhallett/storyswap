@@ -2,6 +2,7 @@ import { type Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme.js';
 import animatePlugin from 'tailwindcss-animate';
 import radixPlugin from 'tailwindcss-radix';
+
 import { extendedTheme } from './app/utils/extended-theme.ts';
 
 export default {

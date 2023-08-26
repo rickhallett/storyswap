@@ -1,10 +1,12 @@
 import { generateTOTP } from '@epic-web/totp';
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
+
 import { Icon } from '#app/components/ui/icon.tsx';
 import { StatusButton } from '#app/components/ui/status-button.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
+
 import { twoFAVerificationType } from './profile.two-factor.tsx';
 import { twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx';
 
@@ -59,7 +61,7 @@ export default function TwoFactorRoute() {
 							You have not enabled two-factor authentication yet.
 						</Icon>
 					</p>
-					<p className="text-sm">
+					<p className="text-sm text-slate-500">
 						Two factor authentication adds an extra layer of security to your
 						account. You will need to enter a code from an authenticator app
 						like{' '}
@@ -74,7 +76,7 @@ export default function TwoFactorRoute() {
 							name="intent"
 							value="enable"
 							status={enable2FAFetcher.state === 'loading' ? 'pending' : 'idle'}
-							className="mx-auto"
+							className="mx-auto mt-4"
 						>
 							Enable 2FA
 						</StatusButton>

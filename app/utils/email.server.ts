@@ -2,6 +2,8 @@ import { renderAsync } from '@react-email/components';
 import { type ReactElement } from 'react';
 import { z } from 'zod';
 
+import { gmailSendMessage } from './googlemail.server.ts';
+
 const resendErrorSchema = z.union([
 	z.object({
 		name: z.string(),
@@ -20,6 +22,31 @@ type ResendError = z.infer<typeof resendErrorSchema>;
 const resendSuccessSchema = z.object({
 	id: z.string(),
 });
+
+export async function sendGmail({
+	react,
+	...options
+}: {
+	to: string;
+	subject: string;
+} & (
+	| { html: string; text: string; react?: never }
+	| { react: ReactElement; html?: never; text?: never }
+)) {
+	const from = 'rick.hallett@brandwatch.com';
+
+	const email = {
+		from,
+		...options,
+		...(react ? await renderReactEmail(react) : null),
+	};
+
+	console.log('We sent the following email: ', JSON.stringify(email));
+
+	const response = await gmailSendMessage(email);
+
+	return response;
+}
 
 export async function sendEmail({
 	react,
@@ -63,7 +90,9 @@ export async function sendEmail({
 			'Content-Type': 'application/json',
 		},
 	});
+
 	const data = await response.json();
+
 	const parsedData = resendSuccessSchema.safeParse(data);
 
 	if (response.ok && parsedData.success) {

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { HttpResponse, http, type HttpHandler } from 'msw';
+import { type HttpHandler, HttpResponse, http } from 'msw';
+
 import { requireHeader, writeEmail } from './utils.ts';
 
 const { json } = HttpResponse;

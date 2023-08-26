@@ -2,13 +2,14 @@ import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import * as E from '@react-email/components';
 import {
-	json,
-	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
+	json,
+	redirect,
 } from '@remix-run/node';
 import { Form, useActionData, useSearchParams } from '@remix-run/react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { StatusButton } from '#app/components/ui/status-button.tsx';
@@ -17,9 +18,10 @@ import {
 	providerNames,
 } from '#app/utils/connections.tsx';
 import { prisma } from '#app/utils/db.server.ts';
-import { sendEmail } from '#app/utils/email.server.ts';
+import { sendGmail } from '#app/utils/email.server.ts';
 import { useIsPending } from '#app/utils/misc.tsx';
 import { EmailSchema } from '#app/utils/user-validation.ts';
+
 import { prepareVerification } from './verify.tsx';
 
 const SignupSchema = z.object({
@@ -59,13 +61,13 @@ export async function action({ request }: DataFunctionArgs) {
 		target: email,
 	});
 
-	const response = await sendEmail({
+	const response = await sendGmail({
 		to: email,
-		subject: `Welcome to Epic Notes!`,
+		subject: `Welcome to StorySwap!`,
 		react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
 	});
 
-	if (response.status === 'success') {
+	if (response.status === 200) {
 		return redirect(redirectTo.toString());
 	} else {
 		submission.error[''] = [response.error.message];
@@ -84,7 +86,7 @@ export function SignupEmail({
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Welcome to Epic Notes!</E.Text>
+					<E.Text>Welcome to StorySwap!</E.Text>
 				</h1>
 				<p>
 					<E.Text>
@@ -101,7 +103,7 @@ export function SignupEmail({
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Sign Up | Epic Notes' }];
+	return [{ title: 'Sign Up | StorySwap' }];
 };
 
 export default function SignupRoute() {
@@ -124,12 +126,12 @@ export default function SignupRoute() {
 	return (
 		<div className="container flex flex-col justify-center pb-32 pt-20">
 			<div className="text-center">
-				<h1 className="text-h1">Let's start your journey!</h1>
-				<p className="mt-3 text-body-md text-muted-foreground">
+				<h1 className="text-h3">Let's start your journey!</h1>
+				<p className="mt-3 text-body-sm text-muted-foreground">
 					Please enter your email.
 				</p>
 			</div>
-			<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+			<div className="min-w-xl mt-16">
 				<Form method="POST" {...form.props}>
 					<Field
 						labelProps={{

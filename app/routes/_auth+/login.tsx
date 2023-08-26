@@ -1,14 +1,15 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
-	json,
-	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
+	json,
+	redirect,
 } from '@remix-run/node';
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
 import { safeRedirect } from 'remix-utils';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
@@ -34,7 +35,8 @@ import { sessionStorage } from '#app/utils/session.server.ts';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts';
 import { verifySessionStorage } from '#app/utils/verification.server.ts';
-import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx';
+
+import { type VerifyFunctionArgs, getRedirectToUrl } from './verify.tsx';
 
 const verifiedTimeKey = 'verified-time';
 const unverifiedSessionIdKey = 'unverified-session-id';
@@ -250,8 +252,8 @@ export default function LoginPage() {
 		<div className="flex min-h-full flex-col justify-center pb-32 pt-20">
 			<div className="mx-auto w-full max-w-md">
 				<div className="flex flex-col gap-3 text-center">
-					<h1 className="text-h1">Welcome back!</h1>
-					<p className="text-body-md text-muted-foreground">
+					<h1 className="text-h3">Welcome back!</h1>
+					<p className="text-body-sm text-muted-foreground">
 						Please enter your details.
 					</p>
 				</div>
@@ -326,7 +328,7 @@ export default function LoginPage() {
 								/>
 							))}
 						</div>
-						<div className="flex items-center justify-center gap-2 pt-6">
+						<div className="flex items-center justify-center gap-2 pt-6 text-body-sm">
 							<span className="text-muted-foreground">New here?</span>
 							<Link
 								to={
@@ -346,7 +348,7 @@ export default function LoginPage() {
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Login to Epic Notes' }];
+	return [{ title: 'Login to StorySwap' }];
 };
 
 export function ErrorBoundary() {

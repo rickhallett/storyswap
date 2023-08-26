@@ -1,8 +1,9 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
+
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { Button } from '#app/components/ui/button.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
@@ -16,6 +17,7 @@ import {
 } from '#app/utils/misc.tsx';
 import { sessionStorage } from '#app/utils/session.server.ts';
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts';
+
 import { twoFAVerificationType } from './profile.two-factor.tsx';
 
 const ProfileFormSchema = z.object({
@@ -99,7 +101,7 @@ export default function EditUserProfile() {
 	return (
 		<div className="flex flex-col gap-12">
 			<div className="flex justify-center">
-				<div className="relative h-52 w-52">
+				<div className="relative h-28 w-28">
 					<img
 						src={getUserImgSrc(data.user.image?.id)}
 						alt={data.user.username}
@@ -123,7 +125,7 @@ export default function EditUserProfile() {
 			</div>
 			<UpdateProfile />
 
-			<div className="col-span-6 mb-12 mt-6 h-1 border-b-[1.5px]" />
+			<div className="col-span-6 mb-2 mt-1 h-1 border-b-[1.5px]" />
 			<div className="col-span-full flex flex-col gap-6">
 				<div>
 					<Link to="change-email">

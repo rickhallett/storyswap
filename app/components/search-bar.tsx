@@ -1,5 +1,7 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+
 import { useDebounce, useIsPending } from '#app/utils/misc.tsx';
+
 import { Icon } from './ui/icon.tsx';
 import { Input } from './ui/input.tsx';
 import { Label } from './ui/label.tsx';
@@ -7,10 +9,12 @@ import { StatusButton } from './ui/status-button.tsx';
 
 export function SearchBar({
 	status,
+	hideInput,
 	autoFocus = false,
 	autoSubmit = false,
 }: {
 	status: 'idle' | 'pending' | 'success' | 'error';
+	hideInput?: boolean;
 	autoFocus?: boolean;
 	autoSubmit?: boolean;
 }) {
@@ -36,15 +40,17 @@ export function SearchBar({
 				<Label htmlFor="search" className="sr-only">
 					Search
 				</Label>
-				<Input
-					type="search"
-					name="search"
-					id="search"
-					defaultValue={searchParams.get('search') ?? ''}
-					placeholder="Search"
-					className="w-full"
-					autoFocus={autoFocus}
-				/>
+				{!hideInput && (
+					<Input
+						type="search"
+						name="search"
+						id="search"
+						defaultValue={searchParams.get('search') ?? ''}
+						placeholder="Search"
+						className="w-full"
+						autoFocus={autoFocus}
+					/>
+				)}
 			</div>
 			<div>
 				<StatusButton

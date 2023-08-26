@@ -21,6 +21,7 @@ import vitest from './vitest.svg';
 import zod from './zod.svg';
 
 export { default as stars } from './stars.jpg';
+export { default as quitter } from './bookmarkquitter.jpg';
 
 export const logos = [
 	{

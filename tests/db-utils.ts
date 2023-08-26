@@ -1,7 +1,9 @@
 import fs from 'node:fs';
+
 import { faker } from '@faker-js/faker';
 import bcrypt from 'bcryptjs';
 import { UniqueEnforcer } from 'enforce-unique';
+
 import { getPasswordHash } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
 

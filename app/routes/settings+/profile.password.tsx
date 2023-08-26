@@ -1,8 +1,9 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
 import { z } from 'zod';
+
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { Button } from '#app/components/ui/button.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
@@ -148,12 +149,13 @@ export default function ChangePasswordRoute() {
 			/>
 			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="grid w-full grid-cols-2 gap-6">
-				<Button variant="secondary" asChild>
+				<Button variant="secondary" asChild className="text-body-xs">
 					<Link to="..">Cancel</Link>
 				</Button>
 				<StatusButton
 					type="submit"
 					status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+					className="text-body-xs"
 				>
 					Change Password
 				</StatusButton>

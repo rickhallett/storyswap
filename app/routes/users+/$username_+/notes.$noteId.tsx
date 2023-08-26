@@ -1,15 +1,16 @@
 import { useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
 	Link,
+	type V2_MetaFunction,
 	useActionData,
 	useLoaderData,
-	type V2_MetaFunction,
 } from '@remix-run/react';
 import { formatDistanceToNow } from 'date-fns';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
@@ -29,6 +30,7 @@ import {
 } from '#app/utils/permissions.ts';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
 import { useOptionalUser } from '#app/utils/user.ts';
+
 import { type loader as notesLoader } from './notes.tsx';
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -113,7 +115,7 @@ export default function NoteRoute() {
 
 	return (
 		<div className="absolute inset-0 flex flex-col px-10">
-			<h2 className="mb-2 pt-12 text-h2 lg:mb-6">{data.note.title}</h2>
+			<h2 className="mb-2 pt-12 text-h5 lg:mb-6">{data.note.title}</h2>
 			<div className={`${displayBar ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
 				<ul className="flex flex-wrap gap-5 py-5">
 					{data.note.images.map((image) => (
@@ -134,7 +136,7 @@ export default function NoteRoute() {
 			</div>
 			{displayBar ? (
 				<div className={floatingToolbarClassName}>
-					<span className="text-sm text-foreground/90 max-[524px]:hidden">
+					<span className="text-xs text-foreground/90">
 						<Icon name="clock" className="scale-125">
 							{data.timeAgo} ago
 						</Icon>
@@ -205,7 +207,7 @@ export const meta: V2_MetaFunction<
 			? data?.note.content.slice(0, 97) + '...'
 			: 'No content';
 	return [
-		{ title: `${noteTitle} | ${displayName}'s Notes | Epic Notes` },
+		{ title: `${noteTitle} | ${displayName}'s Notes | StorySwap` },
 		{
 			name: 'description',
 			content: noteContentsSummary,

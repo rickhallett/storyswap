@@ -1,20 +1,21 @@
 import { conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import {
-	json,
-	redirect,
 	type DataFunctionArgs,
 	type V2_MetaFunction,
+	json,
+	redirect,
 } from '@remix-run/node';
 import {
 	Form,
+	type Params,
 	useActionData,
 	useLoaderData,
 	useSearchParams,
-	type Params,
 } from '@remix-run/react';
 import { safeRedirect } from 'remix-utils';
 import { z } from 'zod';
+
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
 import { StatusButton } from '#app/components/ui/status-button.tsx';
@@ -31,6 +32,7 @@ import { invariant, useIsPending } from '#app/utils/misc.tsx';
 import { sessionStorage } from '#app/utils/session.server.ts';
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts';
 import { verifySessionStorage } from '#app/utils/verification.server.ts';
+
 import { type VerifyFunctionArgs } from './verify.tsx';
 
 export const onboardingEmailSessionKey = 'onboardingEmail';
@@ -183,7 +185,7 @@ export async function handleVerification({
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Setup Epic Notes Account' }];
+	return [{ title: 'Setup StorySwap Account' }];
 };
 
 export default function SignupRoute() {

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import chalk from 'chalk';
+
 import { singleton } from './singleton.server.ts';
 
 const prisma = singleton('prisma', () => {

@@ -1,7 +1,7 @@
-import { conform, useForm, type Submission } from '@conform-to/react';
+import { type Submission, conform, useForm } from '@conform-to/react';
 import { getFieldsetConstraint, parse } from '@conform-to/zod';
 import { generateTOTP, verifyTOTP } from '@epic-web/totp';
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
 	useActionData,
@@ -9,6 +9,7 @@ import {
 	useSearchParams,
 } from '@remix-run/react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList, Field } from '#app/components/forms.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
@@ -20,6 +21,7 @@ import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
 import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
+
 import {
 	handleVerification as handleLoginTwoFactorVerification,
 	shouldRequestTwoFA,
@@ -246,8 +248,8 @@ export default function VerifyRoute() {
 
 	const checkEmail = (
 		<>
-			<h1 className="text-h1">Check your email</h1>
-			<p className="mt-3 text-body-md text-muted-foreground">
+			<h1 className="text-h3">Check your email</h1>
+			<p className="mt-3 text-body-sm text-muted-foreground">
 				We've sent you a code to verify your email address.
 			</p>
 		</>

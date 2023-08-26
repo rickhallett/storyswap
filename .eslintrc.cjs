@@ -37,7 +37,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			plugins: ['remix-react-routes'],
+			plugins: ['remix-react-routes', 'import'],
 			files: appFiles,
 			excludedFiles: testFiles,
 			rules: {

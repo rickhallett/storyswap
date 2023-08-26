@@ -1,6 +1,7 @@
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
 import { SearchBar } from '#app/components/search-bar.tsx';
@@ -60,8 +61,8 @@ export default function UsersRoute() {
 	}
 
 	return (
-		<div className="container mb-48 mt-36 flex flex-col items-center justify-center gap-6">
-			<h1 className="text-h3">Story Swap Users</h1>
+		<div className="container mb-48 mt-6 flex flex-col items-center justify-center gap-6">
+			<h1 className="text-h3">StorySwap Users</h1>
 			<div className="w-full max-w-[700px] ">
 				<SearchBar status={data.status} autoFocus autoSubmit />
 			</div>

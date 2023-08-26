@@ -1,13 +1,15 @@
 import { type V2_MetaFunction } from '@remix-run/node';
+
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '#app/components/ui/tooltip.tsx';
+
 import { logos } from './logos/logos.ts';
 
-export const meta: V2_MetaFunction = () => [{ title: 'Story Swap' }];
+export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];
 
 export default function About() {
 	return (
@@ -21,7 +23,7 @@ export default function About() {
 						</div>
 						<div className="lg:pt-18 relative px-4 pb-8 pt-8 sm:px-6 sm:pb-14 sm:pt-16 lg:px-8 lg:pb-20">
 							<h1 className="text-center font-extrabold tracking-tight sm:text-2xl lg:text-4xl">
-								<span>Story Swap</span>
+								<span>StorySwap</span>
 								<svg
 									className="mx-auto mt-8"
 									xmlns="http://www.w3.org/2000/svg"

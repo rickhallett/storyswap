@@ -1,5 +1,6 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import { Link, Outlet, useMatches } from '@remix-run/react';
+
 import { Spacer } from '#app/components/spacer.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';
@@ -39,7 +40,7 @@ export default function EditUserProfile() {
 			<ul className="flex gap-3">
 				<li>
 					<Link
-						className="text-muted-foreground"
+						className="text-xs text-muted-foreground"
 						to={`/users/${user.username}`}
 					>
 						Profile
@@ -48,7 +49,7 @@ export default function EditUserProfile() {
 				{breadcrumbs.map((breadcrumb, i, arr) => (
 					<li
 						key={i}
-						className={cn('flex items-center gap-3', {
+						className={cn('flex items-center gap-2 text-xs', {
 							'text-muted-foreground': i < arr.length - 1,
 						})}
 					>

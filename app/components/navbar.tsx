@@ -23,29 +23,57 @@ const Navbar = () => {
 			<DropdownMenuTrigger asChild>
 				<Button asChild variant="secondary">
 					<Link
-						to={`/users/`}
+						to={'/'}
 						// this is for progressive enhancement
 						onClick={(e) => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
-						<Icon name="avatar" className="text-body-md" />
-						<span className="text-body">Home</span>
+						<Icon name="dashboard" className="text-body-md" />
+						<span className="text-body">Menu</span>
 					</Link>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuPortal>
 				<DropdownMenuContent sideOffset={8} align="start">
 					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/`}>
-							<Icon className="text-body-md" name="avatar">
-								Settings
+						<Link prefetch="intent" to={'/'}>
+							<Icon className="text-body-md" name="home">
+								Homepage
 							</Icon>
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/notes`}>
+						<Link prefetch="intent" to={'/users'}>
+							<Icon className="text-body-md" name="camera">
+								User Profiles
+							</Icon>
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link prefetch="intent" to={'/books'}>
 							<Icon className="text-body-md" name="pencil-2">
-								Books
+								Book Listings
+							</Icon>
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link prefetch="intent" to={'/'}>
+							<Icon className="text-body-md" name="bookmark">
+								Search Books
+							</Icon>
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link prefetch="intent" to={'/'}>
+							<Icon className="text-body-md" name="switch">
+								Swap Requests
+							</Icon>
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link prefetch="intent" to={'/'}>
+							<Icon className="text-body-md" name="pencil-1">
+								Reviews
 							</Icon>
 						</Link>
 					</DropdownMenuItem>

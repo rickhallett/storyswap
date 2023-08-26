@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--font-sans: monospace, Nunito Sans, Nunito Sans Fallback;
+
+		--radius: 0.5rem; 
+	}
+
+	.dark {
+
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}

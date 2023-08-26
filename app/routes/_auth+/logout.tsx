@@ -1,4 +1,5 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, redirect } from '@remix-run/node';
+
 import { logout } from '#app/utils/auth.server.ts';
 
 export async function loader() {

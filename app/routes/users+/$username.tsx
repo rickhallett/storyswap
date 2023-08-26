@@ -1,10 +1,11 @@
-import { json, type DataFunctionArgs } from '@remix-run/node';
+import { type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
 	Link,
-	useLoaderData,
 	type V2_MetaFunction,
+	useLoaderData,
 } from '@remix-run/react';
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { Spacer } from '#app/components/spacer.tsx';
 import { Button } from '#app/components/ui/button.tsx';
@@ -43,9 +44,9 @@ export default function ProfileRoute() {
 		<div className="container mb-48 mt-36 flex flex-col items-center justify-center">
 			<Spacer size="4xs" />
 
-			<div className="container flex flex-col items-center rounded-3xl bg-muted p-12">
-				<div className="relative w-40">
-					<div className="absolute -top-20">
+			<div className="container flex flex-col items-center rounded-3xl bg-muted p-10">
+				<div className="relative w-32">
+					<div className="absolute -top-32">
 						<div className="relative">
 							<img
 								src={getUserImgSrc(data.user.image?.id)}
@@ -77,12 +78,12 @@ export default function ProfileRoute() {
 					<div className="mt-10 flex gap-4">
 						{isLoggedInUser ? (
 							<>
-								<Button asChild>
+								<Button asChild size="lg" className="text-center text-xs">
 									<Link to="notes" prefetch="intent">
 										My notes
 									</Link>
 								</Button>
-								<Button asChild>
+								<Button asChild size="lg" className="text-center text-xs">
 									<Link to="/settings/profile" prefetch="intent">
 										Edit profile
 									</Link>
@@ -105,10 +106,10 @@ export default function ProfileRoute() {
 export const meta: V2_MetaFunction<typeof loader> = ({ data, params }) => {
 	const displayName = data?.user.name ?? params.username;
 	return [
-		{ title: `${displayName} | Epic Notes` },
+		{ title: `${displayName} | StorySwap` },
 		{
 			name: 'description',
-			content: `Profile of ${displayName} on Epic Notes`,
+			content: `Profile of ${displayName} on StorySwap`,
 		},
 	];
 };

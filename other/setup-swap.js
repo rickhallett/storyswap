@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { writeFile } from 'node:fs/promises';
+
 import { $ } from 'execa';
 
 console.log('setting up swapfile...');

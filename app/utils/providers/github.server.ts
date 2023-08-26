@@ -1,7 +1,9 @@
 import { redirect } from '@remix-run/node';
 import { GitHubStrategy } from 'remix-auth-github';
 import { z } from 'zod';
+
 import { sessionStorage } from '../session.server.ts';
+
 import { type AuthProvider } from './provider.ts';
 
 const GitHubUserSchema = z.object({ login: z.string() });

@@ -1,5 +1,6 @@
 import { redirect } from '@remix-run/node';
 import * as cookie from 'cookie';
+
 import { combineHeaders } from './misc.tsx';
 
 const cookieName = 'en_confetti';
