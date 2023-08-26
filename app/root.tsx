@@ -60,6 +60,7 @@ import { type Theme, getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
 import { useOptionalUser, useUser } from './utils/user.ts';
+// import bookListStyles from './styles/book-list-item.css';
 
 const RemixDevTools =
 	process.env.NODE_ENV === 'development'
@@ -247,8 +248,6 @@ function App() {
 	// const theme = useTheme()
 	const matches = useMatches();
 	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
-
-	console.log({ user, matches });
 
 	return (
 		<Document nonce={nonce} theme={'light'} env={data.ENV}>
