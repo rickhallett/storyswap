@@ -117,12 +117,11 @@ jobs:
             }}
 
       - name: 🌱 Seed Database
-        # if: steps.db-cache.outputs.cache-hit != 'true'
         run: npx prisma db seed
-        # env:
-        # MINIMAL_SEED: true
+      # env:
+      # MINIMAL_SEED: true
 
-  # playwright:
+      # playwright:
   #   name: 🎭 Playwright
   #   runs-on: ubuntu-latest
   #   timeout-minutes: 60
