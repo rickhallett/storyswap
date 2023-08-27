@@ -330,3 +330,4 @@
 - [] squash dev commits to eliminate deploy testing litter
 - [] configure eslint to order imports akin to CI
 - [] navbar dropdown icons
+- [] find out SQL join for user -> roles
