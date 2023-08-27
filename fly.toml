@@ -42,7 +42,7 @@ script_checks = [ ]
   timeout = "2s"
 
   [[services.http_checks]]
-  interval = "10s"
+  interval = "360s"
   grace_period = "5s"
   method = "get"
   path = "/resources/healthcheck"
