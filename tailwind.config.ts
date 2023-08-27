@@ -19,9 +19,13 @@ export default {
 		extend: {
 			...extendedTheme,
 			fontFamily: {
-				sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+				sans: [
+					'Inter var',
+					'var(--font-sans)',
+					...defaultTheme.fontFamily.sans,
+				],
 			},
 		},
 	},
-	plugins: [animatePlugin, radixPlugin],
+	plugins: [animatePlugin, radixPlugin, require('@tailwindcss/forms')],
 } satisfies Config;
