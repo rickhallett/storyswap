@@ -1,6 +1,7 @@
 import { parse } from '@conform-to/zod';
-// import { Disclosure, Menu, Transition } from '@headlessui/react';
-// import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Menu, Popover, Transition } from '@headlessui/react';
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	type DataFunctionArgs,
@@ -10,7 +11,6 @@ import {
 	json,
 } from '@remix-run/node';
 import {
-	Form,
 	Link,
 	Links,
 	LiveReload,
@@ -19,26 +19,15 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	useMatches,
-	useSubmit,
 } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
-import { Suspense, lazy, useRef, Fragment } from 'react';
+import { Suspense, lazy, Fragment } from 'react';
 import { z } from 'zod';
 
 import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
-import Navbar from './components/navbar.tsx';
-import { SearchBar } from './components/search-bar.tsx';
+import { Spacer } from './components/spacer.tsx';
 import { EpicToaster } from './components/toaster.tsx';
-import { Button } from './components/ui/button.tsx';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuTrigger,
-} from './components/ui/dropdown-menu.tsx';
 import { Icon, href as iconsHref } from './components/ui/icon.tsx';
 import fontStylestylesheetUrl from './styles/font.css';
 import interStylesheetUrl from './styles/inter.css';
@@ -51,24 +40,14 @@ import { getEnv } from './utils/env.server.ts';
 import {
 	combineHeaders,
 	getDomainUrl,
+	getUserImgSrc,
 	invariantResponse,
 } from './utils/misc.tsx';
 import { useNonce } from './utils/nonce-provider.ts';
 import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
-import { useOptionalUser, useUser } from './utils/user.ts';
-import { Menu, Popover, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
-import { namedAction } from 'remix-utils';
-
-const user = {
-	name: 'Tom Cook',
-	email: 'tom@example.com',
-	imageUrl:
-		'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
+import { useOptionalUser } from './utils/user.ts';
 
 function classNames(...classes: string[]) {
 	return classes.filter(Boolean).join(' ');
@@ -130,6 +109,7 @@ export async function loader({ request }: DataFunctionArgs) {
 						select: {
 							id: true,
 							name: true,
+							email: true,
 							username: true,
 							image: { select: { id: true } },
 							roles: {
@@ -256,17 +236,19 @@ function App() {
 	const data = useLoaderData<typeof loader>();
 	const nonce = useNonce();
 	const user = useOptionalUser();
-	const matches = useMatches();
+	// const matches = useMatches();
 	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
+	console.log({user})
+
 	const navigation = [
-		{ name: 'Home', href: '#', current: true },
-		{ name: 'User Profiles', href: '/users', current: false },
-		{ name: 'Book Listings', href: '/books', current: false },
-		{ name: 'Search Books', href: '#', current: false },
-		{ name: 'My Book Recommendations', href: '#', current: false },
-		{ name: 'Swap Requests', href: '#', current: false },
-		{ name: 'Reviews & Ratings', href: '#', current: false },
+		{ name: 'Home', href: '/', current: true, logo: 'home' },
+		{ name: 'Users', href: '/users', current: false, logo: 'avatar' },
+		{ name: 'Books', href: '/books', current: false },
+		{ name: 'Search', href: '#', current: false },
+		{ name: 'Recommendations', href: '#', current: false },
+		{ name: 'Swaps', href: '#', current: false },
+		{ name: 'Reviews', href: '#', current: false },
 		// { name: 'Location Matching', href: '#', current: false },
 		// { name: 'Environmental Impact Tracker', href: '#', current: false },
 		// { name: 'Barcode Scanner', href: '#', current: false },
@@ -276,11 +258,12 @@ function App() {
 		// { name: 'Tutorials & Onboarding', href: '#', current: false },
 		{ name: 'Donate', href: '#', current: false },
 	];
+
 	const userNavigation = [
-		{ name: 'Profile', href: `/users/${user.username}`, loggedIn: true },
+		{ name: 'Profile', href: `/users/${user?.username}`, loggedIn: true },
 		{
 			name: 'My Virtual Bookshelf',
-			href: `/users/${user.username}`,
+			href: `/users/${user?.username}`,
 			loggedIn: true,
 		},
 		{ name: 'Message Centre', href: '#', loggedIn: true },
@@ -288,7 +271,7 @@ function App() {
 		{ name: 'Logout', href: '#', loggedIn: true },
 	];
 
-	const MobileNavItem = ({ href, name }): React.JSX.Element => (
+	const MobileNavItem = ({ href, name }: {href: string, name: string}): React.JSX.Element => (
 		<a
 			href={href}
 			className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
@@ -309,14 +292,14 @@ function App() {
 										<div className="relative flex items-center justify-center py-5 lg:justify-between">
 											{/* Logo */}
 											<div className="absolute left-0 flex-shrink-0 lg:static">
-												<a href="#">
+												<Link to="/">
 													<span className="sr-only">Your Company</span>
 													<img
 														className="h-8 w-auto"
 														src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
 														alt="Your Company"
 													/>
-												</a>
+												</Link>
 											</div>
 
 											{/* Right section on desktop */}
@@ -338,7 +321,7 @@ function App() {
 															<span className="sr-only">Open user menu</span>
 															<img
 																className="h-8 w-8 rounded-full"
-																src={user.imageUrl}
+																src={getUserImgSrc(user?.image?.id)}
 																alt=""
 															/>
 														</Menu.Button>
@@ -520,16 +503,16 @@ function App() {
 																<div className="flex-shrink-0">
 																	<img
 																		className="h-10 w-10 rounded-full"
-																		src={user.imageUrl}
+																		src={getUserImgSrc(user?.image?.id)}
 																		alt=""
 																	/>
 																</div>
 																<div className="ml-3 min-w-0 flex-1">
 																	<div className="truncate text-base font-medium text-gray-800">
-																		{user.name}
+																		{user?.name}
 																	</div>
 																	<div className="truncate text-sm font-medium text-gray-500">
-																		{user.email}
+																		{user?.email}
 																	</div>
 																</div>
 																<button
@@ -568,32 +551,33 @@ function App() {
 						</Popover>
 						<main className="-mt-24 pb-8">
 							<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-								<h1 className="sr-only">Page title</h1>
+								<h1 className="sr-only">Main Content</h1>
 								{/* Main 3 column grid */}
 								<div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
 									{/* Left column */}
 									<div className="grid grid-cols-1 gap-4 lg:col-span-2">
 										<section aria-labelledby="section-1-title">
 											<h2 className="sr-only" id="section-1-title">
-												Section title
+												Navigation Output
 											</h2>
 											<div className="overflow-hidden rounded-lg bg-white shadow">
-												<div className="p-6">{/* Your content */}</div>
+												<div className="p-6"><Outlet /></div>
 											</div>
 										</section>
 									</div>
 
 									{/* Right column */}
-									<div className="grid grid-cols-1 gap-4">
+									{/* <div className="grid grid-cols-1 gap-4">
 										<section aria-labelledby="section-2-title">
 											<h2 className="sr-only" id="section-2-title">
 												Section title
 											</h2>
 											<div className="overflow-hidden rounded-lg bg-white shadow">
-												<div className="p-6">{/* Your content */}</div>
+												<div className="p-6">Search Results</div>
 											</div>
 										</section>
-									</div>
+									</div> */}
+
 								</div>
 							</div>
 						</main>
@@ -601,9 +585,10 @@ function App() {
 							<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 								<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
 									<span className="block sm:inline">
-										&copy; 2021 Your Company, Inc.
-									</span>{' '}
-									<span className="block sm:inline">All rights reserved.</span>
+										&copy; 2021 StorySwap
+									</span>
+									<Spacer size='4xs' />
+									<span className="block sm:inline"><a href='https://www.github.com/rickhallett/storyswap'><Icon name='github-logo' className='h-6 w-6' /> rickhallett</a></span>
 								</div>
 							</div>
 						</footer>
@@ -621,113 +606,62 @@ function App() {
 	);
 }
 
-function LegacyApp() {
-	const data = useLoaderData<typeof loader>();
-	const nonce = useNonce();
-	const user = useOptionalUser();
-	// const theme = useTheme()
-	const matches = useMatches();
-	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
-
-	return (
-		<Document nonce={nonce} theme={'light'} env={data.ENV}>
-			<div className="flex h-screen flex-col justify-between">
-				<header className="container py-6">
-					<nav className="flex items-center justify-between">
-						<Navbar />
-
-						{isOnSearchPage ? null : (
-							<div className="mx-auto">
-								<SearchBar status="idle" hideInput />
-							</div>
-						)}
-
-						<div className="flex items-center gap-10">
-							{user ? (
-								<UserDropdown />
-							) : (
-								<Button asChild variant="default" size="sm">
-									<Link to="/login">Log In</Link>
-								</Button>
-							)}
-						</div>
-					</nav>
-				</header>
-
-				<div className="flex-1">
-					<Outlet />
-				</div>
-				<Link to="/" className="p-2">
-					<div className="font-light">story</div>
-					<div className="font-bold">swap</div>
-				</Link>
-			</div>
-			<Confetti id={data.confettiId} />
-			<EpicToaster toast={data.toast} />
-			{RemixDevTools ? (
-				<Suspense>
-					<RemixDevTools />
-				</Suspense>
-			) : null}
-		</Document>
-	);
-}
 export default withSentry(App);
 
-function UserDropdown() {
-	const user = useUser();
-	const submit = useSubmit();
-	const formRef = useRef<HTMLFormElement>(null);
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button asChild variant="secondary">
-					<Link
-						to={`/users/${user.username}`}
-						// this is for progressive enhancement
-						onClick={(e) => e.preventDefault()}
-						className="flex items-center gap-2"
-					>
-						<Icon name="avatar" className="text-body-md" />
-						<span className="text-body">{user.name ?? user.username}</span>
-					</Link>
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuPortal>
-				<DropdownMenuContent sideOffset={8} align="start">
-					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/${user.username}`}>
-							<Icon className="text-body-md" name="avatar">
-								Profile
-							</Icon>
-						</Link>
-					</DropdownMenuItem>
-					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/${user.username}/notes`}>
-							<Icon className="text-body-md" name="pencil-2">
-								Notes
-							</Icon>
-						</Link>
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						asChild
-						// this prevents the menu from closing before the form submission is completed
-						onSelect={(event) => {
-							event.preventDefault();
-							submit(formRef.current);
-						}}
-					>
-						<Form action="/logout" method="POST" ref={formRef}>
-							<Icon className="text-body-md" name="exit">
-								<button type="submit">Logout</button>
-							</Icon>
-						</Form>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenuPortal>
-		</DropdownMenu>
-	);
-}
+// function UserDropdown() {
+// 	const user = useUser();
+// 	const submit = useSubmit();
+// 	const formRef = useRef<HTMLFormElement>(null);
+// 	return (
+// 		<DropdownMenu>
+// 			<DropdownMenuTrigger asChild>
+// 				<Button asChild variant="secondary">
+// 					<Link
+// 						to={`/users/${user.username}`}
+// 						// this is for progressive enhancement
+// 						onClick={(e) => e.preventDefault()}
+// 						className="flex items-center gap-2"
+// 					>
+// 						<Icon name="avatar" className="text-body-md" />
+// 						<span className="text-body">{user.name ?? user.username}</span>
+// 					</Link>
+// 				</Button>
+// 			</DropdownMenuTrigger>
+// 			<DropdownMenuPortal>
+// 				<DropdownMenuContent sideOffset={8} align="start">
+// 					<DropdownMenuItem asChild>
+// 						<Link prefetch="intent" to={`/users/${user.username}`}>
+// 							<Icon className="text-body-md" name="avatar">
+// 								Profile
+// 							</Icon>
+// 						</Link>
+// 					</DropdownMenuItem>
+// 					<DropdownMenuItem asChild>
+// 						<Link prefetch="intent" to={`/users/${user.username}/notes`}>
+// 							<Icon className="text-body-md" name="pencil-2">
+// 								Notes
+// 							</Icon>
+// 						</Link>
+// 					</DropdownMenuItem>
+// 					<DropdownMenuItem
+// 						asChild
+// 						// this prevents the menu from closing before the form submission is completed
+// 						onSelect={(event) => {
+// 							event.preventDefault();
+// 							submit(formRef.current);
+// 						}}
+// 					>
+// 						<Form action="/logout" method="POST" ref={formRef}>
+// 							<Icon className="text-body-md" name="exit">
+// 								<button type="submit">Logout</button>
+// 							</Icon>
+// 						</Form>
+// 					</DropdownMenuItem>
+// 				</DropdownMenuContent>
+// 			</DropdownMenuPortal>
+// 		</DropdownMenu>
+// 	);
+// }
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that

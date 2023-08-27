@@ -20,9 +20,9 @@
 
 #### Subtasks
 
-- [ ] Implement sign-up and login functionality using Remix and Prisma.
-- [ ] Create data schema for storing user profiles in Prisma.
-- [ ] Develop frontend components for personal bio and genre preferences using Remix and Tailwind.
+- [x] Implement sign-up and login functionality using Remix and Prisma.
+- [x] Create data schema for storing user profiles in Prisma.
+- [x] Develop frontend components for personal bio and genre preferences using Remix and Tailwind.
 - [ ] Implement API for CRUD operations on user profiles and books list.
 - [ ] Add a wishlist feature where users can add books they'd like to read.
 
@@ -32,7 +32,7 @@
 
 #### Subtasks
 
-- [ ] Create Prisma schema for book listings.
+- [x] Create Prisma schema for book listings.
 - [ ] Develop API endpoints to add a new book, including uploading photos and metadata.
 - [ ] Create frontend components for adding and editing book listings.
 - [ ] Implement a toggle feature to mark a book as 'Available for Swap' or 'Wishlist'.
@@ -53,7 +53,7 @@
 
 #### Subtasks
 
-- [ ] Create Prisma schema for swap requests and messages.
+- [x] Create Prisma schema for swap requests and messages.
 - [ ] Implement API for sending and receiving swap requests.
 - [ ] Develop a simple real-time messaging or chat system.
 - [ ] Create frontend components for swap requests and messaging.
@@ -74,7 +74,7 @@
 
 #### Subtasks
 
-- [ ] Create a Prisma schema for storing user reviews and ratings.
+- [x] Create a Prisma schema for storing user reviews and ratings.
 - [ ] Implement API endpoints for posting and retrieving ratings.
 - [ ] Create frontend UI for users to rate each other after a swap.
 
@@ -108,7 +108,7 @@
 
 #### Subtasks
 
-- [ ] Create the data schema in Prisma for user information
+- [x] Create the data schema in Prisma for user information
 - [ ] Implement the API endpoints for CRUD operations on user profiles using
       Node.js/Remix
 - [ ] Develop the frontend components in Remix and Tailwind
@@ -120,7 +120,7 @@
 
 #### Subtasks
 
-- [ ] Create the data schema in Prisma for book listings
+- [x] Create the data schema in Prisma for book listings
 - [ ] Implement API endpoints for CRUD operations on book listings
 - [ ] Create frontend components using Remix and Tailwind
 - [ ] Develop an option for users to report unsatisfactory book conditions
@@ -154,7 +154,7 @@
 
 #### Subtasks
 
-- [ ] Create data schema in Prisma for messages and swap requests
+- [x] Create data schema in Prisma for messages and swap requests
 - [ ] Implement API endpoints for messaging and swap requests
 - [ ] Develop frontend components for real-time messaging and notifications
 - [ ] Write tests for messaging and swap requests
@@ -322,4 +322,7 @@
 ---
 
 ## TODO list
+ - [] develop CRUD API for all data models
  - [] squash dev commits to eliminate deploy testing litter
+ - [] configure eslint to order imports akin to CI
+ - [] navbar dropdown icons
