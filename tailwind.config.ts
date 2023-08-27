@@ -2,6 +2,7 @@ import { type Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme.js';
 import animatePlugin from 'tailwindcss-animate';
 import radixPlugin from 'tailwindcss-radix';
+import tailWindForms from '@tailwindcss/forms'
 
 import { extendedTheme } from './app/utils/extended-theme.ts';
 
@@ -27,5 +28,5 @@ export default {
 			},
 		},
 	},
-	plugins: [animatePlugin, radixPlugin, require('@tailwindcss/forms')],
+	plugins: [animatePlugin, radixPlugin, tailWindForms],
 } satisfies Config;
