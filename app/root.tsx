@@ -239,7 +239,7 @@ function App() {
 	// const matches = useMatches();
 	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
-	console.log({user})
+	console.log({ user });
 
 	const navigation = [
 		{ name: 'Home', href: '/', current: true, logo: 'home' },
@@ -271,7 +271,13 @@ function App() {
 		{ name: 'Logout', href: '#', loggedIn: true },
 	];
 
-	const MobileNavItem = ({ href, name }: {href: string, name: string}): React.JSX.Element => (
+	const MobileNavItem = ({
+		href,
+		name,
+	}: {
+		href: string;
+		name: string;
+	}): React.JSX.Element => (
 		<a
 			href={href}
 			className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
@@ -561,7 +567,9 @@ function App() {
 												Navigation Output
 											</h2>
 											<div className="overflow-hidden rounded-lg bg-white shadow">
-												<div className="p-6"><Outlet /></div>
+												<div className="p-6">
+													<Outlet />
+												</div>
 											</div>
 										</section>
 									</div>
@@ -577,18 +585,20 @@ function App() {
 											</div>
 										</section>
 									</div> */}
-
 								</div>
 							</div>
 						</main>
 						<footer>
 							<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 								<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
+									<span className="block sm:inline">&copy; 2021 StorySwap</span>
+									<Spacer size="4xs" />
 									<span className="block sm:inline">
-										&copy; 2021 StorySwap
+										<a href="https://www.github.com/rickhallett/storyswap">
+											<Icon name="github-logo" className="h-6 w-6" />{' '}
+											rickhallett
+										</a>
 									</span>
-									<Spacer size='4xs' />
-									<span className="block sm:inline"><a href='https://www.github.com/rickhallett/storyswap'><Icon name='github-logo' className='h-6 w-6' /> rickhallett</a></span>
 								</div>
 							</div>
 						</footer>

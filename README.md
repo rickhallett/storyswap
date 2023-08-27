@@ -22,7 +22,8 @@
 
 - [x] Implement sign-up and login functionality using Remix and Prisma.
 - [x] Create data schema for storing user profiles in Prisma.
-- [x] Develop frontend components for personal bio and genre preferences using Remix and Tailwind.
+- [x] Develop frontend components for personal bio and genre preferences using
+      Remix and Tailwind.
 - [ ] Implement API for CRUD operations on user profiles and books list.
 - [ ] Add a wishlist feature where users can add books they'd like to read.
 
@@ -33,9 +34,11 @@
 #### Subtasks
 
 - [x] Create Prisma schema for book listings.
-- [ ] Develop API endpoints to add a new book, including uploading photos and metadata.
+- [ ] Develop API endpoints to add a new book, including uploading photos and
+      metadata.
 - [ ] Create frontend components for adding and editing book listings.
-- [ ] Implement a toggle feature to mark a book as 'Available for Swap' or 'Wishlist'.
+- [ ] Implement a toggle feature to mark a book as 'Available for Swap' or
+      'Wishlist'.
 
 ---
 
@@ -85,7 +88,8 @@
 #### Subtasks
 
 - [ ] Draft safety guidelines for safe meetups and transactions.
-- [ ] Create frontend components to display safety guidelines during the swap process.
+- [ ] Create frontend components to display safety guidelines during the swap
+      process.
 
 ---
 
@@ -98,7 +102,6 @@
 - [ ] Develop API endpoints for notifications.
 
 ---
-
 
 ## Planned Features
 
@@ -322,7 +325,8 @@
 ---
 
 ## TODO list
- - [] develop CRUD API for all data models
- - [] squash dev commits to eliminate deploy testing litter
- - [] configure eslint to order imports akin to CI
- - [] navbar dropdown icons
+
+- [] develop CRUD API for all data models
+- [] squash dev commits to eliminate deploy testing litter
+- [] configure eslint to order imports akin to CI
+- [] navbar dropdown icons

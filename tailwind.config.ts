@@ -1,8 +1,8 @@
+import tailWindForms from '@tailwindcss/forms';
 import { type Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme.js';
 import animatePlugin from 'tailwindcss-animate';
 import radixPlugin from 'tailwindcss-radix';
-import tailWindForms from '@tailwindcss/forms'
 
 import { extendedTheme } from './app/utils/extended-theme.ts';
 
