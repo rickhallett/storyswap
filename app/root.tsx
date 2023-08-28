@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { parse } from '@conform-to/zod';
 import { Menu, Popover, Transition } from '@headlessui/react';
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { HomeIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
@@ -11,6 +12,7 @@ import {
 	json,
 } from '@remix-run/node';
 import {
+	Form,
 	Link,
 	Links,
 	LiveReload,
@@ -21,7 +23,8 @@ import {
 	useLoaderData,
 } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
-import { Suspense, lazy, Fragment } from 'react';
+import classnames from 'classnames';
+import { Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
 
 import { Confetti } from './components/confetti.tsx';
@@ -47,6 +50,7 @@ import { useNonce } from './utils/nonce-provider.ts';
 import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
+import { type IconName } from './utils/types.tsx';
 import { useOptionalUser } from './utils/user.ts';
 
 function classNames(...classes: string[]) {
@@ -236,54 +240,99 @@ function App() {
 	const data = useLoaderData<typeof loader>();
 	const nonce = useNonce();
 	const user = useOptionalUser();
+	const formRef = useRef<HTMLFormElement>(null);
 	// const matches = useMatches();
 	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
-	console.log({ user });
+	const loggedIn = true || Boolean(user);
+
+	console.log({ loggedIn, user });
 
 	const navigation = [
 		{ name: 'Home', href: '/', current: true, logo: 'home' },
 		{ name: 'Users', href: '/users', current: false, logo: 'avatar' },
-		{ name: 'Books', href: '/books', current: false },
+		{ name: 'Books', href: '/books', current: false, logo: 'book' },
 		{ name: 'Search', href: '#', current: false },
 		{ name: 'Recommendations', href: '#', current: false },
 		{ name: 'Swaps', href: '#', current: false },
 		{ name: 'Reviews', href: '#', current: false },
-		// { name: 'Location Matching', href: '#', current: false },
-		// { name: 'Environmental Impact Tracker', href: '#', current: false },
-		// { name: 'Barcode Scanner', href: '#', current: false },
+		{ name: 'Location Matching', href: '#', current: false },
+		{ name: 'Environmental Impact Tracker', href: '#', current: false },
+		{ name: 'Barcode Scanner', href: '#', current: false },
 		{ name: 'Community', href: '#', current: false },
-		// { name: 'Integrations', href: '#', current: false },
-		// { name: 'Updates', href: '#', current: false },
-		// { name: 'Tutorials & Onboarding', href: '#', current: false },
+		{ name: 'Integrations', href: '#', current: false },
+		{ name: 'Updates', href: '#', current: false },
+		{ name: 'Tutorials & Onboarding', href: '#', current: false },
 		{ name: 'Donate', href: '#', current: false },
 	];
 
 	const userNavigation = [
-		{ name: 'Profile', href: `/users/${user?.username}`, loggedIn: true },
+		{
+			name: 'Profile',
+			href: `/users/${user?.username}`,
+			show: !loggedIn,
+			logo: 'avatar',
+		},
 		{
 			name: 'My Virtual Bookshelf',
 			href: `/users/${user?.username}`,
-			loggedIn: true,
+			show: !loggedIn,
+			logo: 'bookmark',
 		},
-		{ name: 'Message Centre', href: '#', loggedIn: true },
-		{ name: 'Settings', href: '#', loggedIn: true },
-		{ name: 'Logout', href: '#', loggedIn: true },
+		{ name: 'Message Centre', href: '#', show: !loggedIn, logo: 'pencil-2' },
+		{ name: 'Settings', href: '#', show: !loggedIn, logo: 'gear' },
+
+		{ name: 'Login', href: '/login', show: !loggedIn, logo: 'enter' },
 	];
 
 	const MobileNavItem = ({
 		href,
 		name,
+		show,
+		logo,
 	}: {
 		href: string;
 		name: string;
+		show: boolean;
+		logo: IconName;
 	}): React.JSX.Element => (
-		<a
-			href={href}
-			className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+		<Link
+			hidden={show}
+			to={href}
+			className={classnames(
+				'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+				{ hidden: show },
+			)}
 		>
-			{name}
-		</a>
+			<Icon className="text-body-md" name={logo}>
+				<button>{name}</button>
+			</Icon>
+		</Link>
+	);
+
+	const MobileUserNavItem = ({
+		href,
+		name,
+		show,
+		logo,
+	}: {
+		href: string;
+		name: string;
+		show: boolean;
+		logo: IconName;
+	}): React.JSX.Element => (
+		<Link
+			hidden={show}
+			to={href}
+			className={classnames(
+				'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+				{ hidden: show },
+			)}
+		>
+			<Icon className="text-body-md" name={logo}>
+				<button>{name}</button>
+			</Icon>
+		</Link>
 	);
 
 	return (
@@ -354,6 +403,17 @@ function App() {
 																	)}
 																</Menu.Item>
 															))}
+															<Menu.Item>
+																<Form
+																	action="/logout"
+																	method="POST"
+																	ref={formRef}
+																>
+																	<Icon className="text-body-md" name="exit">
+																		<button type="submit">Logout</button>
+																	</Icon>
+																</Form>
+															</Menu.Item>
 														</Menu.Items>
 													</Transition>
 												</Menu>
@@ -407,21 +467,25 @@ function App() {
 											<div className="grid grid-cols-3 items-center gap-8">
 												<div className="col-span-2">
 													<nav className="flex space-x-4">
-														{navigation.map((item) => (
-															<a
-																key={item.name}
-																href={item.href}
-																className={classNames(
-																	item.current
-																		? 'text-white'
-																		: 'text-indigo-100',
-																	'rounded-md bg-white bg-opacity-0 px-3 py-2 text-sm font-medium hover:bg-opacity-10',
-																)}
-																aria-current={item.current ? 'page' : undefined}
-															>
-																{item.name}
-															</a>
-														))}
+														{navigation.map((item) => {
+															return (
+																<a
+																	key={item.name}
+																	href={item.href}
+																	className={classNames(
+																		item.current
+																			? 'text-white'
+																			: 'text-indigo-100',
+																		'rounded-md bg-white bg-opacity-0 px-3 py-2 text-sm font-medium hover:bg-opacity-10',
+																	)}
+																	aria-current={
+																		item.current ? 'page' : undefined
+																	}
+																>
+																	{item.name}
+																</a>
+															);
+														})}
 													</nav>
 												</div>
 												<div>
@@ -537,14 +601,24 @@ function App() {
 															</div>
 															<div className="mt-3 space-y-1 px-2">
 																{userNavigation.map((item) => (
-																	<a
+																	<MobileUserNavItem
 																		key={item.name}
-																		href={item.href}
-																		className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
-																	>
-																		{item.name}
-																	</a>
+																		{...item}
+																	/>
 																))}
+																<Form
+																	action="/logout"
+																	method="POST"
+																	ref={formRef}
+																	className={classnames(
+																		'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+																		{ hidden: !loggedIn },
+																	)}
+																>
+																	<Icon className="text-body-md" name="exit">
+																		<button type="submit">Logout</button>
+																	</Icon>
+																</Form>
 															</div>
 														</div>
 													</div>

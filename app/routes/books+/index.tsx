@@ -25,7 +25,6 @@ export async function loader() {
 
 export default function BooksRoute() {
 	const books = useLoaderData<typeof loader>();
-	console.log({ books });
 	return (
 		<div className="container flex items-center justify-center p-5">
 			<div className="flex flex-col gap-6">
