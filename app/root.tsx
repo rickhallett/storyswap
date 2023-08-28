@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { parse } from '@conform-to/zod';
 import { Menu, Popover, Transition } from '@headlessui/react';
-import { HomeIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
@@ -31,7 +31,11 @@ import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
 import { Spacer } from './components/spacer.tsx';
 import { EpicToaster } from './components/toaster.tsx';
-import { Icon, href as iconsHref } from './components/ui/icon.tsx';
+import {
+	Icon,
+	href as iconsHref,
+	type IconName,
+} from './components/ui/icon.tsx';
 import fontStylestylesheetUrl from './styles/font.css';
 import interStylesheetUrl from './styles/inter.css';
 import tailwindStylesheetUrl from './styles/tailwind.css';
@@ -50,7 +54,6 @@ import { useNonce } from './utils/nonce-provider.ts';
 import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
-import { type IconName } from './utils/types.tsx';
 import { useOptionalUser } from './utils/user.ts';
 
 function classNames(...classes: string[]) {
@@ -249,59 +252,137 @@ function App() {
 	console.log({ loggedIn, user });
 
 	const navigation = [
-		{ name: 'Home', href: '/', current: true, logo: 'home' },
-		{ name: 'Users', href: '/users', current: false, logo: 'avatar' },
-		{ name: 'Books', href: '/books', current: false, logo: 'book' },
-		{ name: 'Search', href: '#', current: false },
-		{ name: 'Recommendations', href: '#', current: false },
-		{ name: 'Swaps', href: '#', current: false },
-		{ name: 'Reviews', href: '#', current: false },
-		{ name: 'Location Matching', href: '#', current: false },
-		{ name: 'Environmental Impact Tracker', href: '#', current: false },
-		{ name: 'Barcode Scanner', href: '#', current: false },
-		{ name: 'Community', href: '#', current: false },
-		{ name: 'Integrations', href: '#', current: false },
-		{ name: 'Updates', href: '#', current: false },
-		{ name: 'Tutorials & Onboarding', href: '#', current: false },
-		{ name: 'Donate', href: '#', current: false },
+		{ name: 'Home', href: '/', current: true, logo: 'home', hidden: false },
+		{
+			name: 'Users',
+			href: '/users',
+			current: false,
+			logo: 'avatar',
+			hidden: false,
+		},
+		{
+			name: 'Books',
+			href: '/books',
+			current: false,
+			logo: 'reader',
+			hidden: false,
+		},
+		{
+			name: 'Search',
+			href: '#',
+			current: false,
+			logo: 'magnifying-glass',
+			hidden: false,
+		},
+		{
+			name: 'Recommendations',
+			href: '#',
+			current: false,
+			logo: 'star',
+			hidden: false,
+		},
+		{ name: 'Swaps', href: '#', current: false, logo: 'person', hidden: false },
+		{
+			name: 'Reviews',
+			href: '#',
+			current: false,
+			logo: 'pencil-1',
+			hidden: false,
+		},
+		{
+			name: 'Location Matching',
+			href: '#',
+			current: false,
+			logo: 'globe',
+			hidden: false,
+		},
+		{
+			name: 'Environmental Impact Tracker',
+			href: '#',
+			current: false,
+			logo: 'bar-chart',
+			hidden: false,
+		},
+		{
+			name: 'Barcode Scanner',
+			href: '#',
+			current: false,
+			logo: 'line-height',
+			hidden: false,
+		},
+		{
+			name: 'Community',
+			href: '#',
+			current: false,
+			logo: 'face',
+			hidden: false,
+		},
+		{
+			name: 'Integrations',
+			href: '#',
+			current: false,
+			logo: 'space-evenly-horizontally',
+			hidden: false,
+		},
+		{
+			name: 'Updates',
+			href: '#',
+			current: false,
+			logo: 'update',
+			hidden: false,
+		},
+		{
+			name: 'Tutorials & Onboarding',
+			href: '#',
+			current: false,
+			logo: 'question-mark-circled',
+			hidden: false,
+		},
+		{
+			name: 'Donate',
+			href: '#',
+			current: false,
+			logo: 'code',
+			hidden: false,
+		},
 	];
 
 	const userNavigation = [
 		{
 			name: 'Profile',
 			href: `/users/${user?.username}`,
-			show: !loggedIn,
+			hidden: !loggedIn,
 			logo: 'avatar',
 		},
 		{
 			name: 'My Virtual Bookshelf',
 			href: `/users/${user?.username}`,
-			show: !loggedIn,
+			hidden: !loggedIn,
 			logo: 'bookmark',
 		},
-		{ name: 'Message Centre', href: '#', show: !loggedIn, logo: 'pencil-2' },
-		{ name: 'Settings', href: '#', show: !loggedIn, logo: 'gear' },
+		{ name: 'Message Centre', href: '#', hidden: !loggedIn, logo: 'pencil-2' },
+		{ name: 'Settings', href: '#', hidden: !loggedIn, logo: 'gear' },
 
-		{ name: 'Login', href: '/login', show: !loggedIn, logo: 'enter' },
+		{ name: 'Login', href: '/login', hidden: !loggedIn, logo: 'enter' },
 	];
 
 	const MobileNavItem = ({
 		href,
 		name,
-		show,
+		hidden,
 		logo,
 	}: {
 		href: string;
 		name: string;
-		show: boolean;
+		hidden: boolean;
 		logo: IconName;
 	}): React.JSX.Element => (
 		<Link
-			hidden={show}
+			hidden={hidden}
 			to={href}
 			className={classnames(
 				'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-				{ hidden: show },
+				{ hidden },
 			)}
 		>
 			<Icon className="text-body-md" name={logo}>
@@ -313,20 +394,20 @@ function App() {
 	const MobileUserNavItem = ({
 		href,
 		name,
-		show,
+		hidden,
 		logo,
 	}: {
 		href: string;
 		name: string;
-		show: boolean;
+		hidden: boolean;
 		logo: IconName;
 	}): React.JSX.Element => (
 		<Link
-			hidden={show}
+			hidden={hidden}
 			to={href}
 			className={classnames(
 				'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-				{ hidden: show },
+				{ hidden },
 			)}
 		>
 			<Icon className="text-body-md" name={logo}>
