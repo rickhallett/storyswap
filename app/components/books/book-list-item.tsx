@@ -1,8 +1,8 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import React from 'react';
-import { Button } from './button.tsx';
-import { Icon } from './icon.tsx';
-import { Label } from './label.tsx';
+import { Button } from '../ui/button.tsx';
+import { Icon } from '../ui/icon.tsx';
+import { Label } from '../ui/label.tsx';
 
 const BookListItem = ({ book }: { book: any }) => (
 	<Tabs.Root className="TabsRoot min-h-[170px] bg-slate-50" defaultValue="tab1">

@@ -108,8 +108,6 @@ export async function loader({ request }: DataFunctionArgs) {
 		desc: 'getUserId in root',
 	});
 
-	console.log({ request: request.headers });
-
 	const user = userId
 		? await time(
 				() =>
@@ -152,7 +150,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		{ name: 'Users', value: usersCount },
 		{ name: 'Books', value: booksCount },
 		{ name: 'Swaps', value: swapRequestCount },
-		{ name: 'Hits', value: trafficCount },
+		{ name: 'Visitors', value: trafficCount },
 	];
 
 	return json(
@@ -255,7 +253,7 @@ function App() {
 	);
 
 	const Main = () => (
-		<main className="-mt-24 pb-8">
+		<main className="-mt-24 min-h-[75vh] pb-8">
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 				<h1 className="sr-only">Main Content</h1>
 				<div className="grid grid-cols-1 items-start gap-4 lg:gap-8">
@@ -277,15 +275,15 @@ function App() {
 	);
 
 	const Footer = () => (
-		<footer>
+		<footer className="sticky bottom-0 left-0 right-0">
 			<WebsiteStats stats={data.stats} />
 			<div className="mx-auto max-w-3xl bg-indigo-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-400">
+				<div className="border-t border-gray-200 py-4 text-center text-sm text-gray-400">
 					<span className="block sm:inline">&copy; 2021 StorySwap</span>
-					<Spacer size="4xs" />
+					<Spacer size="6xs" />
 					<span className="block sm:inline">
 						<a href="https://www.github.com/rickhallett/storyswap">
-							<Icon name="github-logo" className="h-6 w-6" /> rickhallett
+							<Icon name="github-logo" className="h-4 w-4" /> rickhallett
 						</a>
 					</span>
 				</div>
@@ -295,7 +293,7 @@ function App() {
 
 	return (
 		<Document nonce={nonce} env={data.ENV}>
-			<div className="h-screen">
+			<div className="h-fit">
 				<Header />
 				<Main />
 				<Footer />

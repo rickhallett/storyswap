@@ -6,6 +6,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'avatar',
 		hidden: false,
+		disabled: false,
 	},
 	{
 		name: 'Books',
@@ -13,6 +14,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'reader',
 		hidden: false,
+		disabled: false,
 	},
 	{
 		name: 'Search',
@@ -20,6 +22,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'magnifying-glass',
 		hidden: false,
+		disabled: true,
 	},
 	{
 		name: 'Recommendations',
@@ -27,14 +30,16 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'star',
 		hidden: false,
+		disabled: true,
 	},
-	{ name: 'Swaps', href: '#', current: false, logo: 'person', hidden: false },
+	{ name: 'Swaps', href: '#', current: false, logo: 'person', hidden: false, disabled: true },
 	{
 		name: 'Reviews',
 		href: '#',
 		current: false,
 		logo: 'pencil-1',
 		hidden: false,
+		disabled: true,
 	},
 	{
 		name: 'Location Matching',
@@ -42,6 +47,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'globe',
 		hidden: false,
+		disabled: true,
 	},
 	{
 		name: 'Environmental Impact Tracker',
@@ -49,6 +55,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'bar-chart',
 		hidden: true,
+		disabled: true,
 	},
 	{
 		name: 'Barcode Scanner',
@@ -56,6 +63,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'line-height',
 		hidden: true,
+		disabled: true,
 	},
 	{
 		name: 'My Community',
@@ -63,6 +71,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'face',
 		hidden: false,
+		disabled: true,
 	},
 	{
 		name: 'Integrations',
@@ -70,6 +79,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'space-evenly-horizontally',
 		hidden: true,
+		disabled: true,
 	},
 	{
 		name: 'Updates',
@@ -77,6 +87,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'update',
 		hidden: true,
+		disabled: true,
 	},
 	{
 		name: 'Tutorials & Onboarding',
@@ -84,6 +95,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'question-mark-circled',
 		hidden: true,
+		disabled: true,
 	},
 	{
 		name: 'Donate',
