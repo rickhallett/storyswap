@@ -83,7 +83,6 @@ export async function handleNewSession(
 			data: {
 				type: 'login',
 				user: { connect: { id: session.userId } },
-				session: { connect: { id: session.id } },
 				ip: request.headers.get('cf-connecting-ip') ?? undefined,
 				userAgent: request.headers.get('user-agent') ?? undefined,
 			},
@@ -111,7 +110,6 @@ export async function handleNewSession(
 			data: {
 				type: 'login',
 				user: { connect: { id: session.userId } },
-				session: { connect: { id: session.id } },
 				ip: request.headers.get('cf-connecting-ip') ?? undefined,
 				userAgent: request.headers.get('user-agent') ?? undefined,
 			},

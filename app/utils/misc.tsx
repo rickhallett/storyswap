@@ -29,7 +29,7 @@ export function getErrorMessage(error: unknown) {
 }
 
 function formatColors() {
-	const colors = [];
+	const colors: any[] = [];
 	for (const [key, color] of Object.entries(extendedTheme.colors)) {
 		if (typeof color === 'string') {
 			colors.push(key);
