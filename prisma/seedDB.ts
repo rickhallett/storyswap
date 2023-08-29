@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
+import { goodreads } from '#app/mockdata/goodreads.ts';
 import { prisma } from '#app/utils/db.server.ts';
 import {
 	BOOK_CONDITIONS,
 	BOOK_STATUSES,
-	GENRES,
 } from '#constants/prisma.constants.ts';
 
 import { createPassword, createUser, getNoteImages } from '#tests/db-utils.ts';
@@ -82,7 +82,6 @@ export async function seedDB() {
 	console.time('👑 Created superadmin');
 	await prisma.user
 		.create({
-			select: { id: true },
 			data: {
 				username: 'superadmin',
 				name: 'Super Admin',
@@ -94,13 +93,13 @@ export async function seedDB() {
 		.catch((e) => console.error('Error creating user', e));
 	console.timeEnd('👑 Created superadmin');
 
-	// if (process.env.MINIMAL_SEED) {
-	// 	console.log('👍 Minimal seed complete');
-	// 	console.timeEnd(`🌱 Database has been seeded`);
-	// 	return;
-	// }
+	if (process.env.MINIMAL_SEED) {
+		console.log('👍 Minimal seed complete');
+		console.timeEnd(`🌱 Database has been seeded`);
+		return;
+	}
 
-	const totalUsers = 5;
+	const totalUsers = 20;
 	console.time(`👤 Created ${totalUsers} users...`);
 	const noteImages = await getNoteImages();
 
@@ -108,7 +107,6 @@ export async function seedDB() {
 		const userData = createUser();
 		await prisma.user
 			.create({
-				select: { id: true },
 				data: {
 					...userData,
 					password: { create: createPassword(userData.username) },
@@ -142,7 +140,6 @@ export async function seedDB() {
 	console.time('🌱 Seeded book status');
 	for (const status of Object.keys(BOOK_STATUSES)) {
 		await prisma.bookStatus.create({
-			select: { id: true },
 			data: {
 				name: status,
 			},
@@ -153,7 +150,6 @@ export async function seedDB() {
 	console.time('🌱 Seeded book conditions');
 	for (const condition of Object.keys(BOOK_CONDITIONS)) {
 		await prisma.bookCondition.create({
-			select: { id: true },
 			data: {
 				name: condition,
 			},
@@ -162,58 +158,53 @@ export async function seedDB() {
 	console.timeEnd('🌱 Seeded book conditions');
 
 	console.time('🌱 Seeded book genres');
-	for (const genreName of Object.keys(GENRES)) {
+
+	for (const category of goodreads) {
 		await prisma.genre.create({
-			select: { id: true },
 			data: {
-				name: genreName,
+				name: category.genre.toUpperCase(),
 			},
 		});
 	}
 	console.timeEnd('🌱 Seeded book genres');
 
 	console.time('🌱 Seeded books');
-	const fakeBooksCount = 5;
-	console.time(`🌱 Seeded ${fakeBooksCount} books`);
-	const usersAll = await prisma.user.findMany();
+	const superadmin = await prisma.user.findUnique({
+		where: { username: 'superadmin' },
+	});
 	const bookStatusAll = await prisma.bookStatus.findMany();
 	const bookConditionsAll = await prisma.bookCondition.findMany();
-	const bookGenreAll = await prisma.genre.findMany();
+	const condition =
+		bookConditionsAll[
+			faker.number.int({ min: 0, max: bookConditionsAll.length - 1 })
+		];
 
-	for (let i = 0; i < fakeBooksCount; i++) {
-		const condition =
-			bookConditionsAll[
-				faker.number.int({ min: 0, max: bookConditionsAll.length - 1 })
-			];
+	const status =
+		bookStatusAll[faker.number.int({ min: 0, max: bookStatusAll.length - 1 })];
 
-		const status =
-			bookStatusAll[
-				faker.number.int({ min: 0, max: bookStatusAll.length - 1 })
-			];
-
-		const genre =
-			bookGenreAll[faker.number.int({ min: 0, max: bookGenreAll.length - 1 })];
-
-		await prisma.book.create({
-			select: { id: true },
-			data: {
-				user: { connect: { id: usersAll[i].id } },
-				title: faker.animal.cat(),
-				author: faker.person.fullName(),
-				description: faker.person.bio(),
-				condition: {
-					connect: {
-						id: condition.id,
-					},
+	for (const category of goodreads) {
+		for (const book of category.books) {
+			const genre = await prisma.genre.findUniqueOrThrow({
+				where: { name: category.genre.toUpperCase() },
+				select: { id: true },
+			});
+			await prisma.book.create({
+				select: { id: true },
+				data: {
+					user: { connect: { id: superadmin?.id } },
+					title: book.title,
+					author: book.author,
+					genre: { connect: { id: genre.id } },
+					condition: { connect: { id: condition.id } },
+					status: { connect: { id: status.id } },
+					smallImageURL: book.smallImageURL,
+					goodreadsId: book.id,
+					goodreadsRating: book.rating,
+					goodreadsRatings: book.ratings,
+					publicationYear: book.publicationYear,
 				},
-				status: {
-					connect: {
-						id: status.id,
-					},
-				},
-				genre: { connect: { id: genre.id } },
-			},
-		});
+			});
+		}
 	}
 	console.timeEnd('🌱 Seeded books');
 

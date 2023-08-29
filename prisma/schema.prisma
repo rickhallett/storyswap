@@ -42,22 +42,26 @@ model Genre {
 }
 
 model Book {
-  id           String        @id @default(uuid())
-  title        String
-  author       String
-  genreId      String        // Foreign key for Genre
-  conditionId  String        // Foreign key for BookCondition
-  statusId     String        // Foreign key for BookStatus
-  userId       String        // Foreign key for User
-  genre        Genre         @relation("bookGenres", fields: [genreId], references: [id])
-  description  String?
-  condition    BookCondition @relation(fields: [conditionId], references: [id])
-  status       BookStatus    @relation(fields: [statusId], references: [id])
-  created_at   DateTime      @default(now())
-  user         User          @relation(fields: [userId], references: [id])
-  swapRequests SwapRequest[]
+  id               String        @id @default(uuid())
+  title            String
+  author           String
+  genreId          String // Foreign key for Genre
+  conditionId      String // Foreign key for BookCondition
+  statusId         String // Foreign key for BookStatus
+  userId           String // Foreign key for User
+  genre            Genre         @relation("bookGenres", fields: [genreId], references: [id])
+  description      String?
+  condition        BookCondition @relation(fields: [conditionId], references: [id])
+  status           BookStatus    @relation(fields: [statusId], references: [id])
+  created_at       DateTime      @default(now())
+  user             User          @relation(fields: [userId], references: [id])
+  smallImageURL    String
+  goodreadsId      Int
+  goodreadsRating  Int
+  goodreadsRatings Int
+  publicationYear  Int?
+  swapRequests     SwapRequest[]
 }
-
 
 model BookStatus {
   id    String @id @default(uuid())
@@ -72,11 +76,11 @@ model BookCondition {
 }
 
 model SwapRequest {
-  id          String            @id @default(uuid())
-  created_at  DateTime          @default(now())
-  user        User              @relation(fields: [id], references: [id])
-  book        Book              @relation(fields: [id], references: [id])
-  status      SwapRequestStatus @relation(fields: [id], references: [id])
+  id         String            @id @default(uuid())
+  created_at DateTime          @default(now())
+  user       User              @relation(fields: [id], references: [id])
+  book       Book              @relation(fields: [id], references: [id])
+  status     SwapRequestStatus @relation(fields: [id], references: [id])
 }
 
 model SwapRequestStatus {
@@ -94,12 +98,12 @@ model Message {
 }
 
 model Review {
-  id             String   @id @default(uuid())
-  rating         Int
-  comment        String?
-  created_at     DateTime @default(now())
-  reviewer       User     @relation("writtenReviews", fields: [id], references: [id])
-  reviewedUser   User     @relation("receivedReviews", fields: [id], references: [id])
+  id           String   @id @default(uuid())
+  rating       Int
+  comment      String?
+  created_at   DateTime @default(now())
+  reviewer     User     @relation("writtenReviews", fields: [id], references: [id])
+  reviewedUser User     @relation("receivedReviews", fields: [id], references: [id])
 }
 
 model Note {
