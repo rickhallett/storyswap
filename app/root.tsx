@@ -53,6 +53,7 @@ import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
 import { useOptionalUser, isUser } from './utils/user.ts';
+import WebsiteStats from './components/stats.tsx';
 
 const RemixDevToolsMode = () => {
 	const RemixDevTools =
@@ -218,7 +219,7 @@ function Document({
 	env?: Record<string, string>;
 }) {
 	return (
-		<html lang="en" className={'h-full bg-gray-100'}>
+		<html lang="en" className={'h-full bg-indigo-600'}>
 			<head>
 				<ClientHintCheck nonce={nonce} />
 				<Meta />
@@ -568,8 +569,9 @@ function App() {
 
 	const Footer = () => (
 		<footer>
+			<WebsiteStats />
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-400">
 					<span className="block sm:inline">&copy; 2021 StorySwap</span>
 					<Spacer size="4xs" />
 					<span className="block sm:inline">
