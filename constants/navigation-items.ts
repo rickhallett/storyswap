@@ -32,7 +32,14 @@ export const getNavigationLinks = (user: any) => [
 		hidden: false,
 		disabled: true,
 	},
-	{ name: 'Swaps', href: '#', current: false, logo: 'person', hidden: false, disabled: true },
+	{
+		name: 'Swaps',
+		href: '#',
+		current: false,
+		logo: 'person',
+		hidden: false,
+		disabled: true,
+	},
 	{
 		name: 'Reviews',
 		href: '#',

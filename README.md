@@ -340,4 +340,5 @@
 - [] build out concept of a "suggest me a book" based on reading/swap history.
   Is there an api for this?
 - [] research: can the app be integrated with goodreads accounts?
-- [] BUG: books index calls loader many times, repeating the same if logging out from that page. Why?
+- [] BUG: books index calls loader many times, repeating the same if logging out
+  from that page. Why?
