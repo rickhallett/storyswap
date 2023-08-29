@@ -1,8 +1,8 @@
 import { EnvelopeIcon } from '@heroicons/react/20/solid';
 import { Link } from '@remix-run/react';
-import { getUserImgSrc } from '#app/utils/misc.tsx';
 import classnames from 'classnames';
 import { Icon } from '#app/components/ui/icon.tsx';
+import { getUserImgSrc } from '#app/utils/misc.tsx';
 
 export default function UserListItem({ users, isPending }) {
 	return (

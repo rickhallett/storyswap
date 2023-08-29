@@ -1,6 +1,6 @@
 import { type DataFunctionArgs, json } from '@remix-run/node';
-import { prisma } from '#app/utils/db.server.ts';
 import { useLoaderData } from '@remix-run/react';
+import { prisma } from '#app/utils/db.server.ts';
 
 export async function loader({ params }: DataFunctionArgs) {
 	const ownedBooks = await prisma.book.findMany({

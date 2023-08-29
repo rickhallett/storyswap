@@ -3,9 +3,9 @@ import {
 	json,
 	type LinksFunction,
 } from '@remix-run/node';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData, useRouteLoaderData } from '@remix-run/react';
+import BookListCards from '#app/components/books/book-list-card.tsx';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
-import BookListItem from '#app/components/books/book-list-item.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
 import bookListStyles from '#app/styles/book-list-item.css';
 import { requireUserId } from '#app/utils/auth.server.ts';
@@ -39,15 +39,19 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export default function BooksRoute() {
+	const data = useRouteLoaderData('root');
 	const { books } = useLoaderData<typeof loader>();
+
+	console.log(books);
 
 	return (
 		<div className="container flex items-center justify-center p-5">
 			<div className="flex flex-col gap-6">
 				{/* <Outlet /> */}
-				{books.map((book) => (
+				{/* {books.map((book) => (
 					<BookListItem key={book.id} book={book} />
-				))}
+				))} */}
+				<BookListCards books={books} user={data.user} />
 				<Link to="/" className="text-body-md underline">
 					<Icon name="arrow-left">Back to home</Icon>
 				</Link>

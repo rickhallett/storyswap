@@ -1,13 +1,13 @@
 import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
 import { SearchBar } from '#app/components/search-bar.tsx';
+import UserListItem from '#app/components/users/user-list-item.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
 import { useDelayedIsPending } from '#app/utils/misc.tsx';
-import UserListItem from '#app/components/users/user-list-item.tsx';
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),
