@@ -32,6 +32,7 @@ model User {
   receivedMessages Message[]     @relation("receivedMessages")
   writtenReviews   Review[]      @relation("writtenReviews")
   receivedReviews  Review[]      @relation("receivedReviews")
+  Traffic          Traffic[]
 }
 
 model Genre {
@@ -243,4 +244,15 @@ model Connection {
 
   @@unique([providerName, providerId])
   @@unique([providerId, userId])
+}
+
+model Traffic {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  type      String
+  user      User    @relation(fields: [userId], references: [id])
+  ip        String?
+  userAgent String?
+  userId    String
 }

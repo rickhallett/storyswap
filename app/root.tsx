@@ -108,6 +108,8 @@ export async function loader({ request }: DataFunctionArgs) {
 		desc: 'getUserId in root',
 	});
 
+	console.log({ request: request.headers });
+
 	const user = userId
 		? await time(
 				() =>
@@ -144,12 +146,13 @@ export async function loader({ request }: DataFunctionArgs) {
 	const usersCount = await prisma.user.count();
 	const booksCount = await prisma.book.count();
 	const swapRequestCount = await prisma.swapRequest.count();
+	const trafficCount = await prisma.traffic.count();
 
 	const stats: Stat[] = [
 		{ name: 'Users', value: usersCount },
 		{ name: 'Books', value: booksCount },
 		{ name: 'Swaps', value: swapRequestCount },
-		{ name: 'Hits', value: '1' },
+		{ name: 'Hits', value: trafficCount },
 	];
 
 	return json(

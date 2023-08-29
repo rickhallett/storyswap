@@ -78,6 +78,17 @@ export async function handleNewSession(
 			redirectUrl.searchParams.set('remember', 'on');
 		}
 		redirectUrl.searchParams.sort();
+
+		await prisma.traffic.create({
+			data: {
+				type: 'login',
+				user: { connect: { id: session.userId } },
+				session: { connect: { id: session.id } },
+				ip: request.headers.get('cf-connecting-ip') ?? undefined,
+				userAgent: request.headers.get('user-agent') ?? undefined,
+			},
+		});
+
 		return redirect(
 			`${redirectUrl.pathname}?${redirectUrl.searchParams}`,
 			combineResponseInits(
@@ -95,6 +106,16 @@ export async function handleNewSession(
 			request.headers.get('cookie'),
 		);
 		cookieSession.set(sessionKey, session.id);
+
+		await prisma.traffic.create({
+			data: {
+				type: 'login',
+				user: { connect: { id: session.userId } },
+				session: { connect: { id: session.id } },
+				ip: request.headers.get('cf-connecting-ip') ?? undefined,
+				userAgent: request.headers.get('user-agent') ?? undefined,
+			},
+		});
 
 		return redirect(
 			safeRedirect(redirectTo),
