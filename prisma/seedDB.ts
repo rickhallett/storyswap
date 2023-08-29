@@ -1,10 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { goodreads } from '#app/mockdata/goodreads.ts';
 import { prisma } from '#app/utils/db.server.ts';
-import {
-	BOOK_CONDITIONS,
-	BOOK_STATUSES,
-} from '#constants/prisma.constants.ts';
+import { BOOK_CONDITIONS, BOOK_STATUSES } from '#constants/prisma.constants.ts';
 
 import { createPassword, createUser, getNoteImages } from '#tests/db-utils.ts';
 

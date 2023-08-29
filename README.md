@@ -333,7 +333,10 @@
 - [] find out SQL join for user -> roles
 - [] add user nav config to conditionally render nav items
 - [] split root layout into separate components
-- [] use [open library](https://covers.openlibrary.org/w/id/6979861-M.jpg) for book cover images; create a service that fetches them on upload
-- [] use goodreads api to add descriptions to added books; create a service that fetches them on upload
-- [] build out concept of a "suggest me a book" based on reading/swap history. Is there an api for this?
+- [] use [open library](https://covers.openlibrary.org/w/id/6979861-M.jpg) for
+  book cover images; create a service that fetches them on upload
+- [] use goodreads api to add descriptions to added books; create a service that
+  fetches them on upload
+- [] build out concept of a "suggest me a book" based on reading/swap history.
+  Is there an api for this?
 - [] research: can the app be integrated with goodreads accounts?

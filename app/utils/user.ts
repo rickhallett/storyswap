@@ -3,7 +3,9 @@ import { useRouteLoaderData } from '@remix-run/react';
 
 import { type loader as rootLoader } from '#app/root.tsx';
 
-export function isUser(user: any): user is SerializeFrom<typeof rootLoader>['user'] {
+export function isUser(
+	user: any,
+): user is SerializeFrom<typeof rootLoader>['user'] {
 	return user && typeof user === 'object' && typeof user.id === 'string';
 }
 
