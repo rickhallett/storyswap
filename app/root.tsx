@@ -24,10 +24,11 @@ import {
 } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
 import classnames from 'classnames';
+import * as React from 'react';
 import { Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
-import { navigation } from '../constants/navigation-items.ts';
-import { getUserNavigation } from '../constants/user-navigation-items.ts';
+import { getNavigationLinks } from '../constants/navigation-items.ts';
+import { getUserNavigationLinks } from '../constants/user-navigation-items.ts';
 import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
 import { Spacer } from './components/spacer.tsx';
@@ -51,7 +52,7 @@ import { useNonce } from './utils/nonce-provider.ts';
 import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
-import { useOptionalUser } from './utils/user.ts';
+import { useOptionalUser, isUser } from './utils/user.ts';
 
 const RemixDevToolsMode = () => {
 	const RemixDevTools =
@@ -249,14 +250,9 @@ function App() {
 	const nonce = useNonce();
 	const user = useOptionalUser();
 	const formRef = useRef<HTMLFormElement>(null);
-	// const matches = useMatches();
-	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
 
-	const loggedIn = true || Boolean(user);
-
-	console.log({ loggedIn, user });
-
-	const userNavigation = getUserNavigation({ user, loggedIn });
+	const navigationItems = getNavigationLinks({ user });
+	const userNavigationItems = getUserNavigationLinks({ user });
 
 	const MobileNavItem = ({
 		href,
@@ -303,25 +299,26 @@ function App() {
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<Menu.Items className="absolute -right-2 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-					{userNavigation.map((item) => (
+					{userNavigationItems.map((item) => (
 						<Menu.Item key={item.name}>
 							<MobileNavItem {...item} />
 						</Menu.Item>
 					))}
-					<Menu.Item>
-						<Form
-							action="/logout"
-							method="POST"
-							ref={formRef}
-							className={classnames(
-								'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-								{ hidden: !loggedIn },
-							)}
-						>
-							<Icon className="text-body-md" name="exit">
-								<button type="submit">Logout</button>
-							</Icon>
-						</Form>
+					<Menu.Item as={Form}>
+						{isUser(user) && (
+							<Form
+								action="/logout"
+								method="POST"
+								ref={formRef}
+								className={classnames(
+									'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+								)}
+							>
+								<Icon className="text-body-md" name="exit">
+									<button type="submit">Logout</button>
+								</Icon>
+							</Form>
+						)}
 					</Menu.Item>
 				</Menu.Items>
 			</Transition>
@@ -375,7 +372,7 @@ function App() {
 									</div>
 								</div>
 								<div className="mt-3 space-y-1 px-2">
-									{navigation.map((item) => (
+									{navigationItems.map((item) => (
 										<MobileNavItem key={item.name} {...item} />
 									))}
 								</div>
@@ -407,22 +404,24 @@ function App() {
 									</button>
 								</div>
 								<div className="mt-3 space-y-1 px-2">
-									{userNavigation.map((item) => (
+									{userNavigationItems.map((item) => (
 										<MobileNavItem key={item.name} {...item} />
 									))}
-									<Form
-										action="/logout"
-										method="POST"
-										ref={formRef}
-										className={classnames(
-											'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-											{ hidden: !loggedIn },
-										)}
-									>
-										<Icon className="text-body-md" name="exit">
-											<button type="submit">Logout</button>
-										</Icon>
-									</Form>
+									{isUser(user) && (
+										<Form
+											action="/logout"
+											method="POST"
+											ref={formRef}
+											className={classnames(
+												'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+												// { hidden: !loggedIn },
+											)}
+										>
+											<Icon className="text-body-md" name="exit">
+												<button type="submit">Logout</button>
+											</Icon>
+										</Form>
+									)}
 								</div>
 							</div>
 						</div>
@@ -459,7 +458,7 @@ function App() {
 			<div className="grid grid-cols-3 items-center gap-8">
 				<div className="col-span-2">
 					<nav className="flex space-x-4">
-						{navigation.map((item) => {
+						{navigationItems.map((item) => {
 							return (
 								<a
 									key={item.name}
@@ -570,7 +569,7 @@ function App() {
 	const Footer = () => (
 		<footer>
 			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
+				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500">
 					<span className="block sm:inline">&copy; 2021 StorySwap</span>
 					<Spacer size="4xs" />
 					<span className="block sm:inline">

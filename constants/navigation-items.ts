@@ -1,4 +1,4 @@
-export const navigation = [
+export const getNavigationLinks = (user: any) => [
     { name: 'Home', href: '/', current: true, logo: 'home', hidden: false },
     {
         name: 'Users',

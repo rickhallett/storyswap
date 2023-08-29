@@ -1,9 +1,10 @@
 import { json, type LinksFunction } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, useActionData, useLoaderData } from '@remix-run/react';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import BookListItem from '#app/components/ui/book-list-item.tsx';
 import { Icon } from '#app/components/ui/icon.tsx';
 import bookListStyles from '#app/styles/book-list-item.css';
+import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
 
 export const links: LinksFunction = () => {
@@ -23,8 +24,16 @@ export async function loader() {
 	);
 }
 
+export async function action(request: Request) {
+	return requireUserId(request, { redirectTo: '?login' });
+}
+
 export default function BooksRoute() {
+	const userId = useActionData<typeof action>();
 	const books = useLoaderData<typeof loader>();
+
+	console.log({ userId });
+
 	return (
 		<div className="container flex items-center justify-center p-5">
 			<div className="flex flex-col gap-6">

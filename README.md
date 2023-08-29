@@ -331,3 +331,5 @@
 - [] configure eslint to order imports akin to CI
 - [] navbar dropdown icons
 - [] find out SQL join for user -> roles
+- [] add user nav config to conditionally render nav items
+- [] split root layout into separate components
