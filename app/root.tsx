@@ -26,16 +26,13 @@ import { withSentry } from '@sentry/remix';
 import classnames from 'classnames';
 import { Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
-
+import { navigation } from '../constants/navigation-items.ts';
+import { getUserNavigation } from '../constants/user-navigation-items.ts';
 import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
 import { Spacer } from './components/spacer.tsx';
 import { EpicToaster } from './components/toaster.tsx';
-import {
-	Icon,
-	href as iconsHref,
-	type IconName,
-} from './components/ui/icon.tsx';
+import { Icon, href as iconsHref } from './components/ui/icon.tsx';
 import fontStylestylesheetUrl from './styles/font.css';
 import interStylesheetUrl from './styles/inter.css';
 import tailwindStylesheetUrl from './styles/tailwind.css';
@@ -56,14 +53,22 @@ import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
 import { useOptionalUser } from './utils/user.ts';
 
-function classNames(...classes: string[]) {
-	return classes.filter(Boolean).join(' ');
-}
+const RemixDevToolsMode = () => {
+	const RemixDevTools =
+		process.env.NODE_ENV === 'development'
+			? lazy(() => import('remix-development-tools'))
+			: null;
 
-const RemixDevTools =
-	process.env.NODE_ENV === 'development'
-		? lazy(() => import('remix-development-tools'))
-		: null;
+	return (
+		<>
+			{RemixDevTools ? (
+				<Suspense>
+					<RemixDevTools />
+				</Suspense>
+			) : null}
+		</>
+	);
+};
 
 export const links: LinksFunction = () => {
 	return [
@@ -251,120 +256,7 @@ function App() {
 
 	console.log({ loggedIn, user });
 
-	const navigation = [
-		{ name: 'Home', href: '/', current: true, logo: 'home', hidden: false },
-		{
-			name: 'Users',
-			href: '/users',
-			current: false,
-			logo: 'avatar',
-			hidden: false,
-		},
-		{
-			name: 'Books',
-			href: '/books',
-			current: false,
-			logo: 'reader',
-			hidden: false,
-		},
-		{
-			name: 'Search',
-			href: '#',
-			current: false,
-			logo: 'magnifying-glass',
-			hidden: false,
-		},
-		{
-			name: 'Recommendations',
-			href: '#',
-			current: false,
-			logo: 'star',
-			hidden: false,
-		},
-		{ name: 'Swaps', href: '#', current: false, logo: 'person', hidden: false },
-		{
-			name: 'Reviews',
-			href: '#',
-			current: false,
-			logo: 'pencil-1',
-			hidden: false,
-		},
-		{
-			name: 'Location Matching',
-			href: '#',
-			current: false,
-			logo: 'globe',
-			hidden: false,
-		},
-		{
-			name: 'Environmental Impact Tracker',
-			href: '#',
-			current: false,
-			logo: 'bar-chart',
-			hidden: false,
-		},
-		{
-			name: 'Barcode Scanner',
-			href: '#',
-			current: false,
-			logo: 'line-height',
-			hidden: false,
-		},
-		{
-			name: 'Community',
-			href: '#',
-			current: false,
-			logo: 'face',
-			hidden: false,
-		},
-		{
-			name: 'Integrations',
-			href: '#',
-			current: false,
-			logo: 'space-evenly-horizontally',
-			hidden: false,
-		},
-		{
-			name: 'Updates',
-			href: '#',
-			current: false,
-			logo: 'update',
-			hidden: false,
-		},
-		{
-			name: 'Tutorials & Onboarding',
-			href: '#',
-			current: false,
-			logo: 'question-mark-circled',
-			hidden: false,
-		},
-		{
-			name: 'Donate',
-			href: '#',
-			current: false,
-			logo: 'code',
-			hidden: false,
-		},
-	];
-
-	const userNavigation = [
-		{
-			name: 'Profile',
-			href: `/users/${user?.username}`,
-			hidden: !loggedIn,
-			logo: 'avatar',
-		},
-		{
-			name: 'My Virtual Bookshelf',
-			href: `/users/${user?.username}`,
-			hidden: !loggedIn,
-			logo: 'bookmark',
-		},
-		{ name: 'Message Centre', href: '#', hidden: !loggedIn, logo: 'pencil-2' },
-		{ name: 'Settings', href: '#', hidden: !loggedIn, logo: 'gear' },
-
-		{ name: 'Login', href: '/login', hidden: !loggedIn, logo: 'enter' },
-	];
+	const userNavigation = getUserNavigation({ user, loggedIn });
 
 	const MobileNavItem = ({
 		href,
@@ -375,7 +267,7 @@ function App() {
 		href: string;
 		name: string;
 		hidden: boolean;
-		logo: IconName;
+		logo: string;
 	}): React.JSX.Element => (
 		<Link
 			hidden={hidden}
@@ -391,442 +283,322 @@ function App() {
 		</Link>
 	);
 
-	const MobileUserNavItem = ({
-		href,
-		name,
-		hidden,
-		logo,
-	}: {
-		href: string;
-		name: string;
-		hidden: boolean;
-		logo: IconName;
-	}): React.JSX.Element => (
-		<Link
-			hidden={hidden}
-			to={href}
-			className={classnames(
-				'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-				{ hidden },
+	const ProfileDropdown = () => (
+		<Menu as="div" className="relative ml-4 flex-shrink-0">
+			<div>
+				<Menu.Button className="relative flex rounded-full bg-white text-sm ring-2 ring-white ring-opacity-20 focus:outline-none focus:ring-opacity-100">
+					<span className="absolute -inset-1.5" />
+					<span className="sr-only">Open user menu</span>
+					<img
+						className="h-8 w-8 rounded-full"
+						src={getUserImgSrc(user?.image?.id)}
+						alt=""
+					/>
+				</Menu.Button>
+			</div>
+			<Transition
+				as={Fragment}
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute -right-2 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					{userNavigation.map((item) => (
+						<Menu.Item key={item.name}>
+							<MobileNavItem {...item} />
+						</Menu.Item>
+					))}
+					<Menu.Item>
+						<Form
+							action="/logout"
+							method="POST"
+							ref={formRef}
+							className={classnames(
+								'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+								{ hidden: !loggedIn },
+							)}
+						>
+							<Icon className="text-body-md" name="exit">
+								<button type="submit">Logout</button>
+							</Icon>
+						</Form>
+					</Menu.Item>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+
+	const MobileNavBar = () => (
+		<Transition.Root as={Fragment}>
+			<div className="lg:hidden">
+				<Transition.Child
+					as={Fragment}
+					enter="duration-150 ease-out"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="duration-150 ease-in"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<Popover.Overlay className="fixed inset-0 z-20 bg-black bg-opacity-25" />
+				</Transition.Child>
+
+				<Transition.Child
+					as={Fragment}
+					enter="duration-150 ease-out"
+					enterFrom="opacity-0 scale-95"
+					enterTo="opacity-100 scale-100"
+					leave="duration-150 ease-in"
+					leaveFrom="opacity-100 scale-100"
+					leaveTo="opacity-0 scale-95"
+				>
+					<Popover.Panel
+						focus
+						className="absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-3xl origin-top transform p-2 transition"
+					>
+						<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+							<div className="pb-2 pt-3">
+								<div className="flex items-center justify-between px-4">
+									<div>
+										<img
+											className="h-8 w-auto"
+											src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+											alt="Your Company"
+										/>
+									</div>
+									<div className="-mr-2">
+										<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+											<span className="absolute -inset-0.5" />
+											<span className="sr-only">Close menu</span>
+											<XMarkIcon className="h-6 w-6" aria-hidden="true" />
+										</Popover.Button>
+									</div>
+								</div>
+								<div className="mt-3 space-y-1 px-2">
+									{navigation.map((item) => (
+										<MobileNavItem key={item.name} {...item} />
+									))}
+								</div>
+							</div>
+							<div className="pb-2 pt-4">
+								<div className="flex items-center px-5">
+									<div className="flex-shrink-0">
+										<img
+											className="h-10 w-10 rounded-full"
+											src={getUserImgSrc(user?.image?.id)}
+											alt=""
+										/>
+									</div>
+									<div className="ml-3 min-w-0 flex-1">
+										<div className="truncate text-base font-medium text-gray-800">
+											{user?.name}
+										</div>
+										<div className="truncate text-sm font-medium text-gray-500">
+											{user?.email}
+										</div>
+									</div>
+									<button
+										type="button"
+										className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+									>
+										<span className="absolute -inset-1.5" />
+										<span className="sr-only">View notifications</span>
+										<BellIcon className="h-6 w-6" aria-hidden="true" />
+									</button>
+								</div>
+								<div className="mt-3 space-y-1 px-2">
+									{userNavigation.map((item) => (
+										<MobileNavItem key={item.name} {...item} />
+									))}
+									<Form
+										action="/logout"
+										method="POST"
+										ref={formRef}
+										className={classnames(
+											'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
+											{ hidden: !loggedIn },
+										)}
+									>
+										<Icon className="text-body-md" name="exit">
+											<button type="submit">Logout</button>
+										</Icon>
+									</Form>
+								</div>
+							</div>
+						</div>
+					</Popover.Panel>
+				</Transition.Child>
+			</div>
+		</Transition.Root>
+	);
+
+	const TWSearchBar = () => (
+		<div className="min-w-0 px-12 lg:flex-1">
+			<div className="mx-auto max-w-xs lg:w-full">
+				<label htmlFor="mobile-search" className="sr-only">
+					Search
+				</label>
+				<div className="relative text-white focus-within:text-gray-600">
+					<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+						<MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
+					</div>
+					<input
+						id="mobile-search"
+						className="block w-full rounded-md border-0 bg-white/20 py-1.5 pl-10 pr-3 text-white placeholder:text-white focus:bg-white focus:text-gray-900 focus:ring-0 focus:placeholder:text-gray-500 sm:text-sm sm:leading-6"
+						placeholder="Search"
+						type="search"
+						name="search"
+					/>
+				</div>
+			</div>
+		</div>
+	);
+
+	const DesktopNavBar = () => (
+		<div className="hidden border-t border-white border-opacity-20 py-5 lg:block">
+			<div className="grid grid-cols-3 items-center gap-8">
+				<div className="col-span-2">
+					<nav className="flex space-x-4">
+						{navigation.map((item) => {
+							return (
+								<a
+									key={item.name}
+									href={item.href}
+									className={classnames(
+										'min-w-fit rounded-md bg-white bg-opacity-0 px-3 py-2 text-sm font-medium hover:bg-opacity-10',
+										{ 'text-white': item.current },
+										{ 'text-indigo-100': !item.current },
+										{ hidden: item.hidden },
+									)}
+									aria-current={item.current ? 'page' : undefined}
+								>
+									{item.name}
+								</a>
+							);
+						})}
+					</nav>
+				</div>
+			</div>
+		</div>
+	);
+
+	const DesktopDropdown = () => (
+		<div className="hidden lg:ml-4 lg:flex lg:items-center lg:pr-0.5">
+			<button
+				type="button"
+				className="relative flex-shrink-0 rounded-full p-1 text-indigo-200 hover:bg-white hover:bg-opacity-10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+			>
+				<span className="absolute -inset-1.5" />
+				<span className="sr-only">View notifications</span>
+				<BellIcon className="h-6 w-6" aria-hidden="true" />
+			</button>
+			{/* Profile dropdown */}
+			<ProfileDropdown />
+		</div>
+	);
+
+	const MobileDropdown = ({ open }: { open: boolean }) => (
+		<div className="absolute right-0 flex-shrink-0 lg:hidden">
+			{/* Mobile menu button */}
+			<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-transparent p-2 text-indigo-200 hover:bg-white hover:bg-opacity-10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+				<span className="absolute -inset-0.5" />
+				<span className="sr-only">Open main menu</span>
+				{open ? (
+					<XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+				) : (
+					<Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+				)}
+			</Popover.Button>
+		</div>
+	);
+
+	const Logo = () => (
+		<div className="absolute left-0 flex-shrink-0 lg:static">
+			<Link to="/">
+				<span className="sr-only">Your Company</span>
+				<img
+					className="h-8 w-auto"
+					src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
+					alt="Your Company"
+				/>
+			</Link>
+		</div>
+	);
+
+	const Header = () => (
+		<Popover as="header" className="bg-indigo-600 pb-24">
+			{({ open }) => (
+				<>
+					<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+						<div className="relative flex items-center justify-center py-5 lg:justify-between">
+							<Logo />
+							<TWSearchBar />
+							<DesktopDropdown />
+							<MobileDropdown open={open} />
+						</div>
+						<DesktopNavBar />
+					</div>
+
+					<MobileNavBar />
+				</>
 			)}
-		>
-			<Icon className="text-body-md" name={logo}>
-				<button>{name}</button>
-			</Icon>
-		</Link>
+		</Popover>
+	);
+
+	const Main = () => (
+		<main className="-mt-24 pb-8">
+			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+				<h1 className="sr-only">Main Content</h1>
+				<div className="grid grid-cols-1 items-start gap-4 lg:gap-8">
+					<div className="grid grid-cols-1 gap-4 lg:col-span-2">
+						<section aria-labelledby="section-1-title">
+							<h2 className="sr-only" id="section-1-title">
+								Navigation Output
+							</h2>
+							<div className="overflow-hidden rounded-lg bg-white shadow">
+								<div className="p-6">
+									<Outlet />
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</main>
+	);
+
+	const Footer = () => (
+		<footer>
+			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+				<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
+					<span className="block sm:inline">&copy; 2021 StorySwap</span>
+					<Spacer size="4xs" />
+					<span className="block sm:inline">
+						<a href="https://www.github.com/rickhallett/storyswap">
+							<Icon name="github-logo" className="h-6 w-6" /> rickhallett
+						</a>
+					</span>
+				</div>
+			</div>
+		</footer>
 	);
 
 	return (
-		<>
-			<Document nonce={nonce} env={data.ENV}>
-				<>
-					<div className="min-h-full">
-						<Popover as="header" className="bg-indigo-600 pb-24">
-							{({ open }) => (
-								<>
-									<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-										<div className="relative flex items-center justify-center py-5 lg:justify-between">
-											{/* Logo */}
-											<div className="absolute left-0 flex-shrink-0 lg:static">
-												<Link to="/">
-													<span className="sr-only">Your Company</span>
-													<img
-														className="h-8 w-auto"
-														src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300"
-														alt="Your Company"
-													/>
-												</Link>
-											</div>
+		<Document nonce={nonce} env={data.ENV}>
+			<div className="min-h-full">
+				<Header />
+				<Main />
+				<Footer />
+			</div>
 
-											{/* Right section on desktop */}
-											<div className="hidden lg:ml-4 lg:flex lg:items-center lg:pr-0.5">
-												<button
-													type="button"
-													className="relative flex-shrink-0 rounded-full p-1 text-indigo-200 hover:bg-white hover:bg-opacity-10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-												>
-													<span className="absolute -inset-1.5" />
-													<span className="sr-only">View notifications</span>
-													<BellIcon className="h-6 w-6" aria-hidden="true" />
-												</button>
-
-												{/* Profile dropdown */}
-												<Menu as="div" className="relative ml-4 flex-shrink-0">
-													<div>
-														<Menu.Button className="relative flex rounded-full bg-white text-sm ring-2 ring-white ring-opacity-20 focus:outline-none focus:ring-opacity-100">
-															<span className="absolute -inset-1.5" />
-															<span className="sr-only">Open user menu</span>
-															<img
-																className="h-8 w-8 rounded-full"
-																src={getUserImgSrc(user?.image?.id)}
-																alt=""
-															/>
-														</Menu.Button>
-													</div>
-													<Transition
-														as={Fragment}
-														leave="transition ease-in duration-75"
-														leaveFrom="transform opacity-100 scale-100"
-														leaveTo="transform opacity-0 scale-95"
-													>
-														<Menu.Items className="absolute -right-2 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-															{userNavigation.map((item) => (
-																<Menu.Item key={item.name}>
-																	{({ active }) => (
-																		<a
-																			href={item.href}
-																			className={classNames(
-																				active ? 'bg-gray-100' : '',
-																				'block px-4 py-2 text-sm text-gray-700',
-																			)}
-																		>
-																			{item.name}
-																		</a>
-																	)}
-																</Menu.Item>
-															))}
-															<Menu.Item>
-																<Form
-																	action="/logout"
-																	method="POST"
-																	ref={formRef}
-																>
-																	<Icon className="text-body-md" name="exit">
-																		<button type="submit">Logout</button>
-																	</Icon>
-																</Form>
-															</Menu.Item>
-														</Menu.Items>
-													</Transition>
-												</Menu>
-											</div>
-
-											{/* Search */}
-											<div className="min-w-0 flex-1 px-12 lg:hidden">
-												<div className="mx-auto w-full max-w-xs">
-													<label htmlFor="desktop-search" className="sr-only">
-														Search
-													</label>
-													<div className="relative text-white focus-within:text-gray-600">
-														<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-															<MagnifyingGlassIcon
-																className="h-5 w-5"
-																aria-hidden="true"
-															/>
-														</div>
-														<input
-															id="desktop-search"
-															className="block w-full rounded-md border-0 bg-white/20 py-1.5 pl-10 pr-3 text-white placeholder:text-white focus:bg-white focus:text-gray-900 focus:ring-0 focus:placeholder:text-gray-500 sm:text-sm sm:leading-6"
-															placeholder="Search"
-															type="search"
-															name="search"
-														/>
-													</div>
-												</div>
-											</div>
-
-											{/* Menu button */}
-											<div className="absolute right-0 flex-shrink-0 lg:hidden">
-												{/* Mobile menu button */}
-												<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-transparent p-2 text-indigo-200 hover:bg-white hover:bg-opacity-10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
-													<span className="absolute -inset-0.5" />
-													<span className="sr-only">Open main menu</span>
-													{open ? (
-														<XMarkIcon
-															className="block h-6 w-6"
-															aria-hidden="true"
-														/>
-													) : (
-														<Bars3Icon
-															className="block h-6 w-6"
-															aria-hidden="true"
-														/>
-													)}
-												</Popover.Button>
-											</div>
-										</div>
-										<div className="hidden border-t border-white border-opacity-20 py-5 lg:block">
-											<div className="grid grid-cols-3 items-center gap-8">
-												<div className="col-span-2">
-													<nav className="flex space-x-4">
-														{navigation.map((item) => {
-															return (
-																<a
-																	key={item.name}
-																	href={item.href}
-																	className={classNames(
-																		item.current
-																			? 'text-white'
-																			: 'text-indigo-100',
-																		'rounded-md bg-white bg-opacity-0 px-3 py-2 text-sm font-medium hover:bg-opacity-10',
-																	)}
-																	aria-current={
-																		item.current ? 'page' : undefined
-																	}
-																>
-																	{item.name}
-																</a>
-															);
-														})}
-													</nav>
-												</div>
-												<div>
-													<div className="mx-auto w-full max-w-md">
-														<label htmlFor="mobile-search" className="sr-only">
-															Search
-														</label>
-														<div className="relative text-white focus-within:text-gray-600">
-															<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-																<MagnifyingGlassIcon
-																	className="h-5 w-5"
-																	aria-hidden="true"
-																/>
-															</div>
-															<input
-																id="mobile-search"
-																className="block w-full rounded-md border-0 bg-white/20 py-1.5 pl-10 pr-3 text-white placeholder:text-white focus:bg-white focus:text-gray-900 focus:ring-0 focus:placeholder:text-gray-500 sm:text-sm sm:leading-6"
-																placeholder="Search"
-																type="search"
-																name="search"
-															/>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<Transition.Root as={Fragment}>
-										<div className="lg:hidden">
-											<Transition.Child
-												as={Fragment}
-												enter="duration-150 ease-out"
-												enterFrom="opacity-0"
-												enterTo="opacity-100"
-												leave="duration-150 ease-in"
-												leaveFrom="opacity-100"
-												leaveTo="opacity-0"
-											>
-												<Popover.Overlay className="fixed inset-0 z-20 bg-black bg-opacity-25" />
-											</Transition.Child>
-
-											<Transition.Child
-												as={Fragment}
-												enter="duration-150 ease-out"
-												enterFrom="opacity-0 scale-95"
-												enterTo="opacity-100 scale-100"
-												leave="duration-150 ease-in"
-												leaveFrom="opacity-100 scale-100"
-												leaveTo="opacity-0 scale-95"
-											>
-												<Popover.Panel
-													focus
-													className="absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-3xl origin-top transform p-2 transition"
-												>
-													<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-														<div className="pb-2 pt-3">
-															<div className="flex items-center justify-between px-4">
-																<div>
-																	<img
-																		className="h-8 w-auto"
-																		src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-																		alt="Your Company"
-																	/>
-																</div>
-																<div className="-mr-2">
-																	<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-																		<span className="absolute -inset-0.5" />
-																		<span className="sr-only">Close menu</span>
-																		<XMarkIcon
-																			className="h-6 w-6"
-																			aria-hidden="true"
-																		/>
-																	</Popover.Button>
-																</div>
-															</div>
-															<div className="mt-3 space-y-1 px-2">
-																{navigation.map((item) => (
-																	<MobileNavItem key={item.name} {...item} />
-																))}
-															</div>
-														</div>
-														<div className="pb-2 pt-4">
-															<div className="flex items-center px-5">
-																<div className="flex-shrink-0">
-																	<img
-																		className="h-10 w-10 rounded-full"
-																		src={getUserImgSrc(user?.image?.id)}
-																		alt=""
-																	/>
-																</div>
-																<div className="ml-3 min-w-0 flex-1">
-																	<div className="truncate text-base font-medium text-gray-800">
-																		{user?.name}
-																	</div>
-																	<div className="truncate text-sm font-medium text-gray-500">
-																		{user?.email}
-																	</div>
-																</div>
-																<button
-																	type="button"
-																	className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-																>
-																	<span className="absolute -inset-1.5" />
-																	<span className="sr-only">
-																		View notifications
-																	</span>
-																	<BellIcon
-																		className="h-6 w-6"
-																		aria-hidden="true"
-																	/>
-																</button>
-															</div>
-															<div className="mt-3 space-y-1 px-2">
-																{userNavigation.map((item) => (
-																	<MobileUserNavItem
-																		key={item.name}
-																		{...item}
-																	/>
-																))}
-																<Form
-																	action="/logout"
-																	method="POST"
-																	ref={formRef}
-																	className={classnames(
-																		'block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800',
-																		{ hidden: !loggedIn },
-																	)}
-																>
-																	<Icon className="text-body-md" name="exit">
-																		<button type="submit">Logout</button>
-																	</Icon>
-																</Form>
-															</div>
-														</div>
-													</div>
-												</Popover.Panel>
-											</Transition.Child>
-										</div>
-									</Transition.Root>
-								</>
-							)}
-						</Popover>
-						<main className="-mt-24 pb-8">
-							<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-								<h1 className="sr-only">Main Content</h1>
-								{/* Main 3 column grid */}
-								<div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
-									{/* Left column */}
-									<div className="grid grid-cols-1 gap-4 lg:col-span-2">
-										<section aria-labelledby="section-1-title">
-											<h2 className="sr-only" id="section-1-title">
-												Navigation Output
-											</h2>
-											<div className="overflow-hidden rounded-lg bg-white shadow">
-												<div className="p-6">
-													<Outlet />
-												</div>
-											</div>
-										</section>
-									</div>
-
-									{/* Right column */}
-									{/* <div className="grid grid-cols-1 gap-4">
-										<section aria-labelledby="section-2-title">
-											<h2 className="sr-only" id="section-2-title">
-												Section title
-											</h2>
-											<div className="overflow-hidden rounded-lg bg-white shadow">
-												<div className="p-6">Search Results</div>
-											</div>
-										</section>
-									</div> */}
-								</div>
-							</div>
-						</main>
-						<footer>
-							<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-								<div className="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
-									<span className="block sm:inline">&copy; 2021 StorySwap</span>
-									<Spacer size="4xs" />
-									<span className="block sm:inline">
-										<a href="https://www.github.com/rickhallett/storyswap">
-											<Icon name="github-logo" className="h-6 w-6" />{' '}
-											rickhallett
-										</a>
-									</span>
-								</div>
-							</div>
-						</footer>
-					</div>
-				</>
-				<Confetti id={data.confettiId} />
-				<EpicToaster toast={data.toast} />
-				{RemixDevTools ? (
-					<Suspense>
-						<RemixDevTools />
-					</Suspense>
-				) : null}
-			</Document>
-		</>
+			<Confetti id={data.confettiId} />
+			<EpicToaster toast={data.toast} />
+			<RemixDevToolsMode />
+		</Document>
 	);
 }
 
 export default withSentry(App);
-
-// function UserDropdown() {
-// 	const user = useUser();
-// 	const submit = useSubmit();
-// 	const formRef = useRef<HTMLFormElement>(null);
-// 	return (
-// 		<DropdownMenu>
-// 			<DropdownMenuTrigger asChild>
-// 				<Button asChild variant="secondary">
-// 					<Link
-// 						to={`/users/${user.username}`}
-// 						// this is for progressive enhancement
-// 						onClick={(e) => e.preventDefault()}
-// 						className="flex items-center gap-2"
-// 					>
-// 						<Icon name="avatar" className="text-body-md" />
-// 						<span className="text-body">{user.name ?? user.username}</span>
-// 					</Link>
-// 				</Button>
-// 			</DropdownMenuTrigger>
-// 			<DropdownMenuPortal>
-// 				<DropdownMenuContent sideOffset={8} align="start">
-// 					<DropdownMenuItem asChild>
-// 						<Link prefetch="intent" to={`/users/${user.username}`}>
-// 							<Icon className="text-body-md" name="avatar">
-// 								Profile
-// 							</Icon>
-// 						</Link>
-// 					</DropdownMenuItem>
-// 					<DropdownMenuItem asChild>
-// 						<Link prefetch="intent" to={`/users/${user.username}/notes`}>
-// 							<Icon className="text-body-md" name="pencil-2">
-// 								Notes
-// 							</Icon>
-// 						</Link>
-// 					</DropdownMenuItem>
-// 					<DropdownMenuItem
-// 						asChild
-// 						// this prevents the menu from closing before the form submission is completed
-// 						onSelect={(event) => {
-// 							event.preventDefault();
-// 							submit(formRef.current);
-// 						}}
-// 					>
-// 						<Form action="/logout" method="POST" ref={formRef}>
-// 							<Icon className="text-body-md" name="exit">
-// 								<button type="submit">Logout</button>
-// 							</Icon>
-// 						</Form>
-// 					</DropdownMenuItem>
-// 				</DropdownMenuContent>
-// 			</DropdownMenuPortal>
-// 		</DropdownMenu>
-// 	);
-// }
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that
