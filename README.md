@@ -342,11 +342,17 @@
 - [] research: can the app be integrated with goodreads accounts?
 - [] BUG: books index calls loader many times, repeating the same if logging out
   from that page. Why?
-- [] book list can have author/genre/condition link to a search page revealing more of the same
+- [] book list can have author/genre/condition link to a search page revealing
+  more of the same
 - [] list pages need filters
-- [] research: can we integrate with a courier service, printing delivery labels, organising book pick ups etc
+- [] research: can we integrate with a courier service, printing delivery
+  labels, organising book pick ups etc
 - [] why do the constants not hot reload on change?
 - [] add meta functions to all routes
 - [] community/history models/api
 - [] about page model/api
 - [] welcome index model/api
+- [x] deleting book search string creates an infinite loop of requests that I
+      think remix eventually halts; how can I circumvent this? On every change
+      in search term, the loader should only run once. Required revalidation
+      prevention!

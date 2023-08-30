@@ -1,5 +1,8 @@
 import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
-import { useRouteLoaderData } from '@remix-run/react';
+import {
+	useRouteLoaderData,
+	type ShouldRevalidateFunction,
+} from '@remix-run/react';
 import { z } from 'zod';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
@@ -35,6 +38,26 @@ const UserSearchResultSchema = z.object({
 });
 
 const UserSearchResultsSchema = z.array(UserSearchResultSchema);
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+	formData,
+	currentUrl,
+	nextUrl,
+	defaultShouldRevalidate,
+}) => {
+	const currentParams = currentUrl.searchParams.get('search-users');
+	const nextParams = nextUrl.searchParams.get('search-users');
+
+	if (nextParams === '' && currentParams === '') {
+		return false;
+	}
+
+	if (currentUrl.pathname !== nextUrl.pathname) {
+		return false;
+	}
+
+	return defaultShouldRevalidate;
+};
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
@@ -72,6 +95,7 @@ export async function loader({ request }: DataFunctionArgs) {
 				select: { id: true, title: true, author: true, smallImageURL: true },
 			},
 		},
+		take: 20,
 	});
 
 	const result = UserSearchResultsSchema.safeParse(filteredUsers);

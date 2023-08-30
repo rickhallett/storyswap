@@ -1,5 +1,5 @@
 import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
-import { useOutletContext, useRouteLoaderData } from '@remix-run/react';
+import { useOutletContext, useRouteLoaderData ,type  ShouldRevalidateFunction } from '@remix-run/react';
 import { z } from 'zod';
 import BookListCards from '#app/components/books/book-list-card.tsx';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
@@ -48,11 +48,31 @@ const BookSearchResultSchema = z.object({
 
 const BookSearchResultsSchema = z.array(BookSearchResultSchema);
 
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+	formData,
+	currentUrl,
+	nextUrl,
+	defaultShouldRevalidate,
+}) => {
+	const currentParams = currentUrl.searchParams.get('search-books');
+	const nextParams = nextUrl.searchParams.get('search-books');
+
+	if (nextParams === '' && currentParams === '') {
+		return false;
+	}
+
+	if (currentUrl.pathname !== nextUrl.pathname) {
+		return false;
+	}
+
+	return defaultShouldRevalidate;
+};
+
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
 	const searchTerm = new URL(request.url).searchParams.get('search-books');
 	if (searchTerm === '') {
-		redirect('/books');
+		return redirect('/books');
 	}
 
 	const filteredBooks = await prisma.book.findMany({
@@ -92,21 +112,17 @@ export async function loader({ request }: DataFunctionArgs) {
 				},
 			},
 		},
-		take: 10,
+		take: 20,
 	});
 
-	// TODO: temporarily bypass schema validation
-	return json({ status: 'idle', books: filteredBooks } as const);
+	const result = BookSearchResultsSchema.safeParse(filteredBooks);
+	if (!result.success) {
+		return json({ status: 'error', error: result.error.message } as const, {
+			status: 400,
+		});
+	}
 
-	// const result = BookSearchResultsSchema.safeParse(filteredBooks);
-	// if (!result.success) {
-	// 	console.error(JSON.stringify(result.error, null, 2));
-	// 	return json({ status: 'error', error: result.error.message } as const, {
-	// 		status: 400,
-	// 	});
-	// }
-
-	// return json({ status: 'idle', books: result.data } as const);
+	return json({ status: 'idle', books: result.data } as const);
 }
 
 export default function BooksRoute() {

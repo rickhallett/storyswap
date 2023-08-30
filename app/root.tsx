@@ -251,8 +251,6 @@ function App() {
 	const validUser = isUser(user);
 	const formRef = useRef<HTMLFormElement>(null);
 
-	console.log({ data, nonce, user, validUser });
-
 	const navigationItems = getNavigationLinks({ user });
 	const userNavigationItems = getUserNavigationLinks({ user });
 

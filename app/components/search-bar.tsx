@@ -62,6 +62,7 @@ export function SearchBar({
 					status={isSubmitting ? 'pending' : status}
 					className="flex w-full items-center justify-center"
 					size="sm"
+					disabled={Boolean(!searchParams.get(searchParam))}
 				>
 					<Icon name="magnifying-glass" size="sm" />
 					<span className="sr-only">Search</span>
