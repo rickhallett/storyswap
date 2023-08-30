@@ -22,6 +22,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		select: {
 			id: true,
 			title: true,
+			author: true,
 			description: true,
 			smallImageURL: true,
 			goodreadsId: true,

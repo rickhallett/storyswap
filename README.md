@@ -342,3 +342,5 @@
 - [] research: can the app be integrated with goodreads accounts?
 - [] BUG: books index calls loader many times, repeating the same if logging out
   from that page. Why?
+- [] book list can have author/genre/condition link to a search page revealing more of the same
+- [] list pages need filters
