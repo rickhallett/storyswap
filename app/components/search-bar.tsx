@@ -12,17 +12,21 @@ export function SearchBar({
 	hideInput,
 	autoFocus = false,
 	autoSubmit = false,
+	formAction,
+	searchParam,
 }: {
 	status: 'idle' | 'pending' | 'success' | 'error';
 	hideInput?: boolean;
 	autoFocus?: boolean;
 	autoSubmit?: boolean;
+	formAction: string;
+	searchParam: string;
 }) {
 	const [searchParams] = useSearchParams();
 	const submit = useSubmit();
 	const isSubmitting = useIsPending({
 		formMethod: 'GET',
-		formAction: '/users',
+		formAction,
 	});
 
 	const handleFormChange = useDebounce((form: HTMLFormElement) => {
@@ -32,7 +36,7 @@ export function SearchBar({
 	return (
 		<Form
 			method="GET"
-			action="/users"
+			action={formAction}
 			className="flex flex-wrap items-center justify-center gap-2"
 			onChange={(e) => autoSubmit && handleFormChange(e.currentTarget)}
 		>
@@ -43,9 +47,9 @@ export function SearchBar({
 				{!hideInput && (
 					<Input
 						type="search"
-						name="search"
-						id="search"
-						defaultValue={searchParams.get('search') ?? ''}
+						name={searchParam}
+						id={`search-${formAction}`}
+						defaultValue={searchParams.get(searchParam) ?? ''}
 						placeholder="Search"
 						className="w-full"
 						autoFocus={autoFocus}
@@ -58,6 +62,7 @@ export function SearchBar({
 					status={isSubmitting ? 'pending' : status}
 					className="flex w-full items-center justify-center"
 					size="sm"
+					disabled={Boolean(!searchParams.get(searchParam))}
 				>
 					<Icon name="magnifying-glass" size="sm" />
 					<span className="sr-only">Search</span>

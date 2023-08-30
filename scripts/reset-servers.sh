@@ -26,8 +26,8 @@ commands=(
     "fly apps create storyswap-stage"
     "fly secrets set SESSION_SECRET=$(openssl rand -hex 32) INTERNAL_COMMAND_TOKEN=$(openssl rand -hex 32) --app storyswap"
     "fly secrets set SESSION_SECRET=$(openssl rand -hex 32) INTERNAL_COMMAND_TOKEN=$(openssl rand -hex 32) --app storyswap-stage"
-    "fly volumes create data --region lhr --size 1 --app storyswap --yes"
-    "fly volumes create data --region lhr --size 1 --app storyswap-stage --yes"
+    "fly volumes create data --region lhr --size 2 --app storyswap --yes"
+    "fly volumes create data --region lhr --size 2 --app storyswap-stage --yes"
     "fly consul attach --app storyswap"
     "fly consul attach --app storyswap-stage"
 )

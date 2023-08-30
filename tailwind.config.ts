@@ -1,3 +1,4 @@
+import tailWindForms from '@tailwindcss/forms';
 import { type Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme.js';
 import animatePlugin from 'tailwindcss-animate';
@@ -19,9 +20,13 @@ export default {
 		extend: {
 			...extendedTheme,
 			fontFamily: {
-				sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+				sans: [
+					'Inter var',
+					'var(--font-sans)',
+					...defaultTheme.fontFamily.sans,
+				],
 			},
 		},
 	},
-	plugins: [animatePlugin, radixPlugin],
+	plugins: [animatePlugin, radixPlugin, tailWindForms],
 } satisfies Config;

@@ -1,54 +1,358 @@
-<div align="center">
-  <h1 align="center"><a href="https://www.epicweb.dev/epic-stack">The Epic Stack 🚀</a></h1>
-  <strong align="center">
-    Ditch analysis paralysis and start shipping Epic Web apps.
-  </strong>
-  <p>
-    This is an opinionated project starter and reference that allows teams to
-    ship their ideas to production faster and on a more stable foundation based
-    on the experience of <a href="https://kentcdodds.com">Kent C. Dodds</a> and
-    <a href="https://github.com/epicweb-dev/epic-stack/graphs/contributors">contributors</a>.
-  </p>
-</div>
+# Project Tracker
 
-```sh
-npx create-remix@latest --typescript --install --template epicweb-dev/epic-stack
-```
+---
 
-[![The Epic Stack](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/246885449-1b00286c-aa3d-44b2-9ef2-04f694eb3592.png)](https://www.epicweb.dev/epic-stack)
+## Table of Contents
 
-[The Epic Stack](https://www.epicweb.dev/epic-stack)
+1. [Planned MVP Features](#planned-mvp-features)
+2. [Planned Features](#planned-features)
+3. [Bugs](#bugs)
+4. [Notes](#notes)
+5. [Todo](#todo)
 
-<hr />
+---
 
-## Watch Kent's Introduction to The Epic Stack
+## Planned MVP Features
 
-[![screenshot of a YouTube video](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/242088051-6beafa78-41c6-47e1-b999-08d3d3e5cb57.png)](https://www.youtube.com/watch?v=yMK5SVRASxM)
+---
 
-["The Epic Stack" by Kent C. Dodds at #RemixConf 2023 💿](https://www.youtube.com/watch?v=yMK5SVRASxM)
+### 1. User Profiles
 
-## Docs
+#### Subtasks
 
-[Read the docs](https://github.com/epicweb-dev/epic-stack/blob/main/docs)
-(please 🙏).
+- [x] Implement sign-up and login functionality using Remix and Prisma.
+- [x] Create data schema for storing user profiles in Prisma.
+- [x] Develop frontend components for personal bio and genre preferences using
+      Remix and Tailwind.
+- [ ] Implement API for CRUD operations on user profiles and books list.
+- [ ] Add a wishlist feature where users can add books they'd like to read.
 
-## Support
+---
 
-- 🆘 Join the
-  [discussion on GitHub](https://github.com/epicweb-dev/epic-stack/discussions)
-  and the [KCD Community on Discord](https://kcd.im/discord).
-- 💡 Create an
-  [idea discussion](https://github.com/epicweb-dev/epic-stack/discussions/new?category=ideas)
-  for suggestions.
-- 🐛 Open a [GitHub issue](https://github.com/epicweb-dev/epic-stack/issues) to
-  report a bug.
+### 2. Book Listings
 
-## Branding
+#### Subtasks
 
-Want to talk about the Epic Stack in a blog post or talk? Great! Here are some
-assets you can use in your material:
-[EpicWeb.dev/brand](https://epicweb.dev/brand)
+- [x] Create Prisma schema for book listings.
+- [ ] Develop API endpoints to add a new book, including uploading photos and
+      metadata.
+- [ ] Create frontend components for adding and editing book listings.
+- [ ] Implement a toggle feature to mark a book as 'Available for Swap' or
+      'Wishlist'.
 
-## Thanks
+---
 
-You rock 🪨
+### 3. Search & Filter Options
+
+#### Subtasks
+
+- [ ] Implement a basic search algorithm to find books or users.
+- [ ] Develop API endpoints for search and filter functionalities.
+- [ ] Create frontend UI components for search and filtering.
+
+---
+
+### 4. Swap Requests & Messaging
+
+#### Subtasks
+
+- [x] Create Prisma schema for swap requests and messages.
+- [ ] Implement API for sending and receiving swap requests.
+- [ ] Develop a simple real-time messaging or chat system.
+- [ ] Create frontend components for swap requests and messaging.
+
+---
+
+### 5. Location-based Matching
+
+#### Subtasks
+
+- [ ] Investigate geolocation services suitable for local matching.
+- [ ] Develop API endpoints for geolocation-based search.
+- [ ] Create frontend components to display books available for swap nearby.
+
+---
+
+### 6. Reviews & Ratings
+
+#### Subtasks
+
+- [x] Create a Prisma schema for storing user reviews and ratings.
+- [ ] Implement API endpoints for posting and retrieving ratings.
+- [ ] Create frontend UI for users to rate each other after a swap.
+
+---
+
+### 7. Safety Guidelines
+
+#### Subtasks
+
+- [ ] Draft safety guidelines for safe meetups and transactions.
+- [ ] Create frontend components to display safety guidelines during the swap
+      process.
+
+---
+
+### 8. Basic Notifications
+
+#### Subtasks
+
+- [ ] Implement backend logic for sending notifications using Fly.io.
+- [ ] Create frontend notification UI.
+- [ ] Develop API endpoints for notifications.
+
+---
+
+## Planned Features
+
+---
+
+### Feature 1: User Profiles
+
+#### Subtasks
+
+- [x] Create the data schema in Prisma for user information
+- [ ] Implement the API endpoints for CRUD operations on user profiles using
+      Node.js/Remix
+- [ ] Develop the frontend components in Remix and Tailwind
+- [ ] Add integration tests for user profile operations
+
+---
+
+### Feature 2: Book Listings
+
+#### Subtasks
+
+- [x] Create the data schema in Prisma for book listings
+- [ ] Implement API endpoints for CRUD operations on book listings
+- [ ] Create frontend components using Remix and Tailwind
+- [ ] Develop an option for users to report unsatisfactory book conditions
+- [ ] Add integration tests for book listing features
+
+---
+
+### Feature 3: Search & Filter Options
+
+#### Subtasks
+
+- [ ] Design the search algorithm for genre, author, title, etc.
+- [ ] Implement the API for search functionality
+- [ ] Create UI components for search and filters
+- [ ] Optimize database queries using SQLite indexes for efficient search
+
+---
+
+### Feature 4: Location-based Matching
+
+#### Subtasks
+
+- [ ] Investigate third-party libraries or APIs for geolocation services
+- [ ] Implement geolocation-based search in the backend
+- [ ] Integrate with the frontend, showcasing nearby books
+- [ ] Optimize for performance and costs on Fly.io
+
+---
+
+### Feature 5: Swap Requests & Messaging
+
+#### Subtasks
+
+- [x] Create data schema in Prisma for messages and swap requests
+- [ ] Implement API endpoints for messaging and swap requests
+- [ ] Develop frontend components for real-time messaging and notifications
+- [ ] Write tests for messaging and swap requests
+
+---
+
+### Feature 6: Reviews & Ratings
+
+#### Subtasks
+
+- [ ] Create the data schema in Prisma for reviews and ratings
+- [ ] Implement API for posting and retrieving reviews
+- [ ] Develop frontend UI for submitting and viewing reviews
+- [ ] Write tests for review features
+
+---
+
+### Feature 7: Environmental Impact Tracker
+
+#### Subtasks
+
+- [ ] Research algorithms for calculating environmental savings
+- [ ] Implement backend logic for tracking
+- [ ] Develop frontend UI for displaying impact
+- [ ] Write tests for impact calculations
+
+---
+
+### Feature 8: Barcode Scanner
+
+#### Subtasks
+
+- [ ] Investigate libraries for barcode scanning
+- [ ] Implement barcode scanning feature in the frontend
+- [ ] Integrate with backend to quickly add books
+- [ ] Write tests for barcode scanning
+
+---
+
+### Feature 9: Virtual Bookshelf
+
+#### Subtasks
+
+- [ ] Create data schema in Prisma for virtual bookshelf
+- [ ] Implement API endpoints for managing the virtual bookshelf
+- [ ] Develop frontend UI components
+- [ ] Write tests for virtual bookshelf features
+
+---
+
+### Feature 10: Community Features
+
+#### Subtasks
+
+- [ ] Create data schema in Prisma for book clubs and discussion groups
+- [ ] Implement API endpoints for community features
+- [ ] Develop frontend components for book clubs and discussion groups
+- [ ] Write tests for community features
+
+---
+
+### Feature 11: Recommendation System
+
+#### Subtasks
+
+- [ ] Design recommendation algorithm based on user data and activity
+- [ ] Implement recommendation logic in the backend
+- [ ] Develop frontend UI for displaying recommendations
+- [ ] Write tests for recommendation features
+
+---
+
+### Feature 12: Donation Integration
+
+#### Subtasks
+
+- [ ] Research payment gateway APIs
+- [ ] Implement donation functionality in backend
+- [ ] Develop frontend UI for donations
+- [ ] Write tests for donation features
+
+---
+
+### Feature 13: Safety Guidelines
+
+#### Subtasks
+
+- [ ] Research and write safety guidelines
+- [ ] Develop frontend UI for displaying safety guidelines
+- [ ] Implement verified user badges in Prisma schema and frontend UI
+- [ ] Write tests for safety features
+
+---
+
+### Feature 14: Tutorials & Onboarding
+
+#### Subtasks
+
+- [ ] Design onboarding experience
+- [ ] Develop frontend UI for tutorials
+- [ ] Implement onboarding logic in the backend
+- [ ] Write tests for onboarding and tutorials
+
+---
+
+### Feature 15: Events Calendar
+
+#### Subtasks
+
+- [ ] Create data schema in Prisma for events
+- [ ] Implement API endpoints for events
+- [ ] Develop frontend components for the events calendar
+- [ ] Write tests for event features
+
+---
+
+### Feature 16: Integration with External Platforms
+
+#### Subtasks
+
+- [ ] Research APIs for platforms like Goodreads
+- [ ] Implement data import/export feature in the backend
+- [ ] Develop frontend UI for external integration
+- [ ] Write tests for external integration features
+
+---
+
+### Feature 17: Accessibility Features
+
+#### Subtasks
+
+- [ ] Investigate best practices for accessibility
+- [ ] Implement voice-over, high contrast theme, adjustable font size
+- [ ] Develop frontend UI components for accessibility
+- [ ] Write tests for accessibility features
+
+---
+
+### Feature 18: Regular Updates
+
+#### Subtasks
+
+- [ ] Design data schema for updates and notifications
+- [ ] Implement API endpoints for sending and receiving updates
+- [ ] Develop frontend UI for displaying updates
+- [ ] Write tests for update features
+
+---
+
+## Bugs
+
+### BUG-001: Login Button Not Responsive
+
+- **Status**: Open
+- **Priority**: Low
+- **Description**: Its possible for a user to have multiple active sessions
+
+---
+
+## Notes
+
+- Consider implementing CI/CD for automated tests and deployments.
+- Ask @larister to review some of the code so far
+
+---
+
+## TODO list
+
+- [] develop CRUD API for all data models
+- [] squash dev commits to eliminate deploy testing litter
+- [] configure eslint to order imports akin to CI
+- [] navbar dropdown icons
+- [] find out SQL join for user -> roles
+- [] add user nav config to conditionally render nav items
+- [] split root layout into separate components
+- [] use [open library](https://covers.openlibrary.org/w/id/6979861-M.jpg) for
+  book cover images; create a service that fetches them on upload
+- [] use goodreads api to add descriptions to added books; create a service that
+  fetches them on upload
+- [] build out concept of a "suggest me a book" based on reading/swap history.
+  Is there an api for this?
+- [] research: can the app be integrated with goodreads accounts?
+- [] BUG: books index calls loader many times, repeating the same if logging out
+  from that page. Why?
+- [] book list can have author/genre/condition link to a search page revealing
+  more of the same
+- [] list pages need filters
+- [] research: can we integrate with a courier service, printing delivery
+  labels, organising book pick ups etc
+- [] why do the constants not hot reload on change?
+- [] add meta functions to all routes
+- [] community/history models/api
+- [] about page model/api
+- [] welcome index model/api
+- [x] deleting book search string creates an infinite loop of requests that I
+      think remix eventually halts; how can I circumvent this? On every change
+      in search term, the loader should only run once. Required revalidation
+      prevention!

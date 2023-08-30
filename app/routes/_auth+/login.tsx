@@ -78,6 +78,16 @@ export async function handleNewSession(
 			redirectUrl.searchParams.set('remember', 'on');
 		}
 		redirectUrl.searchParams.sort();
+
+		await prisma.traffic.create({
+			data: {
+				type: 'login',
+				user: { connect: { id: session.userId } },
+				ip: request.headers.get('cf-connecting-ip') ?? undefined,
+				userAgent: request.headers.get('user-agent') ?? undefined,
+			},
+		});
+
 		return redirect(
 			`${redirectUrl.pathname}?${redirectUrl.searchParams}`,
 			combineResponseInits(
@@ -95,6 +105,15 @@ export async function handleNewSession(
 			request.headers.get('cookie'),
 		);
 		cookieSession.set(sessionKey, session.id);
+
+		await prisma.traffic.create({
+			data: {
+				type: 'login',
+				user: { connect: { id: session.userId } },
+				ip: request.headers.get('cf-connecting-ip') ?? undefined,
+				userAgent: request.headers.get('user-agent') ?? undefined,
+			},
+		});
 
 		return redirect(
 			safeRedirect(redirectTo),
@@ -237,10 +256,15 @@ export default function LoginPage() {
 	const [searchParams] = useSearchParams();
 	const redirectTo = searchParams.get('redirectTo');
 
+	const dev = process.env.NODE_ENV === 'development';
+
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
-		defaultValue: { redirectTo },
+		defaultValue: {
+			redirectTo,
+			...(dev && { username: 'superadmin', password: 'superadmin' }),
+		},
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema });

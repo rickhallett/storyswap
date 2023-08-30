@@ -1,5 +1,7 @@
-// import { useForm } from '@conform-to/react'
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { parse } from '@conform-to/zod';
+import { Popover } from '@headlessui/react';
+import { Prisma } from '@prisma/client';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	type DataFunctionArgs,
@@ -8,43 +10,31 @@ import {
 	type V2_MetaFunction,
 	json,
 } from '@remix-run/node';
-import {
-	Form,
-	Link,
-	Links,
-	LiveReload,
-	Meta,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-	// useFetcher,
-	// useFetchers,
-	useLoaderData,
-	useMatches,
-	useSubmit,
-} from '@remix-run/react';
+import { Outlet, useRouteLoaderData } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
-import { Suspense, lazy, useRef } from 'react';
+import { useState, Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
+import { getNavigationLinks } from '../constants/navigation-items.ts';
+import { getUserNavigationLinks } from '../constants/user-navigation-items.ts';
 import { Confetti } from './components/confetti.tsx';
 import { GeneralErrorBoundary } from './components/error-boundary.tsx';
-// import { ErrorList } from './components/forms.tsx'
-import Navbar from './components/navbar.tsx';
-import { SearchBar } from './components/search-bar.tsx';
+import { DesktopDropdown } from './components/root/desktop-dropdown.tsx';
+import { DesktopNavBar } from './components/root/desktop-nav-bar.tsx';
+import { Document } from './components/root/document.tsx';
+import { Logo } from './components/root/logo.tsx';
+import { MobileDropdown } from './components/root/mobile-dropdown.tsx';
+import { MobileNavBar } from './components/root/mobile-nav-bar.tsx';
+import { TWSearchBar } from './components/root/tw-searchbar.tsx';
+import { WebsiteStats, type Stat } from './components/root/website-stats.tsx';
 import { EpicToaster } from './components/toaster.tsx';
-import { Button } from './components/ui/button.tsx';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuTrigger,
-} from './components/ui/dropdown-menu.tsx';
 import { Icon, href as iconsHref } from './components/ui/icon.tsx';
+import { Label } from './components/ui/label.tsx';
+import ToggleIcon from './components/ui/toggle-icon.tsx';
 import fontStylestylesheetUrl from './styles/font.css';
+import interStylesheetUrl from './styles/inter.css';
 import tailwindStylesheetUrl from './styles/tailwind.css';
 import { authenticator, getUserId } from './utils/auth.server.ts';
-import { ClientHintCheck, getHints } from './utils/client-hints.tsx';
+import { getHints } from './utils/client-hints.tsx';
 import { getConfetti } from './utils/confetti.server.ts';
 import { prisma } from './utils/db.server.ts';
 import { getEnv } from './utils/env.server.ts';
@@ -54,16 +44,27 @@ import {
 	invariantResponse,
 } from './utils/misc.tsx';
 import { useNonce } from './utils/nonce-provider.ts';
-// import { useRequestInfo } from './utils/request-info.ts'
-import { type Theme, getTheme, setTheme } from './utils/theme.server.ts';
+import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
-import { useOptionalUser, useUser } from './utils/user.ts';
+import { useOptionalUser, isUser } from './utils/user.ts';
 
-const RemixDevTools =
-	process.env.NODE_ENV === 'development'
-		? lazy(() => import('remix-development-tools'))
-		: null;
+const RemixDevToolsMode = () => {
+	const RemixDevTools =
+		process.env.NODE_ENV === 'development'
+			? lazy(() => import('remix-development-tools'))
+			: null;
+
+	return (
+		<>
+			{RemixDevTools ? (
+				<Suspense>
+					<RemixDevTools />
+				</Suspense>
+			) : null}
+		</>
+	);
+};
 
 export const links: LinksFunction = () => {
 	return [
@@ -89,6 +90,7 @@ export const links: LinksFunction = () => {
 		{ rel: 'icon', type: 'image/svg+xml', href: '/favicons/favicon.svg' },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
+		{ rel: 'stylesheet', href: interStylesheetUrl },
 		cssBundleHref ? { rel: 'stylesheet', href: cssBundleHref } : null,
 	].filter(Boolean);
 };
@@ -100,6 +102,21 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	];
 };
 
+type UserContext = {
+	id: string;
+	name: string;
+	username: string;
+	email: string;
+	bio: string | null;
+	createdAt: string;
+	updatedAt: string;
+	image: { id: string } | null;
+	roles: {
+		name: string;
+		permissions: { entity: string; action: string; access: string };
+	}[];
+};
+
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('root loader');
 	const userId = await time(() => getUserId(request), {
@@ -108,24 +125,35 @@ export async function loader({ request }: DataFunctionArgs) {
 		desc: 'getUserId in root',
 	});
 
+	const permissionsSelect = Prisma.validator<Prisma.PermissionSelect>()({
+		entity: true,
+		action: true,
+		access: true,
+	});
+
+	const rolesSelect = Prisma.validator<Prisma.RoleSelect>()({
+		name: true,
+		createdAt: false,
+		permissions: { select: permissionsSelect },
+	});
+
+	const userSelect = Prisma.validator<Prisma.UserSelect>()({
+		id: true,
+		name: true,
+		email: true,
+		username: true,
+		createdAt: true,
+		updatedAt: true,
+		bio: true,
+		image: { select: { id: true } },
+		roles: { select: rolesSelect },
+	});
+
 	const user = userId
 		? await time(
 				() =>
 					prisma.user.findUniqueOrThrow({
-						select: {
-							id: true,
-							name: true,
-							username: true,
-							image: { select: { id: true } },
-							roles: {
-								select: {
-									name: true,
-									permissions: {
-										select: { entity: true, action: true, access: true },
-									},
-								},
-							},
-						},
+						select: userSelect,
 						where: { id: userId },
 					}),
 				{ timings, type: 'find user', desc: 'find user in root' },
@@ -139,6 +167,18 @@ export async function loader({ request }: DataFunctionArgs) {
 	}
 	const { toast, headers: toastHeaders } = await getToast(request);
 	const { confettiId, headers: confettiHeaders } = getConfetti(request);
+
+	const usersCount = await prisma.user.count();
+	const booksCount = await prisma.book.count();
+	const swapRequestCount = await prisma.swapRequest.count();
+	const trafficCount = await prisma.traffic.count();
+
+	const stats: Stat[] = [
+		{ name: 'Users', value: usersCount },
+		{ name: 'Books', value: booksCount },
+		{ name: 'Swaps', value: swapRequestCount },
+		{ name: 'Visitors', value: trafficCount },
+	];
 
 	return json(
 		{
@@ -154,6 +194,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			ENV: getEnv(),
 			toast,
 			confettiId,
+			stats,
 		},
 		{
 			headers: combineHeaders(
@@ -200,238 +241,122 @@ export async function action({ request }: DataFunctionArgs) {
 	return json({ success: true, submission }, responseInit);
 }
 
-function Document({
-	children,
-	nonce,
-	theme = 'light',
-	env = {},
-}: {
-	children: React.ReactNode;
-	nonce: string;
-	theme?: Theme;
-	env?: Record<string, string>;
-}) {
-	return (
-		<html lang="en" className={`${theme} mx-auto h-screen overflow-x-hidden`}>
-			<head>
-				<ClientHintCheck nonce={nonce} />
-				<Meta />
-				<meta charSet="utf-8" />
-				<meta
-					name="viewport"
-					content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-				/>
-				<Links />
-			</head>
-			<body className="bg-background text-foreground">
-				{children}
-				<script
-					nonce={nonce}
-					dangerouslySetInnerHTML={{
-						__html: `window.ENV = ${JSON.stringify(env)}`,
-					}}
-				/>
-				<ScrollRestoration nonce={nonce} />
-				<Scripts nonce={nonce} />
-				<LiveReload nonce={nonce} />
-			</body>
-		</html>
-	);
-}
+export type UserContextType = { user: UserContext | null | undefined };
 
 function App() {
-	const data = useLoaderData<typeof loader>();
+	// const data = useLoaderData<typeof loader>();
+	const data = useRouteLoaderData('root');
 	const nonce = useNonce();
 	const user = useOptionalUser();
-	// const theme = useTheme()
-	const matches = useMatches();
-	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index');
+	const validUser = isUser(user);
+	const formRef = useRef<HTMLFormElement>(null);
 
-	console.log({ user, matches });
+	const navigationItems = getNavigationLinks({ user });
+	const userNavigationItems = getUserNavigationLinks({ user });
+
+	const Header = () => (
+		<Popover as="header" className="bg-indigo-600 pb-24">
+			{({ open }) => (
+				<>
+					<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+						<div className="relative flex items-center justify-center py-5 lg:justify-between">
+							<Logo />
+							<TWSearchBar />
+							<DesktopDropdown
+								user={user}
+								formRef={formRef}
+								userNavigationItems={userNavigationItems}
+							/>
+							<MobileDropdown open={open} />
+						</div>
+						<DesktopNavBar navigationItems={navigationItems} />
+					</div>
+
+					<MobileNavBar
+						user={user}
+						userNavigationItems={userNavigationItems}
+						navigationItems={navigationItems}
+						formRef={formRef}
+					/>
+				</>
+			)}
+		</Popover>
+	);
+
+	const Main = () => (
+		<main className="-mt-24 min-h-[75vh] pb-8">
+			<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+				<h1 className="sr-only">Main Content</h1>
+				<div className="grid grid-cols-1 items-start gap-4 lg:gap-8">
+					<div className="grid grid-cols-1 gap-4 lg:col-span-2">
+						<section aria-labelledby="section-1-title">
+							<h2 className="sr-only" id="section-1-title">
+								Navigation Output
+							</h2>
+							<div className="overflow-hidden rounded-lg bg-white shadow">
+								<div className="p-6">
+									<Outlet
+										context={
+											{
+												user: validUser ? user : null,
+											} as UserContextType
+										}
+									/>
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</main>
+	);
+
+	const Footer = () => {
+		const [showStats, setShowStats] = useState(false);
+
+		return (
+			<footer className="sticky bottom-0 left-0 right-0">
+				<WebsiteStats stats={data.stats} hidden={!showStats} />
+				<div className="mx-auto max-w-3xl bg-indigo-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
+					<div className="flex items-center justify-around border-t border-gray-200 py-2 text-center text-xs text-gray-400">
+						<div className="flex items-center gap-2">
+							<Label className="text-xs" htmlFor="show-stats">
+								Stats
+							</Label>
+							<ToggleIcon
+								name="show-stats"
+								enabled={showStats}
+								setEnabled={() => setShowStats((show) => !show)}
+							/>
+						</div>
+						<span className="block sm:inline">&copy; 2021 StorySwap</span>
+						<span className="mt-1 block sm:inline">
+							<a href="https://www.github.com/rickhallett/storyswap">
+								<Icon name="github-logo" className="h-4 w-4" /> rickhallett
+							</a>
+						</span>
+					</div>
+				</div>
+			</footer>
+		);
+	};
 
 	return (
-		<Document nonce={nonce} theme={'light'} env={data.ENV}>
-			<div className="flex h-screen flex-col justify-between">
-				<header className="container py-6">
-					<nav className="flex items-center justify-between">
-						<Navbar />
-
-						{isOnSearchPage ? null : (
-							<div className="mx-auto">
-								<SearchBar status="idle" hideInput />
-							</div>
-						)}
-
-						<div className="flex items-center gap-10">
-							{user ? (
-								<UserDropdown />
-							) : (
-								<Button asChild variant="default" size="sm">
-									<Link to="/login">Log In</Link>
-								</Button>
-							)}
-						</div>
-					</nav>
-				</header>
-
-				<div className="flex-1">
-					<Outlet />
-				</div>
-				<Link to="/" className="p-2">
-					<div className="font-light">story</div>
-					<div className="font-bold">swap</div>
-				</Link>
+		<Document nonce={nonce} env={data.ENV}>
+			<div className="h-fit">
+				<Header />
+				<Main />
+				<Footer />
 			</div>
+
 			<Confetti id={data.confettiId} />
 			<EpicToaster toast={data.toast} />
-			{RemixDevTools ? (
-				<Suspense>
-					<RemixDevTools />
-				</Suspense>
-			) : null}
+			<RemixDevToolsMode />
 		</Document>
 	);
 }
+
 export default withSentry(App);
-
-function UserDropdown() {
-	const user = useUser();
-	const submit = useSubmit();
-	const formRef = useRef<HTMLFormElement>(null);
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button asChild variant="secondary">
-					<Link
-						to={`/users/${user.username}`}
-						// this is for progressive enhancement
-						onClick={(e) => e.preventDefault()}
-						className="flex items-center gap-2"
-					>
-						<Icon name="avatar" className="text-body-md" />
-						<span className="text-body">{user.name ?? user.username}</span>
-					</Link>
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuPortal>
-				<DropdownMenuContent sideOffset={8} align="start">
-					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/${user.username}`}>
-							<Icon className="text-body-md" name="avatar">
-								Profile
-							</Icon>
-						</Link>
-					</DropdownMenuItem>
-					<DropdownMenuItem asChild>
-						<Link prefetch="intent" to={`/users/${user.username}/notes`}>
-							<Icon className="text-body-md" name="pencil-2">
-								Notes
-							</Icon>
-						</Link>
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						asChild
-						// this prevents the menu from closing before the form submission is completed
-						onSelect={(event) => {
-							event.preventDefault();
-							submit(formRef.current);
-						}}
-					>
-						<Form action="/logout" method="POST" ref={formRef}>
-							<Icon className="text-body-md" name="exit">
-								<button type="submit">Logout</button>
-							</Icon>
-						</Form>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenuPortal>
-		</DropdownMenu>
-	);
-}
-
-// /**
-//  * @returns the user's theme preference, or the client hint theme if the user
-//  * has not set a preference.
-//  */
-// export function useTheme() {
-// 	const hints = useHints()
-// 	const requestInfo = useRequestInfo()
-// 	const optimisticMode = useOptimisticThemeMode()
-// 	if (optimisticMode) {
-// 		return optimisticMode === 'system' ? hints.theme : optimisticMode
-// 	}
-// 	return requestInfo.userPrefs.theme ?? hints.theme
-// }
-
-// /**
-//  * If the user's changing their theme mode preference, this will return the
-//  * value it's being changed to.
-//  */
-// export function useOptimisticThemeMode() {
-// 	const fetchers = useFetchers()
-
-// 	const themeFetcher = fetchers.find(
-// 		f => f.formData?.get('intent') === 'update-theme',
-// 	)
-
-// 	if (themeFetcher && themeFetcher.formData) {
-// 		const submission = parse(themeFetcher.formData, {
-// 			schema: ThemeFormSchema,
-// 		})
-// 		return submission.value?.theme
-// 	}
-// }
-
-// function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
-// 	const fetcher = useFetcher<typeof action>()
-
-// 	const [form] = useForm({
-// 		id: 'theme-switch',
-// 		lastSubmission: fetcher.data?.submission,
-// 		onValidate({ formData }) {
-// 			return parse(formData, { schema: ThemeFormSchema })
-// 		},
-// 	})
-
-// 	const optimisticMode = useOptimisticThemeMode()
-// 	const mode = optimisticMode ?? userPreference ?? 'system'
-// 	const nextMode =
-// 		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
-// 	const modeLabel = {
-// 		light: (
-// 			<Icon name="sun">
-// 				<span className="sr-only">Light</span>
-// 			</Icon>
-// 		),
-// 		dark: (
-// 			<Icon name="moon">
-// 				<span className="sr-only">Dark</span>
-// 			</Icon>
-// 		),
-// 		system: (
-// 			<Icon name="laptop">
-// 				<span className="sr-only">System</span>
-// 			</Icon>
-// 		),
-// 	}
-
-// 	return (
-// 		<fetcher.Form method="POST" {...form.props}>
-// 			<input type="hidden" name="theme" value={nextMode} />
-// 			<div className="flex gap-2">
-// 				<button
-// 					name="intent"
-// 					value="update-theme"
-// 					type="submit"
-// 					className="flex h-8 w-8 cursor-pointer items-center justify-center"
-// 				>
-// 					{modeLabel[mode]}
-// 				</button>
-// 			</div>
-// 			<ErrorList errors={form.errors} id={form.errorId} />
-// 		</fetcher.Form>
-// 	)
-// }
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that

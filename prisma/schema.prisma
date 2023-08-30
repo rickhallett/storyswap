@@ -25,13 +25,13 @@ model User {
   connections      Connection[]
   bio              String?
   preferredGenres  Genre[]       @relation("userGenres")
-  created_at       DateTime      @default(now())
   books            Book[]
   swapRequests     SwapRequest[]
   sentMessages     Message[]     @relation("sentMessages")
   receivedMessages Message[]     @relation("receivedMessages")
   writtenReviews   Review[]      @relation("writtenReviews")
   receivedReviews  Review[]      @relation("receivedReviews")
+  Traffic          Traffic[]
 }
 
 model Genre {
@@ -42,22 +42,26 @@ model Genre {
 }
 
 model Book {
-  id           String        @id @default(uuid())
-  title        String
-  author       String
-  genreId      String        // Foreign key for Genre
-  conditionId  String        // Foreign key for BookCondition
-  statusId     String        // Foreign key for BookStatus
-  userId       String        // Foreign key for User
-  genre        Genre         @relation("bookGenres", fields: [genreId], references: [id])
-  description  String?
-  condition    BookCondition @relation(fields: [conditionId], references: [id])
-  status       BookStatus    @relation(fields: [statusId], references: [id])
-  created_at   DateTime      @default(now())
-  user         User          @relation(fields: [userId], references: [id])
-  swapRequests SwapRequest[]
+  id               String        @id @default(uuid())
+  title            String
+  author           String
+  genreId          String // Foreign key for Genre
+  conditionId      String // Foreign key for BookCondition
+  statusId         String // Foreign key for BookStatus
+  userId           String // Foreign key for User
+  genre            Genre         @relation("bookGenres", fields: [genreId], references: [id])
+  description      String?
+  condition        BookCondition @relation(fields: [conditionId], references: [id])
+  status           BookStatus    @relation(fields: [statusId], references: [id])
+  createdAt        DateTime      @default(now())
+  user             User          @relation(fields: [userId], references: [id])
+  smallImageURL    String
+  goodreadsId      Int
+  goodreadsRating  Int
+  goodreadsRatings Int
+  publicationYear  Int?
+  swapRequests     SwapRequest[]
 }
-
 
 model BookStatus {
   id    String @id @default(uuid())
@@ -72,11 +76,11 @@ model BookCondition {
 }
 
 model SwapRequest {
-  id          String            @id @default(uuid())
-  created_at  DateTime          @default(now())
-  user        User              @relation(fields: [id], references: [id])
-  book        Book              @relation(fields: [id], references: [id])
-  status      SwapRequestStatus @relation(fields: [id], references: [id])
+  id        String            @id @default(uuid())
+  createdAt DateTime          @default(now())
+  user      User              @relation(fields: [id], references: [id])
+  book      Book              @relation(fields: [id], references: [id])
+  status    SwapRequestStatus @relation(fields: [id], references: [id])
 }
 
 model SwapRequestStatus {
@@ -86,20 +90,20 @@ model SwapRequestStatus {
 }
 
 model Message {
-  id         String   @id @default(uuid())
-  content    String
-  created_at DateTime @default(now())
-  sender     User     @relation("sentMessages", fields: [id], references: [id])
-  receiver   User     @relation("receivedMessages", fields: [id], references: [id])
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  sender    User     @relation("sentMessages", fields: [id], references: [id])
+  receiver  User     @relation("receivedMessages", fields: [id], references: [id])
 }
 
 model Review {
-  id             String   @id @default(uuid())
-  rating         Int
-  comment        String?
-  created_at     DateTime @default(now())
-  reviewer       User     @relation("writtenReviews", fields: [id], references: [id])
-  reviewedUser   User     @relation("receivedReviews", fields: [id], references: [id])
+  id           String   @id @default(uuid())
+  rating       Int
+  comment      String?
+  createdAt    DateTime @default(now())
+  reviewer     User     @relation("writtenReviews", fields: [id], references: [id])
+  reviewedUser User     @relation("receivedReviews", fields: [id], references: [id])
 }
 
 model Note {
@@ -239,4 +243,15 @@ model Connection {
 
   @@unique([providerName, providerId])
   @@unique([providerId, userId])
+}
+
+model Traffic {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  type      String
+  user      User    @relation(fields: [userId], references: [id])
+  ip        String?
+  userAgent String?
+  userId    String
 }

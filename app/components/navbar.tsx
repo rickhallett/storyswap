@@ -1,5 +1,3 @@
-// import { CaretDownIcon } from '@radix-ui/react-icons'
-// import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import { type LinksFunction } from '@remix-run/node';
 import { Link } from '@remix-run/react';
 import React from 'react';

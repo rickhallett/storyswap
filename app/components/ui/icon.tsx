@@ -43,7 +43,7 @@ export function Icon({
 	children,
 	...props
 }: SVGProps<SVGSVGElement> & {
-	name: IconName;
+	name: string;
 	size?: Size;
 }) {
 	if (children) {
