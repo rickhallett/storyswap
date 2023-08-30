@@ -48,13 +48,9 @@ const BookSearchResultSchema = z.object({
 
 const BookSearchResultsSchema = z.array(BookSearchResultSchema);
 
-// export const links: LinksFunction = () => {
-// 	return [{ rel: 'stylesheet', href: bookListStyles }];
-// };
-
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
-	const searchTerm = new URL(request.url).searchParams.get('search');
+	const searchTerm = new URL(request.url).searchParams.get('search-books');
 	if (searchTerm === '') {
 		redirect('/books');
 	}
@@ -132,6 +128,7 @@ export default function BooksRoute() {
 					formAction="/books"
 					autoFocus
 					autoSubmit
+					searchParam="search-books"
 				/>
 			</div>
 			<main>

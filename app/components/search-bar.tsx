@@ -13,12 +13,14 @@ export function SearchBar({
 	autoFocus = false,
 	autoSubmit = false,
 	formAction,
+	searchParam,
 }: {
 	status: 'idle' | 'pending' | 'success' | 'error';
 	hideInput?: boolean;
 	autoFocus?: boolean;
 	autoSubmit?: boolean;
 	formAction: string;
+	searchParam: string;
 }) {
 	const [searchParams] = useSearchParams();
 	const submit = useSubmit();
@@ -45,9 +47,9 @@ export function SearchBar({
 				{!hideInput && (
 					<Input
 						type="search"
-						name="search"
+						name={searchParam}
 						id={`search-${formAction}`}
-						defaultValue={searchParams.get('search') ?? ''}
+						defaultValue={searchParams.get(searchParam) ?? ''}
 						placeholder="Search"
 						className="w-full"
 						autoFocus={autoFocus}

@@ -38,7 +38,7 @@ const UserSearchResultsSchema = z.array(UserSearchResultSchema);
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
-	const searchTerm = new URL(request.url).searchParams.get('search');
+	const searchTerm = new URL(request.url).searchParams.get('search-users');
 	if (searchTerm === '') {
 		return redirect('/users');
 	}
@@ -101,6 +101,7 @@ export default function UsersRoute() {
 					formAction="/users"
 					autoFocus
 					autoSubmit
+					searchParam="search-users"
 				/>
 			</div>
 			<main>
