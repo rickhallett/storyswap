@@ -15,6 +15,8 @@ function classNames(...classes) {
 }
 
 function OptionsMenu({ book, user }) {
+	const isOwner = book.user.id === user.id;
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
@@ -111,25 +113,27 @@ function OptionsMenu({ book, user }) {
 							)}
 						</Menu.Item>
 					</div>
-					<div className="py-1">
-						<Menu.Item>
-							{({ active }) => (
-								<Link
-									to="#"
-									className={classNames(
-										active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-										'group flex items-center px-4 py-2 text-sm',
-									)}
-								>
-									<TrashIcon
-										className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-										aria-hidden="true"
-									/>
-									Delete
-								</Link>
-							)}
-						</Menu.Item>
-					</div>
+					{isOwner && (
+						<div className="py-1">
+							<Menu.Item>
+								{({ active }) => (
+									<Link
+										to="#"
+										className={classNames(
+											active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+											'group flex items-center px-4 py-2 text-sm',
+										)}
+									>
+										<TrashIcon
+											className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+											aria-hidden="true"
+										/>
+										Delete
+									</Link>
+								)}
+							</Menu.Item>
+						</div>
+					)}
 				</Menu.Items>
 			</Transition>
 		</Menu>

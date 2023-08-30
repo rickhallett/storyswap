@@ -43,15 +43,9 @@ export default function BooksRoute() {
 	const data = useRouteLoaderData('root');
 	const { books } = useLoaderData<typeof loader>();
 
-	console.log(books);
-
 	return (
 		<div className="container flex items-center justify-center p-5">
 			<div className="flex flex-col gap-6">
-				{/* <Outlet /> */}
-				{/* {books.map((book) => (
-					<BookListItem key={book.id} book={book} />
-				))} */}
 				<BookListCards books={books} user={data.user} />
 				<Link to="/" className="text-body-md underline">
 					<Icon name="arrow-left">Back to home</Icon>
