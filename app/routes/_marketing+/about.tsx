@@ -1,74 +1,79 @@
-import { type V2_MetaFunction } from '@remix-run/node';
+import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid';
 
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '#app/components/ui/tooltip.tsx';
-
-import { logos } from './logos/logos.ts';
-
-export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];
+const profile = {
+	name: 'Ricardo Cooper',
+	email: 'ricardo.cooper@example.com',
+	avatar:
+		'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+	backgroundImage:
+		'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+	fields: [
+		['Phone', '(555) 123-4567'],
+		['Email', 'ricardocooper@example.com'],
+		['Title', 'Front-End Developer'],
+		['Team', 'Product Development'],
+		['Location', 'San Francisco'],
+		['Sits', 'Oasis, 4th floor'],
+		['Salary', '$145,000'],
+		['Birthday', 'June 8, 1990'],
+	],
+};
 
 export default function About() {
 	return (
-		<main className="relative min-h-screen sm:flex sm:items-start sm:justify-center">
-			<div className="relative sm:pb-16 sm:pt-8">
-				<div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-					<div className="relative shadow-xl sm:overflow-hidden sm:rounded-2xl">
-						<div className="absolute inset-0">
-							{/* <img className="h-full w-full object-cover" src={stars} alt="" /> */}
-							<div className="absolute inset-0 bg-[color:rgba(30,23,38,0.5)] mix-blend-multiply" />
-						</div>
-						<div className="lg:pt-18 relative px-4 pb-8 pt-8 sm:px-6 sm:pb-14 sm:pt-16 lg:px-8 lg:pb-20">
-							<h1 className="text-center font-extrabold tracking-tight sm:text-2xl lg:text-4xl">
-								<span>StorySwap</span>
-								<svg
-									className="mx-auto mt-8"
-									xmlns="http://www.w3.org/2000/svg"
-									width="60"
-									height="60"
-									fill="none"
-									viewBox="0 0 65 65"
-								>
-									<path
-										fill="currentColor"
-										d="M39.445 25.555 37 17.163 65 0 47.821 28l-8.376-2.445Zm-13.89 0L28 17.163 0 0l17.179 28 8.376-2.445Zm13.89 13.89L37 47.837 65 65 47.821 37l-8.376 2.445Zm-13.89 0L28 47.837 0 65l17.179-28 8.376 2.445Z"
-									></path>
-								</svg>
+		<div>
+			<div>
+				<img
+					className="h-32 w-full object-cover lg:h-48"
+					src={profile.backgroundImage}
+					alt=""
+				/>
+			</div>
+			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+				<div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+					<div className="flex">
+						<img
+							className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
+							src={profile.avatar}
+							alt=""
+						/>
+					</div>
+					<div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
+						<div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
+							<h1 className="truncate text-2xl font-bold text-gray-900">
+								{profile.name}
 							</h1>
 						</div>
+						<div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
+							<button
+								type="button"
+								className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+							>
+								<EnvelopeIcon
+									className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+									aria-hidden="true"
+								/>
+								<span>Message</span>
+							</button>
+							<button
+								type="button"
+								className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+							>
+								<PhoneIcon
+									className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+									aria-hidden="true"
+								/>
+								<span>Call</span>
+							</button>
+						</div>
 					</div>
 				</div>
-
-				<div className="mx-auto mt-8 max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-					<p className="text-center">made with...</p>
-					<div className="flex flex-wrap justify-center gap-8 rounded-3xl bg-slate-100 py-4 dark:bg-slate-200">
-						<TooltipProvider>
-							{logos
-								.filter((l) => l.inc)
-								.map((img) => (
-									<Tooltip key={img.href}>
-										<TooltipTrigger asChild>
-											<a
-												href={img.href}
-												className="flex h-16 w-32 justify-center p-1 grayscale transition hover:grayscale-0 focus:grayscale-0"
-											>
-												<img
-													alt={img.alt}
-													src={img.src}
-													className="object-contain"
-												/>
-											</a>
-										</TooltipTrigger>
-										<TooltipContent>{img.alt}</TooltipContent>
-									</Tooltip>
-								))}
-						</TooltipProvider>
-					</div>
+				<div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
+					<h1 className="truncate text-2xl font-bold text-gray-900">
+						{profile.name}
+					</h1>
 				</div>
 			</div>
-		</main>
+		</div>
 	);
 }
