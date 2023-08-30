@@ -74,11 +74,11 @@ export const getNavigationLinks = (user: any) => [
 	},
 	{
 		name: 'My Community',
-		href: '#',
+		href: '/community/history',
 		current: false,
 		logo: 'face',
 		hidden: false,
-		disabled: true,
+		disabled: false,
 	},
 	{
 		name: 'Integrations',

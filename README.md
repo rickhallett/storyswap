@@ -344,3 +344,4 @@
   from that page. Why?
 - [] book list can have author/genre/condition link to a search page revealing more of the same
 - [] list pages need filters
+- [] research: can we integrate with a courier service, printing delivery labels, organising book pick ups etc
