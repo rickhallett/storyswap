@@ -2,8 +2,8 @@ import { CheckIcon } from '@heroicons/react/20/solid';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { type V2_MetaFunction } from '@remix-run/node';
 
-import { Icon } from '#app/components/ui/icon.tsx';
 import { Link } from '@remix-run/react';
+import { Icon } from '#app/components/ui/icon.tsx';
 
 export const meta: V2_MetaFunction = () => [{ title: 'StorySwap' }];
 
