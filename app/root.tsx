@@ -12,7 +12,7 @@ import {
 } from '@remix-run/node';
 import { Outlet, useRouteLoaderData } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
-import { Suspense, lazy, Fragment, useRef } from 'react';
+import { useState, Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
 import { getNavigationLinks } from '../constants/navigation-items.ts';
 import { getUserNavigationLinks } from '../constants/user-navigation-items.ts';
@@ -26,9 +26,10 @@ import { MobileDropdown } from './components/root/mobile-dropdown.tsx';
 import { MobileNavBar } from './components/root/mobile-nav-bar.tsx';
 import { TWSearchBar } from './components/root/tw-searchbar.tsx';
 import { WebsiteStats, type Stat } from './components/root/website-stats.tsx';
-import { Spacer } from './components/spacer.tsx';
 import { EpicToaster } from './components/toaster.tsx';
 import { Icon, href as iconsHref } from './components/ui/icon.tsx';
+import { Label } from './components/ui/label.tsx';
+import ToggleIcon from './components/ui/toggle-icon.tsx';
 import fontStylestylesheetUrl from './styles/font.css';
 import interStylesheetUrl from './styles/inter.css';
 import tailwindStylesheetUrl from './styles/tailwind.css';
@@ -250,6 +251,8 @@ function App() {
 	const validUser = isUser(user);
 	const formRef = useRef<HTMLFormElement>(null);
 
+	console.log({ data, nonce, user, validUser });
+
 	const navigationItems = getNavigationLinks({ user });
 	const userNavigationItems = getUserNavigationLinks({ user });
 
@@ -310,22 +313,35 @@ function App() {
 		</main>
 	);
 
-	const Footer = () => (
-		<footer className="sticky bottom-0 left-0 right-0">
-			<WebsiteStats stats={data.stats} />
-			<div className="mx-auto max-w-3xl bg-indigo-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="border-t border-gray-200 py-4 text-center text-sm text-gray-400">
-					<span className="block sm:inline">&copy; 2021 StorySwap</span>
-					<Spacer size="6xs" />
-					<span className="block sm:inline">
-						<a href="https://www.github.com/rickhallett/storyswap">
-							<Icon name="github-logo" className="h-4 w-4" /> rickhallett
-						</a>
-					</span>
+	const Footer = () => {
+		const [showStats, setShowStats] = useState(false);
+
+		return (
+			<footer className="sticky bottom-0 left-0 right-0">
+				<WebsiteStats stats={data.stats} hidden={!showStats} />
+				<div className="mx-auto max-w-3xl bg-indigo-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
+					<div className="flex items-center justify-around border-t border-gray-200 py-2 text-center text-xs text-gray-400">
+						<div className="flex items-center gap-2">
+							<Label className="text-xs" htmlFor="show-stats">
+								Stats
+							</Label>
+							<ToggleIcon
+								name="show-stats"
+								enabled={showStats}
+								setEnabled={() => setShowStats((show) => !show)}
+							/>
+						</div>
+						<span className="block sm:inline">&copy; 2021 StorySwap</span>
+						<span className="mt-1 block sm:inline">
+							<a href="https://www.github.com/rickhallett/storyswap">
+								<Icon name="github-logo" className="h-4 w-4" /> rickhallett
+							</a>
+						</span>
+					</div>
 				</div>
-			</div>
-		</footer>
-	);
+			</footer>
+		);
+	};
 
 	return (
 		<Document nonce={nonce} env={data.ENV}>
