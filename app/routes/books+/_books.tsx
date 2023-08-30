@@ -1,63 +1,56 @@
-import {
-	type DataFunctionArgs,
-	json,
-	type LinksFunction,
-	redirect,
-} from '@remix-run/node';
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
 import { useOutletContext, useRouteLoaderData } from '@remix-run/react';
-// import { z } from 'zod';
+import { z } from 'zod';
 import BookListCards from '#app/components/books/book-list-card.tsx';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
 import { SearchBar } from '#app/components/search-bar.tsx';
 import { type UserContextType } from '#app/root.tsx';
-import bookListStyles from '#app/styles/book-list-item.css';
 import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
 
-// const BookSearchResultSchema = z.object({
-// 	id: z.string(),
-// 	title: z.string().nullable(),
-// 	author: z.string().nullable(),
-// 	description: z.string().nullable(),
-// 	smallImageURL: z.string().nullable(),
-// 	goodreadsId: z.number().nullable(),
-// 	goodreadsRating: z.number().nullable(),
-// 	goodreadsRatings: z.number().nullable(),
-// 	publicationYear: z.number().nullable(),
-// 	createdAt: z.date(),
-// 	user: z.object({
-// 		id: z.string(),
-// 		username: z.string().nullable(),
-// 		name: z.string().nullable(),
-// 		bio: z.string().nullable(),
-// 		email: z.string().nullable(),
-// 	}),
-// 	status: z.object({
-// 		name: z.string().nullable(),
-// 	}),
-// 	genre: z.object({
-// 		name: z.string().nullable(),
-// 	}),
-// 	condition: z.object({
-// 		name: z.string().nullable(),
-// 	}),
-// 	swapRequests: z.array(
-// 		z.object({
-// 			id: z.string(),
-// 			createdAt: z.date(),
-// 			status: z.object({
-// 				name: z.string().nullable(),
-// 			}),
-// 		}),
-// 	),
-// });
+const BookSearchResultSchema = z.object({
+	id: z.string(),
+	title: z.string().nullable(),
+	author: z.string().nullable(),
+	description: z.string().nullable(),
+	smallImageURL: z.string().nullable(),
+	goodreadsId: z.number().nullable(),
+	goodreadsRating: z.number().nullable(),
+	goodreadsRatings: z.number().nullable(),
+	publicationYear: z.number().nullable(),
+	createdAt: z.date(),
+	user: z.object({
+		id: z.string(),
+		username: z.string().nullable(),
+		name: z.string().nullable(),
+		email: z.string().nullable(),
+	}),
+	status: z.object({
+		name: z.string().nullable(),
+	}),
+	genre: z.object({
+		name: z.string().nullable(),
+	}),
+	condition: z.object({
+		name: z.string().nullable(),
+	}),
+	swapRequests: z.array(
+		z.object({
+			id: z.string(),
+			createdAt: z.date(),
+			status: z.object({
+				name: z.string().nullable(),
+			}),
+		}),
+	),
+});
 
-// const BookSearchResultsSchema = z.array(BookSearchResultSchema);
+const BookSearchResultsSchema = z.array(BookSearchResultSchema);
 
-export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: bookListStyles }];
-};
+// export const links: LinksFunction = () => {
+// 	return [{ rel: 'stylesheet', href: bookListStyles }];
+// };
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
@@ -91,7 +84,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			goodreadsRating: true,
 			goodreadsRatings: true,
 			publicationYear: true,
-			user: { select: { id: true, username: true, name: true } },
+			user: { select: { id: true, username: true, name: true, email: true } },
 			status: { select: { name: true } },
 			genre: { select: { name: true } },
 			condition: { select: { name: true } },
@@ -103,6 +96,7 @@ export async function loader({ request }: DataFunctionArgs) {
 				},
 			},
 		},
+		take: 10,
 	});
 
 	// TODO: temporarily bypass schema validation
@@ -121,7 +115,6 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export default function BooksRoute() {
 	const data = useRouteLoaderData('routes/books+/_books');
-
 	const user = useOutletContext<UserContextType>().user;
 
 	if (data.status === 'error') {
