@@ -345,3 +345,8 @@
 - [] book list can have author/genre/condition link to a search page revealing more of the same
 - [] list pages need filters
 - [] research: can we integrate with a courier service, printing delivery labels, organising book pick ups etc
+- [] why do the constants not hot reload on change?
+- [] add meta functions to all routes
+- [] community/history models/api
+- [] about page model/api
+- [] welcome index model/api

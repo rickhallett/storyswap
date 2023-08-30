@@ -105,8 +105,8 @@ export const getNavigationLinks = (user: any) => [
 		disabled: true,
 	},
 	{
-		name: 'Donate',
-		href: '#',
+		name: 'Feedback',
+		href: '/community/bugs',
 		current: false,
 		logo: 'code',
 		hidden: false,
