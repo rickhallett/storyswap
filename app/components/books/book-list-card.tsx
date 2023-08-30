@@ -169,7 +169,7 @@ export default function BookListCards({ books, user }) {
 					key={book.id}
 					className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
 				>
-					<div className="flex flex-1 flex-col p-8">
+					<div className="flex flex-1 flex-col p-4">
 						<img
 							className=" mx-auto h-[79px] w-[48px] flex-shrink-0"
 							src={book.smallImageURL}

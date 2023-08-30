@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { parse } from '@conform-to/zod';
 import { Popover } from '@headlessui/react';
+import { Prisma } from '@prisma/client';
 import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	type DataFunctionArgs,
@@ -9,7 +10,7 @@ import {
 	type V2_MetaFunction,
 	json,
 } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Outlet, useRouteLoaderData } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
 import { Suspense, lazy, Fragment, useRef } from 'react';
 import { z } from 'zod';
@@ -45,7 +46,7 @@ import { useNonce } from './utils/nonce-provider.ts';
 import { getTheme, setTheme } from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts';
 import { getToast } from './utils/toast.server.ts';
-import { useOptionalUser } from './utils/user.ts';
+import { useOptionalUser, isUser } from './utils/user.ts';
 
 const RemixDevToolsMode = () => {
 	const RemixDevTools =
@@ -100,6 +101,21 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	];
 };
 
+type UserContext = {
+	id: string;
+	name: string;
+	username: string;
+	email: string;
+	bio: string | null;
+	createdAt: string;
+	updatedAt: string;
+	image: { id: string } | null;
+	roles: {
+		name: string;
+		permissions: { entity: string; action: string; access: string };
+	}[];
+};
+
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('root loader');
 	const userId = await time(() => getUserId(request), {
@@ -108,25 +124,35 @@ export async function loader({ request }: DataFunctionArgs) {
 		desc: 'getUserId in root',
 	});
 
+	const permissionsSelect = Prisma.validator<Prisma.PermissionSelect>()({
+		entity: true,
+		action: true,
+		access: true,
+	});
+
+	const rolesSelect = Prisma.validator<Prisma.RoleSelect>()({
+		name: true,
+		createdAt: false,
+		permissions: { select: permissionsSelect },
+	});
+
+	const userSelect = Prisma.validator<Prisma.UserSelect>()({
+		id: true,
+		name: true,
+		email: true,
+		username: true,
+		createdAt: true,
+		updatedAt: true,
+		bio: true,
+		image: { select: { id: true } },
+		roles: { select: rolesSelect },
+	});
+
 	const user = userId
 		? await time(
 				() =>
 					prisma.user.findUniqueOrThrow({
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							username: true,
-							image: { select: { id: true } },
-							roles: {
-								select: {
-									name: true,
-									permissions: {
-										select: { entity: true, action: true, access: true },
-									},
-								},
-							},
-						},
+						select: userSelect,
 						where: { id: userId },
 					}),
 				{ timings, type: 'find user', desc: 'find user in root' },
@@ -214,10 +240,14 @@ export async function action({ request }: DataFunctionArgs) {
 	return json({ success: true, submission }, responseInit);
 }
 
+export type UserContextType = { user: UserContext | null | undefined };
+
 function App() {
-	const data = useLoaderData<typeof loader>();
+	// const data = useLoaderData<typeof loader>();
+	const data = useRouteLoaderData('root');
 	const nonce = useNonce();
 	const user = useOptionalUser();
+	const validUser = isUser(user);
 	const formRef = useRef<HTMLFormElement>(null);
 
 	const navigationItems = getNavigationLinks({ user });
@@ -264,7 +294,13 @@ function App() {
 							</h2>
 							<div className="overflow-hidden rounded-lg bg-white shadow">
 								<div className="p-6">
-									<Outlet />
+									<Outlet
+										context={
+											{
+												user: validUser ? user : null,
+											} as UserContextType
+										}
+									/>
 								</div>
 							</div>
 						</section>

@@ -1,13 +1,12 @@
 import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { useRouteLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
 import { ErrorList } from '#app/components/forms.tsx';
 import { SearchBar } from '#app/components/search-bar.tsx';
-import UserListItem from '#app/components/users/user-list-item.tsx';
+import UserListItems from '#app/components/users/user-list-item.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
-import { useDelayedIsPending } from '#app/utils/misc.tsx';
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),
@@ -85,26 +84,29 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export default function UsersRoute() {
-	const data = useLoaderData<typeof loader>();
-	const isPending = useDelayedIsPending({
-		formMethod: 'GET',
-		formAction: '/users',
-	});
+	const data = useRouteLoaderData('routes/users+/_users');
 
 	if (data.status === 'error') {
 		console.error(data.error);
 	}
 
+	console.log(data);
+
 	return (
 		<div className="container mb-48 mt-6 flex flex-col items-center justify-center gap-6">
 			<h1 className="text-h5">StorySwap Users</h1>
 			<div className="w-full max-w-[700px] ">
-				<SearchBar status={data.status} autoFocus autoSubmit />
+				<SearchBar
+					status={data.status}
+					formAction="/users"
+					autoFocus
+					autoSubmit
+				/>
 			</div>
 			<main>
 				{data.status === 'idle' ? (
 					data.users.length ? (
-						<UserListItem users={data.users} isPending={isPending} />
+						<UserListItems users={data.users} />
 					) : (
 						<p>No users found</p>
 					)
