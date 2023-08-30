@@ -1,5 +1,9 @@
 import { type DataFunctionArgs, json, redirect } from '@remix-run/node';
-import { useOutletContext, useRouteLoaderData ,type  ShouldRevalidateFunction } from '@remix-run/react';
+import {
+	useOutletContext,
+	useRouteLoaderData,
+	type ShouldRevalidateFunction,
+} from '@remix-run/react';
 import { z } from 'zod';
 import BookListCards from '#app/components/books/book-list-card.tsx';
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx';
@@ -49,15 +53,13 @@ const BookSearchResultSchema = z.object({
 const BookSearchResultsSchema = z.array(BookSearchResultSchema);
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
-	formData,
 	currentUrl,
 	nextUrl,
 	defaultShouldRevalidate,
 }) => {
-	const currentParams = currentUrl.searchParams.get('search-books');
 	const nextParams = nextUrl.searchParams.get('search-books');
 
-	if (nextParams === '' && currentParams === '') {
+	if (nextParams === '' || nextParams === null) {
 		return false;
 	}
 
@@ -126,14 +128,12 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export default function BooksRoute() {
-	const data = useRouteLoaderData('routes/books+/_books');
+	const data = useRouteLoaderData('routes/books+/index');
 	const user = useOutletContext<UserContextType>().user;
 
 	if (data.status === 'error') {
 		console.error(data.error);
 	}
-
-	console.log(data);
 
 	return (
 		<div className="container mb-48 mt-6 flex flex-col items-center justify-center gap-6">
