@@ -36,8 +36,8 @@ export default function EditUserProfile() {
 		.filter(Boolean);
 
 	return (
-		<div className="container m-auto mb-36 mt-16 max-w-3xl">
-			<ul className="flex gap-3">
+		<div className="container mx-auto mb-36 mt-16 max-w-4xl">
+			<ul className="flex flex-wrap gap-2">
 				<li>
 					<Link
 						className="text-xs text-muted-foreground"
@@ -49,7 +49,7 @@ export default function EditUserProfile() {
 				{breadcrumbs.map((breadcrumb, i, arr) => (
 					<li
 						key={i}
-						className={cn('flex items-center gap-2 text-xs', {
+						className={cn('flex max-w-md items-center gap-2 text-xs', {
 							'text-muted-foreground': i < arr.length - 1,
 						})}
 					>
@@ -57,7 +57,7 @@ export default function EditUserProfile() {
 					</li>
 				))}
 			</ul>
-			<Spacer size="xs" />
+			<Spacer size="4xs" />
 			<main>
 				<Outlet />
 			</main>

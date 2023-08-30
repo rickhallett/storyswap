@@ -99,7 +99,7 @@ export default function EditUserProfile() {
 	const data = useLoaderData<typeof loader>();
 
 	return (
-		<div className="flex flex-col gap-12">
+		<div className="flex flex-col gap-6">
 			<div className="flex justify-center">
 				<div className="relative h-28 w-28">
 					<img
@@ -118,15 +118,17 @@ export default function EditUserProfile() {
 							title="Change profile photo"
 							aria-label="Change profile photo"
 						>
-							<Icon name="camera" className="h-4 w-4" />
+							<Icon name="camera" className="h-6 w-6" />
 						</Link>
 					</Button>
 				</div>
 			</div>
+
 			<UpdateProfile />
 
 			<div className="col-span-6 mb-2 mt-1 h-1 border-b-[1.5px]" />
-			<div className="col-span-full flex flex-col gap-6">
+
+			<div className="col-span-full flex flex-col gap-6 text-sm">
 				<div>
 					<Link to="change-email">
 						<Icon name="envelope-closed">
@@ -230,9 +232,9 @@ function UpdateProfile() {
 
 	return (
 		<fetcher.Form method="POST" {...form.props}>
-			<div className="grid grid-cols-6 gap-x-10">
+			<div className="grid grid-rows-2">
 				<Field
-					className="col-span-3"
+					className="row-span-1"
 					labelProps={{
 						htmlFor: fields.username.id,
 						children: 'Username',
@@ -241,7 +243,7 @@ function UpdateProfile() {
 					errors={fields.username.errors}
 				/>
 				<Field
-					className="col-span-3"
+					className="row-span-2"
 					labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
 					inputProps={conform.input(fields.name)}
 					errors={fields.name.errors}
@@ -250,10 +252,10 @@ function UpdateProfile() {
 
 			<ErrorList errors={form.errors} id={form.errorId} />
 
-			<div className="mt-8 flex justify-center">
+			<div className="mt-2 flex justify-center">
 				<StatusButton
 					type="submit"
-					size="wide"
+					size="lg"
 					name="intent"
 					value={profileUpdateActionIntent}
 					status={
