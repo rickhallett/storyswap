@@ -58,8 +58,9 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 	defaultShouldRevalidate,
 }) => {
 	const nextParams = nextUrl.searchParams.get('search-books');
+	const currentParams = currentUrl.searchParams.get('search-books');
 
-	if (nextParams === '' || nextParams === null) {
+	if (nextParams === '' && currentParams === '') {
 		return false;
 	}
 
@@ -73,6 +74,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
 	const searchTerm = new URL(request.url).searchParams.get('search-books');
+	console.log({ searchTerm });
 	if (searchTerm === '') {
 		return redirect('/books');
 	}
