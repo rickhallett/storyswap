@@ -74,7 +74,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
 	const searchTerm = new URL(request.url).searchParams.get('search-books');
-	console.log({ searchTerm });
 	if (searchTerm === '') {
 		return redirect('/books');
 	}
