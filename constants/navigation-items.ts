@@ -41,7 +41,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'person',
 		hidden: false,
 		disabled: true,
-		soon: true
+		soon: true,
 	},
 	{
 		name: 'Reviews',
@@ -50,7 +50,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'pencil-1',
 		hidden: false,
 		disabled: true,
-		soon: true
+		soon: true,
 	},
 	{
 		name: 'Location Matching',
@@ -59,7 +59,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'globe',
 		hidden: false,
 		disabled: true,
-		soon: true
+		soon: true,
 	},
 	{
 		name: 'Environmental Impact Tracker',
@@ -116,7 +116,7 @@ export const getNavigationLinks = (user: any) => [
 		current: false,
 		logo: 'code',
 		hidden: false,
-		soon: true
+		soon: true,
 	},
 	{
 		name: 'About Me',
