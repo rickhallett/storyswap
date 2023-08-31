@@ -23,6 +23,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'magnifying-glass',
 		hidden: false,
 		disabled: true,
+		soon: true,
 	},
 	{
 		name: 'Recommendations',
@@ -31,6 +32,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'star',
 		hidden: false,
 		disabled: true,
+		soon: true,
 	},
 	{
 		name: 'Swaps',
@@ -39,6 +41,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'person',
 		hidden: false,
 		disabled: true,
+		soon: true
 	},
 	{
 		name: 'Reviews',
@@ -47,6 +50,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'pencil-1',
 		hidden: false,
 		disabled: true,
+		soon: true
 	},
 	{
 		name: 'Location Matching',
@@ -55,6 +59,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'globe',
 		hidden: false,
 		disabled: true,
+		soon: true
 	},
 	{
 		name: 'Environmental Impact Tracker',
@@ -79,6 +84,7 @@ export const getNavigationLinks = (user: any) => [
 		logo: 'face',
 		hidden: false,
 		disabled: false,
+		soon: true,
 	},
 	{
 		name: 'Integrations',
@@ -109,6 +115,14 @@ export const getNavigationLinks = (user: any) => [
 		href: '/community/bugs',
 		current: false,
 		logo: 'code',
+		hidden: false,
+		soon: true
+	},
+	{
+		name: 'About Me',
+		href: '/about',
+		current: false,
+		logo: 'avatar',
 		hidden: false,
 	},
 ];
