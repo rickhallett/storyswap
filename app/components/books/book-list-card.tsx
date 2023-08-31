@@ -191,13 +191,13 @@ export default function BookListCards({ books, user }) {
 						<dl className="mt-1 flex flex-grow flex-col justify-between">
 							<dt className="sr-only">Condition</dt>
 							<dd className="mt-3">
-								<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+								<span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
 									{book.condition.name}
 								</span>
 							</dd>
 							<dt className="sr-only">Genre</dt>
 							<dd className="mt-3">
-								<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+								<span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
 									{book.genre.name}
 								</span>
 							</dd>

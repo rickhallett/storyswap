@@ -29,7 +29,7 @@ const activity = [
 		person: { name: 'Hilary Mahy', href: '#' },
 		tags: [
 			{ name: 'Bug', href: '#', color: 'fill-red-500' },
-			{ name: 'Accessibility', href: '#', color: 'fill-indigo-500' },
+			{ name: 'Accessibility', href: '#', color: 'fill-emerald-500' },
 		],
 		date: '6h ago',
 	},

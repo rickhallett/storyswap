@@ -15,7 +15,7 @@ const timeline = [
 		date: 'Aug 2023',
 		datetime: '2020-09-20',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 2,
@@ -24,7 +24,7 @@ const timeline = [
 		date: 'Aug 2023',
 		datetime: '2020-09-22',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 3,
@@ -33,7 +33,7 @@ const timeline = [
 		date: 'Aug 2023',
 		datetime: '2020-09-22',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 4,
@@ -42,7 +42,7 @@ const timeline = [
 		date: 'Aug 2023',
 		datetime: '2020-09-28',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 5,
@@ -51,7 +51,7 @@ const timeline = [
 		date: 'Aug 2023',
 		datetime: '2020-09-30',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 6,
@@ -60,7 +60,7 @@ const timeline = [
 		date: 'TBC',
 		datetime: '2020-10-04',
 		icon: CheckIcon,
-		iconBackground: 'bg-green-500',
+		iconBackground: 'bg-emerald-600',
 	},
 	{
 		id: 7,
@@ -222,7 +222,7 @@ export default function Index() {
 			<div className="container flex items-center justify-center p-2 text-h4 ">
 				<div className="flex flex-col gap-6">
 					<div className="flex gap-3">
-						<h1 className="text-center align-middle text-indigo-500">
+						<h1 className="text-center align-middle text-emerald-700">
 							Welcome to StorySwap
 						</h1>
 					</div>
@@ -240,17 +240,17 @@ export default function Index() {
 							arrange for couriers if you need one.
 						</li>
 						<li>
-							<Icon name="reader" size="md" className="text-green-600">
+							<Icon name="reader" size="md" className="text-emerald-600">
 								Read more
 							</Icon>
 						</li>
 						<li>
-							<Icon name="globe" className="text-green-600" size="md">
+							<Icon name="globe" className="text-emerald-600" size="md">
 								Save our trees
 							</Icon>
 						</li>
 						<li>
-							<Icon name="face" size="md" className="text-green-600">
+							<Icon name="face" size="md" className="text-emerald-600">
 								Connect
 							</Icon>
 						</li>

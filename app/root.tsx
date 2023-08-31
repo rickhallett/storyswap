@@ -255,7 +255,7 @@ function App() {
 	const userNavigationItems = getUserNavigationLinks({ user });
 
 	const Header = () => (
-		<Popover as="header" className="bg-indigo-600 pb-24">
+		<Popover as="header" className="bg-emerald-800 pb-24">
 			{({ open }) => (
 				<>
 					<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -317,8 +317,8 @@ function App() {
 		return (
 			<footer className="sticky bottom-0 left-0 right-0">
 				<WebsiteStats stats={data.stats} hidden={!showStats} />
-				<div className="mx-auto max-w-3xl bg-indigo-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
-					<div className="flex items-center justify-around border-t border-gray-200 py-2 text-center text-xs text-gray-400">
+				<div className="mx-auto max-w-3xl bg-emerald-600 py-0 sm:px-6 lg:max-w-7xl lg:px-8">
+					<div className="flex items-center justify-around border-t border-gray-200 py-2 text-center text-xs text-gray-200">
 						<div className="flex items-center gap-2">
 							<Label className="text-xs" htmlFor="show-stats">
 								Stats
