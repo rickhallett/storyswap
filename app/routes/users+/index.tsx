@@ -21,9 +21,6 @@ const UserSearchResultSchema = z.object({
 	image: z
 		.object({
 			id: z.string(),
-			altText: z.string().nullable(),
-			contentType: z.string(),
-			blob: z.custom<File>((file) => file instanceof File),
 		})
 		.nullable(),
 	roles: z.array(z.object({ name: z.string() })),
@@ -45,8 +42,9 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 	defaultShouldRevalidate,
 }) => {
 	const nextParams = nextUrl.searchParams.get('search-users');
+	const currentParams = currentUrl.searchParams.get('search-users');
 
-	if (nextParams === '' || nextParams === null) {
+	if (nextParams === '' && currentParams === '') {
 		return false;
 	}
 
@@ -60,6 +58,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request);
 	const searchTerm = new URL(request.url).searchParams.get('search-users');
+	console.log(searchTerm);
 	if (searchTerm === '') {
 		return redirect('/users');
 	}

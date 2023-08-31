@@ -14,7 +14,7 @@ export default function UserListItems({ users }) {
 					<div className="flex flex-1 flex-col p-4">
 						<img
 							className="mx-auto h-20 w-20 flex-shrink-0 rounded-full"
-							src={getUserImgSrc(user.imageId)}
+							src={getUserImgSrc(user?.image?.id)}
 							alt=""
 						/>
 						<h3 className="mt-6 text-sm font-medium text-gray-900">
