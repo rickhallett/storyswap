@@ -55,12 +55,12 @@ const timeline = [
 	},
 	{
 		id: 6,
-		content: 'Building',
+		content: 'Built',
 		target: 'book search',
 		date: 'TBC',
 		datetime: '2020-10-04',
-		icon: QuestionMarkCircleIcon,
-		iconBackground: 'bg-yellow-500',
+		icon: CheckIcon,
+		iconBackground: 'bg-green-500',
 	},
 	{
 		id: 7,

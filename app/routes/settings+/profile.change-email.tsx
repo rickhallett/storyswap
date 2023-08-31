@@ -15,7 +15,7 @@ import {
 } from '#app/routes/_auth+/verify.tsx';
 import { requireUserId } from '#app/utils/auth.server.ts';
 import { prisma } from '#app/utils/db.server.ts';
-import { sendEmail } from '#app/utils/email.server.ts';
+import { sendGmail } from '#app/utils/email.server.ts';
 import { invariant, useIsPending } from '#app/utils/misc.tsx';
 import { redirectWithToast } from '#app/utils/toast.server.ts';
 import { EmailSchema } from '#app/utils/user-validation.ts';
@@ -54,7 +54,7 @@ export async function handleVerification({
 		data: { email: newEmail },
 	});
 
-	void sendEmail({
+	void sendGmail({
 		to: preUpdateUser.email,
 		subject: 'Epic Stack email changed',
 		react: <EmailChangeNoticeEmail userId={user.id} />,
@@ -125,13 +125,13 @@ export async function action({ request }: DataFunctionArgs) {
 		type: 'change-email',
 	});
 
-	const response = await sendEmail({
+	const response = await sendGmail({
 		to: submission.value.email,
 		subject: `StorySwap Email Change Verification`,
 		react: <EmailChangeEmail verifyUrl={verifyUrl.toString()} otp={otp} />,
 	});
 
-	if (response.status === 'success') {
+	if (response.status === 200) {
 		const verifySession = await verifySessionStorage.getSession(
 			request.headers.get('cookie'),
 		);
@@ -217,14 +217,14 @@ export default function ChangeEmailIndex() {
 
 	const isPending = useIsPending();
 	return (
-		<div className="text-body-xs">
+		<div className="flex flex-col gap-4 text-body-xs">
 			<h1 className="mb-2 text-h3">Change Email</h1>
 			<p>You will receive an email at the new email address to confirm.</p>
 			<p>
 				An email notice will also be sent to your old address{' '}
-				<span className="text-slate-500">{data.user.email}</span>.
+				<span className=" text-slate-500">{data.user.email}</span>.
 			</p>
-			<div className="mx-auto mt-5 max-w-sm">
+			<div className="mt-5 max-w-md">
 				<Form method="POST" {...form.props}>
 					<Field
 						labelProps={{ children: 'New Email' }}

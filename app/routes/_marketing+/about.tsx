@@ -1,27 +1,23 @@
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid';
 
 const profile = {
-	name: 'Ricardo Cooper',
-	email: 'ricardo.cooper@example.com',
-	avatar:
-		'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+	name: 'Rick Hallett',
+	email: 'rickhallett@icloud.com',
+	avatar: 'https://avatars.githubusercontent.com/u/29977869?v=4',
 	backgroundImage:
-		'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+		'https://images.unsplash.com/photo-1567372704182-ec2ea042c937?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1748&q=80',
 	fields: [
-		['Phone', '(555) 123-4567'],
-		['Email', 'ricardocooper@example.com'],
-		['Title', 'Front-End Developer'],
-		['Team', 'Product Development'],
-		['Location', 'San Francisco'],
-		['Sits', 'Oasis, 4th floor'],
-		['Salary', '$145,000'],
-		['Birthday', 'June 8, 1990'],
+		['Phone', '+447375862225'],
+		['Email', 'rickhallett@icloud.com'],
+		['Title', 'Full Stack Developer'],
+		['Location', 'Brighton, UK'],
+		['Birthday', '8 Dec 1986'],
 	],
 };
 
 export default function About() {
 	return (
-		<div>
+		<div className="h-screen">
 			<div>
 				<img
 					className="h-32 w-full object-cover lg:h-48"
@@ -43,6 +39,16 @@ export default function About() {
 							<h1 className="truncate text-2xl font-bold text-gray-900">
 								{profile.name}
 							</h1>
+						</div>
+						<div className="flex flex-row flex-wrap gap-2">
+							{profile.fields.map(([key, value]) => (
+								<span
+									key={key}
+									className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600"
+								>
+									{value}
+								</span>
+							))}
 						</div>
 						<div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
 							<button
