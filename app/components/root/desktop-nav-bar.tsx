@@ -13,7 +13,7 @@ export const DesktopNavBar = ({ navigationItems }) => (
 								className={classnames(
 									'min-w-fit rounded-md bg-white bg-opacity-0 px-3 py-2 text-sm font-medium hover:bg-opacity-10',
 									{ 'text-white': item.current },
-									{ 'text-indigo-100': !item.current },
+									{ 'text-emerald-100': !item.current },
 									{ hidden: item.hidden },
 								)}
 								aria-current={item.current ? 'page' : undefined}

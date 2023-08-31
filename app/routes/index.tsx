@@ -7,8 +7,8 @@ export default function IndexRoute() {
 		<div className="container flex items-center justify-center p-20 text-h2">
 			<div className="flex flex-col gap-6">
 				<div className="flex flex-col gap-3">
-					<h2 className="text-sky-600">Coming soon...!</h2>
-					<pre className="whitespace-pre-wrap break-all text-body-lg text-sky-300">
+					<h2 className="text-emerald-600">Coming soon...!</h2>
+					<pre className="whitespace-pre-wrap break-all text-body-lg text-emerald-300">
 						{location.pathname}
 					</pre>
 				</div>

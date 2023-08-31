@@ -27,7 +27,7 @@ export const MobileNavItem = ({
 			<button>{name}</button>
 		</Icon>
 		{soon && (
-			<span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-gray-600">
+			<span className="inline-flex items-center rounded-md bg-emerald-100 px-2 py-1 text-xs font-medium text-gray-600">
 				Coming soon!
 			</span>
 		)}

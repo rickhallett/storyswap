@@ -26,7 +26,7 @@ export default function UserListItems({ users }) {
 								{user.roles.map((role) => (
 									<span
 										key={role.name}
-										className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+										className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20"
 									>
 										{role.name}
 									</span>

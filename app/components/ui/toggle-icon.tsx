@@ -19,8 +19,8 @@ export default function ToggleIcon({
 			checked={enabled}
 			onChange={setEnabled}
 			className={classNames(
-				enabled ? 'bg-indigo-600' : 'bg-gray-200',
-				'relative inline-flex h-4 w-8 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+				enabled ? 'bg-emerald-600' : 'bg-gray-200',
+				'relative inline-flex h-4 w-8 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2',
 			)}
 		>
 			<span className="sr-only">Use setting</span>
@@ -63,7 +63,7 @@ export default function ToggleIcon({
 					aria-hidden="true"
 				>
 					<svg
-						className="h-3 w-3 text-indigo-600"
+						className="h-3 w-3 text-emerald-600"
 						fill="currentColor"
 						viewBox="0 0 12 12"
 					>

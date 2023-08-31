@@ -18,7 +18,7 @@ export function Document({
 	env?: Record<string, string>;
 }) {
 	return (
-		<html lang="en" className={'h-screen bg-indigo-600'}>
+		<html lang="en" className={'h-screen bg-emerald-600'}>
 			<head>
 				<ClientHintCheck nonce={nonce} />
 				<Meta />

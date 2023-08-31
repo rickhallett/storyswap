@@ -47,12 +47,12 @@ export const MobileNavBar = ({
 								<div>
 									<img
 										className="h-8 w-auto"
-										src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+										src="https://tailwindui.com/img/logos/mark.svg?color=emerald&shade=600"
 										alt="Your Company"
 									/>
 								</div>
 								<div className="-mr-2">
-									<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+									<Popover.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500">
 										<span className="absolute -inset-0.5" />
 										<span className="sr-only">Close menu</span>
 										<XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -84,7 +84,7 @@ export const MobileNavBar = ({
 								</div>
 								<button
 									type="button"
-									className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+									className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 								>
 									<span className="absolute -inset-1.5" />
 									<span className="sr-only">View notifications</span>
