@@ -130,6 +130,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		action: true,
 		access: true,
 	});
+	// TODO: call roles only on needed routes
 
 	const rolesSelect = Prisma.validator<Prisma.RoleSelect>()({
 		name: true,
@@ -255,12 +256,17 @@ function App() {
 	const userNavigationItems = getUserNavigationLinks({ user });
 
 	const Header = () => (
+		<>
+		
 		<Popover as="header" className="bg-emerald-800 pb-24">
 			{({ open }) => (
 				<>
 					<div className="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 						<div className="relative flex items-center justify-center py-5 lg:justify-between">
 							<Logo />
+							<div className='hidden md:flex md:flex-1 md:justify-center md:items-center'>
+								<h5 className='text-green-100'>Best viewed on mobile!</h5>
+							</div>
 							<TWSearchBar />
 							<DesktopDropdown
 								user={user}
@@ -281,6 +287,7 @@ function App() {
 				</>
 			)}
 		</Popover>
+		</>
 	);
 
 	const Main = () => (
