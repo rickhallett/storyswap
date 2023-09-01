@@ -113,7 +113,7 @@ app.use(
 				].filter(Boolean),
 				'font-src': ["'self'"],
 				'frame-src': ["'self'"],
-				// 'img-src': ["'self'", 'data:'],
+				// 'img-src': ["'self'", 'data:'], TODO: does this fallback to self?
 				'script-src': [
 					"'strict-dynamic'",
 					"'self'",

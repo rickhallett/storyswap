@@ -1,0 +1,74 @@
+# Integrating AWS Services with Fly.io for Remix App
+
+## Table of Contents
+
+1. [Integrating AWS with Fly.io](#integrating-aws-with-flyio)
+2. [Hosting on AWS](#hosting-on-aws)
+3. [Blending the Two](#blending-the-two)
+4. [Recommendations](#recommendations)
+
+---
+
+## Integrating AWS with Fly.io
+
+### Considerations
+
+1. **SDKs and APIs**
+   - Utilize AWS SDKs or APIs within your app, deployed on Fly.io, to interact with AWS services.
+  
+2. **Security**
+   - Securely store AWS credentials as environment variables or use services like AWS Secrets Manager.
+
+3. **Networking**
+   - Ensure network permissions and firewall settings on both sides (AWS and Fly.io) allow for necessary interactions.
+
+4. **Data Transfer Costs**
+   - Be aware that using AWS services while hosting elsewhere can incur additional data transfer costs.
+
+5. **Monitoring**
+   - AWS provides CloudWatch for detailed monitoring, but you may need multiple monitoring solutions for full observability.
+
+---
+
+## Hosting on AWS
+
+### Considerations
+
+1. **Unified Management**
+   - Simplifies administration, scaling, and monitoring.
+  
+2. **Cost Optimization**
+   - Lower internal data transfer costs and potential bundled service pricing.
+
+3. **Integrated Services**
+   - AWS services are tightly integrated with each other for seamless data and service flow.
+
+4. **Vendor Lock-in**
+   - AWS services often work best with each other, leading to potential vendor lock-in.
+
+---
+
+## Blending the Two
+
+### Considerations
+
+1. **Best of Both Worlds**
+   - Use Fly.io for edge deployments and AWS for its rich ecosystem of services.
+
+2. **Complexity**
+   - May result in more complex system architecture and data flow.
+
+3. **Cost Analysis**
+   - Balancing resources across two platforms may require more stringent cost monitoring.
+
+---
+
+## Recommendations
+
+1. If you’re happy with Fly.io, you can easily integrate AWS services into your Fly.io-deployed application.
+
+2. If you foresee the need for multiple, tightly-integrated AWS services, consider migrating to AWS.
+
+---
+
+Given your background, integrating AWS services using AWS SDK for JavaScript should be straightforward.

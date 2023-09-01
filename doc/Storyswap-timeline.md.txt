@@ -1,0 +1,63 @@
+# Development Timeline
+
+## Phase 1: Setting Up Infrastructure & Basic Features
+
+### Week 1-2: Initial Setup
+1. **AWS & Fly.io Integration**
+   - Get the app deployed on Fly.io and establish connections to AWS services, as needed.
+
+### Week 3-4: User Profiles & Safety
+1. **User Profiles (MVP & Planned)**
+   - Implement sign-up and login, create data schema in Prisma.
+2. **Safety Guidelines (MVP)**
+   - Draft and display safety guidelines, essential for early adopters.
+
+### Week 5-6: Basic Book Interactions
+1. **Book Listings (MVP & Planned)**
+   - Develop CRUD operations for book listings and API endpoints.
+2. **Wishlist Feature (MVP)**
+   - Implement a basic wishlist feature for user profiles.
+
+---
+
+## Phase 2: Enhancing User Experience
+
+### Week 7-9: Search & Filters
+1. **Search & Filter Options (MVP & Planned)**
+   - Implement basic search algorithm and API endpoints.
+
+### Week 10-12: Messaging & Swap Requests
+1. **Swap Requests & Messaging (MVP & Planned)**
+   - Develop API for swap requests and a simple real-time messaging system.
+
+---
+
+## Phase 3: Additional Features & Usability
+
+### Week 13-15: Location and Reviews
+1. **Location-based Matching (MVP & Planned)**
+   - Investigate geolocation services and implement them.
+2. **Reviews & Ratings (MVP & Planned)**
+   - Implement the API for ratings and create the frontend UI.
+
+### Week 16-18: Community and More
+1. **Community Features (Planned)**
+   - Implement book clubs and discussion groups.
+2. **Notification System (MVP)**
+   - Implement backend logic for notifications using Fly.io.
+
+---
+
+## Phase 4: Advanced Features & Optimization
+
+### Week 19-21: Advanced Features
+1. **Environmental Impact Tracker (Planned)**
+   - Begin work on environmental impact tracking.
+2. **Recommendation System (Planned)**
+   - Design and implement a recommendation algorithm.
+
+### Week 22-24: Final Testing & Debugging
+1. **Integration Tests**
+   - Implement integration tests for all features.
+2. **Performance Optimization**
+   - Optimize for performance, especially if using AWS and Fly.io together.

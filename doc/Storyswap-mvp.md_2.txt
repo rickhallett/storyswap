@@ -1,0 +1,86 @@
+## StorySwap MVP Features
+
+---
+
+### 1. User Profiles
+
+#### Subtasks
+
+- [ ] Implement sign-up and login functionality using Remix and Prisma.
+- [ ] Create data schema for storing user profiles in Prisma.
+- [ ] Develop frontend components for personal bio and genre preferences using Remix and Tailwind.
+- [ ] Implement API for CRUD operations on user profiles and books list.
+- [ ] Add a wishlist feature where users can add books they'd like to read.
+
+---
+
+### 2. Book Listings
+
+#### Subtasks
+
+- [ ] Create Prisma schema for book listings.
+- [ ] Develop API endpoints to add a new book, including uploading photos and metadata.
+- [ ] Create frontend components for adding and editing book listings.
+- [ ] Implement a toggle feature to mark a book as 'Available for Swap' or 'Wishlist'.
+
+---
+
+### 3. Search & Filter Options
+
+#### Subtasks
+
+- [ ] Implement a basic search algorithm to find books or users.
+- [ ] Develop API endpoints for search and filter functionalities.
+- [ ] Create frontend UI components for search and filtering.
+
+---
+
+### 4. Swap Requests & Messaging
+
+#### Subtasks
+
+- [ ] Create Prisma schema for swap requests and messages.
+- [ ] Implement API for sending and receiving swap requests.
+- [ ] Develop a simple real-time messaging or chat system.
+- [ ] Create frontend components for swap requests and messaging.
+
+---
+
+### 5. Location-based Matching
+
+#### Subtasks
+
+- [ ] Investigate geolocation services suitable for local matching.
+- [ ] Develop API endpoints for geolocation-based search.
+- [ ] Create frontend components to display books available for swap nearby.
+
+---
+
+### 6. Reviews & Ratings
+
+#### Subtasks
+
+- [ ] Create a Prisma schema for storing user reviews and ratings.
+- [ ] Implement API endpoints for posting and retrieving ratings.
+- [ ] Create frontend UI for users to rate each other after a swap.
+
+---
+
+### 7. Safety Guidelines
+
+#### Subtasks
+
+- [ ] Draft safety guidelines for safe meetups and transactions.
+- [ ] Create frontend components to display safety guidelines during the swap process.
+
+---
+
+### 8. Basic Notifications
+
+#### Subtasks
+
+- [ ] Implement backend logic for sending notifications using Fly.io.
+- [ ] Create frontend notification UI.
+- [ ] Develop API endpoints for notifications.
+
+---

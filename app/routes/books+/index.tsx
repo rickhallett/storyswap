@@ -137,7 +137,7 @@ export default function BooksRoute() {
 	}
 
 	return (
-		<div className="container mb-48 mt-6 flex flex-col items-center justify-center gap-6">
+		<div className="container mb-48 mt-6 flex flex-col items-center justify-center gap-6 ">
 			<h1 className="text-h5">StorySwap Books</h1>
 			<div className="w-full max-w-[700px] ">
 				<SearchBar
