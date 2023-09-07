@@ -46,7 +46,7 @@
 
 - **Ease of Integration**: All these services are designed to be plug-and-play to some extent, reducing the need for extensive machine learning expertise.
 - **Scalability**: AWS services are built to scale, fitting both small and large applications.
-- **Comprehensive SDKs**: AWS SDKs often have good support for popular languages, including JavaScript/TypeScript.
+- **Comprehensive SDKs**: AWS SDKs often have good support for popular languages, including JavaScript/TypeScript
 
 
 
